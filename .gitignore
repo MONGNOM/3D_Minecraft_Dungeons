@@ -1,0 +1,11 @@
+# Visual Studio 임시 파일 및 캐시 폴더 제외
+.vs/
+[Bb]in/
+[Obj]/
+*.user
+*.suo
+/Resources/*
+Debug/
+Release/
+x64/
+x86/
