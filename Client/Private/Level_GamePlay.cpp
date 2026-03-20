@@ -144,6 +144,7 @@ CLevel_GamePlay* CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 void CLevel_GamePlay::Free()
 {
 	__super::Free();
+
 	Safe_Release(m_pImGui_Manager);
 
 }

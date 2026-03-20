@@ -18,13 +18,27 @@ public:
 public:
 	void Set_NumShaderResource(_uint num) { m_iNumSRVs = num; }
 	HRESULT Bind_ShaderResourceView(class CShader* pShader, const _char* pConstantName, _uint iIndex);
-	void Set_Texture(vector<ID3D11ShaderResourceView*> texture) { m_SRVs = texture; }
+	void Set_Texture(vector<ID3D11ShaderResourceView*> texture) {
+		
+		for (auto& pSRV : m_SRVs)
+		{
+			Safe_Release(pSRV);
+		}
+		m_SRVs.clear();
+
+		m_SRVs = texture;
+
+		
+		for (auto& pSRV : m_SRVs)
+		{
+			Safe_AddRef(pSRV);
+		}
+	}
 	vector<ID3D11ShaderResourceView*> Get_Texture() { return m_SRVs; }
 
 private:
 	_uint										m_iNumSRVs = {};
 	vector<ID3D11ShaderResourceView*>			m_SRVs;
-	_bool										isClone{ false };
 public:
 	static CTexture* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumSRVs);
 	virtual CComponent* Clone(void* pArg) override;

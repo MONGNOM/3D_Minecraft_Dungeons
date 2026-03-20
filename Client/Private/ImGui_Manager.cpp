@@ -378,6 +378,7 @@ _float3 CImGui_Manager::Set_PickTerrain()
 void CImGui_Manager::Free()
 {
 	__super::Free();
+
 	for (CImGui_Panel* pPanel : m_pPanels)
 	{
 		Safe_Release(pPanel);
@@ -392,4 +393,6 @@ void CImGui_Manager::Free()
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pDeviceContext);
 	Safe_Release(m_pDevice);
+
+
 }
