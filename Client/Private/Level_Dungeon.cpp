@@ -95,12 +95,9 @@ HRESULT CLevel_Dungeon::Ready_Layer_Player(const _wstring& strLayerTag)
 
 HRESULT CLevel_Dungeon::Ready_Layer_Monster(const _wstring& strLayerTag)
 {
-	for (size_t i = 0; i < 10; i++)
-	{
-		if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Monster"),
-			ETOI(LEVEL::DUNGEON), strLayerTag)))
-			return E_FAIL;
-	}
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Skeleton"),
+		ETOI(LEVEL::DUNGEON), strLayerTag)))
+		return E_FAIL;
 
 
 	return S_OK;

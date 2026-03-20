@@ -24,6 +24,8 @@ public:
 
 	_int Get_BoneIndex(const _char* pBoneName);
 
+	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName);
+
 public:
 	virtual HRESULT Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreLocalTransformMatrix);
 	virtual HRESULT Initialize(void* pArg);

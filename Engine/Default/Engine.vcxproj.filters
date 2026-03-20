@@ -118,6 +118,12 @@
     <Filter Include="01.Utility\08. Picking">
       <UniqueIdentifier>{3a230075-b36f-43ae-b0e3-bb71b37fd746}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.GameObjects\ContainerObject">
+      <UniqueIdentifier>{b96f53e7-bb9d-4209-8356-90008db7e581}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObjects\ContainerObject\PartObject">
+      <UniqueIdentifier>{97f00897-9c02-4718-8b4a-98e956583f36}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Base.h">
@@ -234,6 +240,12 @@
     <ClInclude Include="..\public\Picking_Manager.h">
       <Filter>01.Utility\08. Picking</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ContainerObject.h">
+      <Filter>01.Utility\03.GameObjects\ContainerObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PartObject.h">
+      <Filter>01.Utility\03.GameObjects\ContainerObject\PartObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -331,6 +343,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Picking_Manager.cpp">
       <Filter>01.Utility\08. Picking</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ContainerObject.cpp">
+      <Filter>01.Utility\03.GameObjects\ContainerObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PartObject.cpp">
+      <Filter>01.Utility\03.GameObjects\ContainerObject\PartObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

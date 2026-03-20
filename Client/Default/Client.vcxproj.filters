@@ -76,6 +76,12 @@
     <Filter Include="96.ImGui\Panel\Inspector">
       <UniqueIdentifier>{150a57a4-40e1-4c05-b629-5771b82c35f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Skeleton">
+      <UniqueIdentifier>{6ecf219e-e530-4539-83bf-257aaa6e5f2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Skeleton\Body">
+      <UniqueIdentifier>{5a43bb8f-7dd7-4c4d-a2b8-85984093b95a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -168,6 +174,12 @@
     <ClInclude Include="..\Public\imgui_impl_dx11.h">
       <Filter>96.ImGui\Deafult</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Skeleton.h">
+      <Filter>02.GameObject\Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Body_Skeleton.h">
+      <Filter>02.GameObject\Skeleton\Body</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -257,6 +269,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\imgui_draw.cpp">
       <Filter>96.ImGui\Deafult</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Skeleton.cpp">
+      <Filter>02.GameObject\Skeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Body_Skeleton.cpp">
+      <Filter>02.GameObject\Skeleton\Body</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

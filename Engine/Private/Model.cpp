@@ -54,6 +54,18 @@ _int CModel::Get_BoneIndex(const _char* pBoneName)
     return iBoneIndex;
 }
 
+const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName)
+{
+    auto    iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool {
+        return pBone->isCompare(pBoneName);
+        });
+
+    if (iter == m_Bones.end())
+        return nullptr;
+
+    return (*iter)->Get_CombinedTransformationMatrixPtr();
+}
+
 HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreLocalTransformMatrix)
 {
     _uint       iFlag = { aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast };
