@@ -44,6 +44,8 @@ HRESULT CImGui_Manager::Initialize_Manager(ID3D11Device* pDevice, ID3D11DeviceCo
 	if (!::ImGui_ImplDX11_Init(m_pDevice, m_pDeviceContext))
 		return E_FAIL;
 
+	m_pGalleryTexture = CTexture::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/mincraft/Test/block%d.png"), 4);
+	images = m_pGalleryTexture->Get_Texture();
 
 	m_pPanels[ETOI(PanelType::INSPECTOR)] = CImGui_Panel_Inspector::Create();
 	m_pPanels[ETOI(PanelType::HIERARCHY)] = CImGui_Panel_Hierarchy::Create();
@@ -96,6 +98,10 @@ void CImGui_Manager::Render()
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+
+
+	
 }
 
 void CImGui_Manager::Render_Panels()
@@ -104,7 +110,76 @@ void CImGui_Manager::Render_Panels()
 	{
 		if (pPanel)
 			pPanel->Render();
+
 	}
+
+
+	ImGui::Begin("Texture Gallery");
+
+	ImGui::Text("Select a Texture:");
+	ImGui::Separator();
+
+	// 벡터에 담긴 텍스쳐 개수만큼 반복합니다. (예: m_vecTextures)
+	for (int i = 0; i < images.size(); ++i)
+	{
+		ImGui::PushID(i); // 버튼 ID 꼬임 방지용
+
+		// 1. 현재 그리는 버튼이 '내가 선택한 인덱스'라면 파란색 배경을 깔아줍니다.
+		if (m_SelectedTextureIndex == i)
+		{
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.6f, 1.0f, 1.0f)); // 파란색
+		}
+		else
+		{
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)); // 투명색
+		}
+
+		// 2. 텍스트 대신 '이미지 버튼'을 그립니다! (크기 64x64 예시)
+		// m_vecTextures[i] 는 유저님의 텍스쳐 포인터 변수에 맞게 수정해주세요.
+		if (ImGui::ImageButton("##Image", (void*)images[i], ImVec2(64.f, 64.f)))
+		{
+			// 이미지를 클릭하면, 자신의 방 번호(인덱스)를 기억장치에 저장합니다!
+			m_SelectedTextureIndex = i;
+		}
+
+		// 3. 색상 설정 원상복구
+		ImGui::PopStyleColor();
+
+		// 4. 세로로 한 줄로 나오는 걸 방지하고, 바둑판(Grid)처럼 가로로 나열합니다.
+		// 예: 창 가로 길이에 맞춰서 알아서 줄바꿈 되게 하거나, 4개마다 줄바꿈
+		if ((i + 1) % 4 != 0)
+		{
+			ImGui::SameLine();
+		}
+
+		ImGui::PopID();
+	}
+
+	// 줄바꿈이 깔끔하게 끝나도록 빈 줄 하나 추가
+	ImGui::NewLine();
+	ImGui::Separator();
+
+	// 적용 버튼
+	if (ImGui::Button("Apply Texture to Object", ImVec2(-FLT_MIN, 30)))
+	{
+		// 선택된 텍스쳐가 있고 (인덱스가 -1이 아님)
+		if (m_SelectedTextureIndex != -1)
+		{
+			if (pSelectedObject != nullptr)
+			{
+				CShader* shader = dynamic_cast<CShader*>(pSelectedObject->Get_Component(TEXT("Com_Shader")));
+				CTexture* texture = dynamic_cast<CTexture*>(pSelectedObject->Get_Component(TEXT("Com_Texture")));
+
+
+				texture->Set_Texture(images);
+				texture->Set_NumShaderResource(images.size());
+				pSelectedObject->Set_m_iNumTexture(m_SelectedTextureIndex);
+				
+			}
+		}
+	}
+
+	ImGui::End();
 }
 
 _bool CImGui_Manager::Picking_OnTerrain(HWND hWnd, CVIBuffer_Terrain* pTerrainBufferCom, CTransform* pTerrainTransformCom, _uint numZ, _uint numX, _float3* pos)
@@ -311,7 +386,9 @@ void CImGui_Manager::Free()
 	::ImGui_ImplDX11_Shutdown();
 	::ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
-
+	
+	Safe_Release(pSelectedObject);
+	Safe_Release(m_pGalleryTexture);
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pDeviceContext);
 	Safe_Release(m_pDevice);

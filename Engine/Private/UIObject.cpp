@@ -24,7 +24,7 @@ HRESULT CUIObject::Initialize(void* pArg)
 	m_fY = pDesc->fY;
 	m_fSizeX = pDesc->fSizeX;
 	m_fSizeY = pDesc->fSizeY;
-	m_iNumTexture = pDesc->iNumTexture;
+	//m_iNumTexture = pDesc->iNumTexture;
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;

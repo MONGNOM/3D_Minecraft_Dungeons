@@ -65,9 +65,12 @@ HRESULT CGameObject::Initialize(void* pArg)
         {
             m_Name = TEXT("None");
             m_fPos = _float3(0, 0, 0);
+            m_iNumTexture = 0;
         }
         /* 게임오브젝트 멤버를 채워넣어야한다면 여기서 채운다. */
     } 
+
+
 
     return S_OK;
 }

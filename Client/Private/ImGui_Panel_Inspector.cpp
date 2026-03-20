@@ -22,7 +22,7 @@ HRESULT CImGui_Panel_Inspector::Intiailzie()
 void CImGui_Panel_Inspector::Render()
 {
 
-
+    
 
 #pragma region 원본코드
    /*

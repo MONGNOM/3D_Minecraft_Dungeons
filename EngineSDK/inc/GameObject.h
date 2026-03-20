@@ -26,6 +26,7 @@ public:
 	class CComponent* Get_Component(const _wstring& strComponentTag);
 	OBJECTTYPE Get_ObjectType() { return m_eObjectType; }
 	_wstring Get_ObjectName() { return m_Name; }
+	void Set_m_iNumTexture(_uint numTex) { m_iNumTexture = numTex; }
 
 
 public:
@@ -44,7 +45,7 @@ protected:
 	OBJECTTYPE m_eObjectType = {};
 	_wstring m_Name = {};
 	_float3 m_fPos = {};
-
+	_uint			m_iNumTexture { 0 };
 protected:
 	map<const _wstring, class CComponent*>		m_Components;
 

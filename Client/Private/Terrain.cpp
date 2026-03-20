@@ -25,7 +25,6 @@ HRESULT CTerrain::Initialize(void* pArg)
 	
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -90,7 +89,7 @@ HRESULT CTerrain::Bind_ShaderResources()
 	if (FAILED(m_pGameInstance->Bind_TransformMatrix(D3DTS::PROJ, m_pShaderCom, "g_ProjMatrix")))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, "g_DiffuseTexture", 0)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, "g_DiffuseTexture", m_iNumTexture)))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Bind_CamPosition(m_pShaderCom, "g_vCamPosition")))

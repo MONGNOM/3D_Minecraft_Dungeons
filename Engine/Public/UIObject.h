@@ -10,7 +10,6 @@ public:
 	typedef struct tagUIObjectDesc  : public CGameObject::GAMEOBJECT_DESC
 	{
 		_float		fX, fY, fSizeX, fSizeY;
-		_uint		iNumTexture;
 	}UI_DESC;
 
 protected:
@@ -28,7 +27,7 @@ public:
 
 protected:
 	_float						m_fX{}, m_fY{}, m_fSizeX{}, m_fSizeY{};
-	_uint						m_iNumTexture{};
+
 	_float						m_fViewportWidth{}, m_fViewportHeight{};
 	_float4x4					m_TransformationMatrices[ETOI(D3DTS::END)];
 

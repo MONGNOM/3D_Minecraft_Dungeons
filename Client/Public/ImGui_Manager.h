@@ -21,6 +21,9 @@ private:
 	CImGui_Manager();
 	virtual ~CImGui_Manager() = default;
 public:
+	CGameObject* Get_SelectObject() { return pSelectedObject; }
+	void Set_SelectObject(CGameObject* object) { pSelectedObject = object; }
+
 	HRESULT Initialize_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
 	void Update_Engine();
 	void Render();
@@ -34,10 +37,18 @@ private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pDeviceContext = { nullptr };
 	class CImGui_Panel* m_pPanels[ETOI(PanelType::END)];
+private:
+	class CTexture* m_pGalleryTexture = nullptr; // 갤러리용 텍스쳐 포인터
+	vector<ID3D11ShaderResourceView*> images = {};
 	_float3 m_pickingPos{};
 	_bool m_bClone  = false;
 	int m_iNumX = 129;
 	int m_iNumZ = 129;
+
+	 CGameObject* pSelectedObject = nullptr;
+
+private:
+	int m_SelectedTextureIndex = -1;
 public:
 	_bool			Picking_OnTerrain(HWND hWnd,
 					class CVIBuffer_Terrain* pTerrainBufferCom,

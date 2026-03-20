@@ -3,12 +3,12 @@
 #include "Shader.h"
 
 CTexture::CTexture(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-    : CComponent { pDevice, pContext }
+    : CComponent { pDevice, pContext } , isClone(false)
 {
 }
 
 CTexture::CTexture(const CTexture& Prototype)
-    : CComponent (Prototype)
+    : CComponent(Prototype), isClone(true)
     , m_iNumSRVs { Prototype.m_iNumSRVs }
     , m_SRVs { Prototype.m_SRVs }
 {
@@ -94,8 +94,18 @@ void CTexture::Free()
 {
     __super::Free();
 
-    for (auto& pSRV : m_SRVs)
-        Safe_Release(pSRV);
+    if (isClone)
+    {
+        for (auto& pSRV : m_SRVs)
+            Safe_Release(pSRV);
 
-    m_SRVs.clear();
+       m_SRVs.clear();
+    }
+    else
+    {
+        for (auto& pSRV : m_SRVs)
+            Safe_Release(pSRV);
+
+        m_SRVs.clear();
+    }
 }

@@ -47,7 +47,8 @@ void CImGui_Panel_Hierarchy::Render()
     ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
     const auto& player = CGameInstance::GetInstance()->Get_Layer(ETOI(LEVEL::GAMEPLAY));
-    static CGameObject* pSelectedObject = nullptr;
+    
+  
 
     for (auto& pair : player)
     {
@@ -66,13 +67,13 @@ void CImGui_Panel_Hierarchy::Render()
                 std::string utf8ObjName = WStringToString(pObj->Get_ObjectName()  );
 
 
-                bool isSelected = (pSelectedObject == pObj);
+                bool isSelected = (CImGui_Manager::GetInstance()->Get_SelectObject() == pObj);
 
                 ImGuiSelectableFlags flags = ImGuiSelectableFlags_AllowDoubleClick;
 
                 if (ImGui::Selectable(utf8ObjName.c_str(), isSelected, flags))
                 {
-                    pSelectedObject = pObj;
+                    CImGui_Manager::GetInstance()->Set_SelectObject(pObj);
                 }
 
                 if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
@@ -88,7 +89,7 @@ void CImGui_Panel_Hierarchy::Render()
                     // pCamera->Set_Position(objPos + Vector3(0.0f, 2.0f, -5.0f)); 
                     // pCamera->LookAt(objPos);
                     CTransform* cameraTransform = dynamic_cast<CTransform*>(CGameInstance::GetInstance()->Get_Component(TEXT("Camera"), TEXT("Layer_Camera"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Transform")));
-                    CTransform* pObjTransform = dynamic_cast<CTransform*>(CGameInstance::GetInstance()->Get_Component(pObj->Get_ObjectName(), TEXT("Layer_Clone"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Transform")));
+                    CTransform* pObjTransform = dynamic_cast<CTransform*>(CGameInstance::GetInstance()->Get_Component(CImGui_Manager::GetInstance()->Get_SelectObject()->Get_ObjectName(), TEXT("Layer_Clone"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Transform")));
                     
                     _float3 objPos;
                     XMStoreFloat3(&objPos, pObjTransform->Get_State(STATE::POSITION));
@@ -109,14 +110,14 @@ void CImGui_Panel_Hierarchy::Render()
     
     ImGui::Begin("Inspector");
 
-    if (pSelectedObject != nullptr)
+    if (CImGui_Manager::GetInstance()->Get_SelectObject() != nullptr)
     {
-        string utf8Name = WStringToString(pSelectedObject->Get_ObjectName());
+        string utf8Name = WStringToString(CImGui_Manager::GetInstance()->Get_SelectObject()->Get_ObjectName());
         ImGui::Text("Object Name: %s", utf8Name.c_str());
         ImGui::Separator(); // ∞°∑Œ¡Ÿ ±ﬂ±‚
 
       
-        CTransform* pTransform = dynamic_cast<CTransform*>(pSelectedObject->Get_Component(TEXT("Com_Transform")));
+        CTransform* pTransform = dynamic_cast<CTransform*>(CImGui_Manager::GetInstance()->Get_SelectObject()->Get_Component(TEXT("Com_Transform")));
 
         if (pTransform != nullptr)
         {
@@ -225,6 +226,8 @@ void CImGui_Panel_Hierarchy::Render()
             // ==========================================================
         }
     }
+
+    
 
     ImGui::End();
 
