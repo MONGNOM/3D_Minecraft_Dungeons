@@ -9,6 +9,9 @@
 #include "HotBar.h"
 #include "Body_Skeleton.h"
 #include "Skeleton.h"
+#include "Bunting.h"
+#include "Body_Player.h"
+#include "Weapon.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice { pDevice }
@@ -173,6 +176,13 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		return E_FAIL;
 	}
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Bunting"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/Mesh/Prefab/Bunting/T_Bunting.png"), 1))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Bunting Texture");
+		return E_FAIL;
+	}
+
 	lstrcpy(m_szLoadingText, TEXT("셰이더를 로딩 중 입니다."));
 	/* Prototype_Component_Shader_VtxNorTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxNorTex"),
@@ -236,6 +246,15 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	}
 
 
+	PreLocalTransformMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Bunting"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Bunting/Bunting.fbx", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Bunting");
+		return E_FAIL;
+	}
+
+
 	lstrcpy(m_szLoadingText, TEXT("객체원형를 로딩 중 입니다."));
 	/* Prototype_GameObject_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
@@ -275,13 +294,74 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		return E_FAIL;
 	}
 
+
+	//if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Bunting"),
+	//	CBody_Skeleton::Create(m_pDevice, m_pContext))))
+	//{
+	//	MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Bunting");
+	//	return E_FAIL;
+	//}
+
+	//번팅
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Bunting"),
+		CBunting::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Bunting");
+		return E_FAIL;
+	}
+
+
 	PreLocalTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Skeleton"),
 		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/Skeleton.fbx", PreLocalTransformMatrix))))
 	{
+		MSG_BOX("Faild to Add_Prototype : Model_Skeleton");
+		return E_FAIL;
+	}
+
+	/* Prototype_GameObject_Player*/
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Player"),
+		CPlayer::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Player");
+		return E_FAIL;
+	}
+
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Player"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Player.fbx", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Player");
+		return E_FAIL;
+	}
+
+
+	/* Prototype_GameObject_Body_Player */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_Player"),
+		CBody_Player::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Body_Player");
+		return E_FAIL;
+	}
+
+	/* Prototype_GameObject_Weapon */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
+		CWeapon::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Weapon");
+		return E_FAIL;
+	}
+
+	/* Prototype_Component_Model_ForkLift */
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Sword"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Sword/Sword.fbx", PreLocalTransformMatrix))))
+	{
 		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
 		return E_FAIL;
 	}
+
 
 
 
@@ -360,13 +440,6 @@ HRESULT CLoader::Loading_For_Dungeon()
 		return E_FAIL;
 	}
 
-	/* Prototype_GameObject_Player */
-	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Player"),
-		CPlayer::Create(m_pDevice, m_pContext))))
-	{
-		MSG_BOX("Faild to Add_Prototype : GameObject_Player");
-		return E_FAIL;
-	}
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
 		CHotBar::Create(m_pDevice, m_pContext))))
@@ -386,6 +459,30 @@ HRESULT CLoader::Loading_For_Dungeon()
 		CBody_Skeleton::Create(m_pDevice, m_pContext))))
 	{
 		MSG_BOX("Faild to Add_Prototype : GameObject_Body_Skeleton");
+		return E_FAIL;
+	}
+
+	/* Prototype_GameObject_Player*/
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Player"),
+		CPlayer::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Player");
+		return E_FAIL;
+	}
+
+	/* Prototype_GameObject_Body_Player */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Body_Player"),
+		CBody_Player::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Body_Player");
+		return E_FAIL;
+	}
+
+	/* Prototype_GameObject_Weapon */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Weapon"),
+		CWeapon::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Weapon");
 		return E_FAIL;
 	}
 	

@@ -21,6 +21,7 @@ CAnimation::CAnimation(const CAnimation& Prototype)
 
 HRESULT CAnimation::Initialize(const aiAnimation* pAIAnimation, class CModel* pModel)
 {
+	strcpy_s(animationName, pAIAnimation->mName.data);
 	m_fDuration = pAIAnimation->mDuration; // 애니메이션 늦추는거?
 	m_fTickPerSecond = pAIAnimation->mTicksPerSecond; // 하나의 객체의 애니메이션의 관련된 속도
 

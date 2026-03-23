@@ -152,13 +152,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\public\BackGround.h" />
+    <ClInclude Include="..\public\Body_Player.h" />
     <ClInclude Include="..\public\Body_Skeleton.h" />
+    <ClInclude Include="..\public\Bunting.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\public\Cursor.h" />
     <ClInclude Include="..\public\FreeCamera.h" />
     <ClInclude Include="..\public\HotBar.h" />
     <ClInclude Include="..\Public\imconfig.h" />
     <ClInclude Include="..\Public\imgui.h" />
+    <ClInclude Include="..\Public\ImGuizmo.h" />
     <ClInclude Include="..\Public\imgui_impl_dx11.h" />
     <ClInclude Include="..\Public\imgui_impl_win32.h" />
     <ClInclude Include="..\Public\imgui_internal.h" />
@@ -178,6 +181,7 @@
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\public\Skeleton.h" />
     <ClInclude Include="..\Public\Terrain.h" />
+    <ClInclude Include="..\public\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Level_Dungeon.h" />
@@ -186,10 +190,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
+    <ClCompile Include="..\private\Body_Player.cpp" />
     <ClCompile Include="..\private\Body_Skeleton.cpp" />
+    <ClCompile Include="..\private\Bunting.cpp" />
     <ClCompile Include="..\private\FreeCamera.cpp" />
     <ClCompile Include="..\private\HotBar.cpp" />
     <ClCompile Include="..\Private\imgui.cpp" />
+    <ClCompile Include="..\Private\ImGuizmo.cpp" />
     <ClCompile Include="..\Private\imgui_demo.cpp" />
     <ClCompile Include="..\Private\imgui_draw.cpp" />
     <ClCompile Include="..\Private\imgui_impl_dx11.cpp" />
@@ -210,6 +217,7 @@
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\private\Skeleton.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
+    <ClCompile Include="..\private\Weapon.cpp" />
     <ClCompile Include="..\Public\Cursor.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>

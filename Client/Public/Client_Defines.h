@@ -22,6 +22,7 @@ namespace Client
 	enum class LEVEL { STATIC, LOADING, LOGO, GAMEPLAY, DUNGEON, END };
 }
 
+
 using namespace std;
 using namespace Client;
 

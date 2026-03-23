@@ -82,6 +82,18 @@
     <Filter Include="02.GameObject\Skeleton\Body">
       <UniqueIdentifier>{5a43bb8f-7dd7-4c4d-a2b8-85984093b95a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Bunting">
+      <UniqueIdentifier>{ce3c4b7a-25a3-484c-bc73-3bf8274fb09e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.ImGui\Gizumo">
+      <UniqueIdentifier>{2f283f93-05fb-4309-9176-fa447344bdba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Player\Body">
+      <UniqueIdentifier>{2b92ae80-4792-435a-b142-59e600292af2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Player\Weapon">
+      <UniqueIdentifier>{48e65ad4-c533-4545-b09e-093ef7255004}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -180,6 +192,18 @@
     <ClInclude Include="..\public\Body_Skeleton.h">
       <Filter>02.GameObject\Skeleton\Body</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Bunting.h">
+      <Filter>02.GameObject\Bunting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGuizmo.h">
+      <Filter>96.ImGui\Gizumo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Body_Player.h">
+      <Filter>02.GameObject\Player\Body</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Weapon.h">
+      <Filter>02.GameObject\Player\Weapon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -275,6 +299,18 @@
     </ClCompile>
     <ClCompile Include="..\private\Body_Skeleton.cpp">
       <Filter>02.GameObject\Skeleton\Body</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bunting.cpp">
+      <Filter>02.GameObject\Bunting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ImGuizmo.cpp">
+      <Filter>96.ImGui\Gizumo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Body_Player.cpp">
+      <Filter>02.GameObject\Player\Body</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Weapon.cpp">
+      <Filter>02.GameObject\Player\Weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

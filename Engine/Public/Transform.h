@@ -22,6 +22,8 @@ private:
 	virtual ~CTransform() = default;
 
 public:
+	void Set_WorldMatrix(_float4x4 _matrix) { XMStoreFloat4x4(&m_WorldMatrix, XMLoadFloat4x4(&_matrix)); }
+
 	_float3 Get_Rotation() { return m_fRotation; }
 
 	_vector Get_State(STATE eState) {

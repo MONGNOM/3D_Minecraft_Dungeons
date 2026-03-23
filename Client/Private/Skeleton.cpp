@@ -53,7 +53,7 @@ void CSkeleton::Priority_Update(_float fTimeDelta)
 void CSkeleton::Update(_float fTimeDelta)
 {
 
-	if (GetKeyState(VK_DOWN) & 0x8000)
+	/*if (GetKeyState(VK_DOWN) & 0x8000)
 	{
 		m_pTransformCom->Go_Backward(fTimeDelta);
 	}
@@ -84,8 +84,8 @@ void CSkeleton::Update(_float fTimeDelta)
 			m_iState ^= SKELETONSTATE::WALK;
 
 		m_iState |= SKELETONSTATE::IDLE;
-	}
-
+	}*/
+	m_iState |= SKELETONSTATE::IDLE;
 
 	__super::Update(fTimeDelta);
 }

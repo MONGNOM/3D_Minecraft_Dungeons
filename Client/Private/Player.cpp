@@ -1,15 +1,17 @@
 #include "Player.h"
+
+#include "Weapon.h"
+#include "Body_Player.h"
 #include "GameInstance.h"
 
-
-
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject{pDevice, pContext}
+	: CContainerObject{ pDevice, pContext }
 {
 }
 
 CPlayer::CPlayer(const CPlayer& Prototype)
-	: CGameObject( Prototype )
+	: CContainerObject{ Prototype }
+
 {
 }
 
@@ -20,98 +22,118 @@ HRESULT CPlayer::Initialize_Prototype()
 
 HRESULT CPlayer::Initialize(void* pArg)
 {
+	CContainerObject::CONTAINEROBJECT_DESC* Desc = static_cast<CONTAINEROBJECT_DESC*>(pArg);
+
+	Desc->fSpeedPerSec = 10.f;
+	Desc->fDegreePerSec = 180.f;
+
+	/* 백그라운드의 멤버를 채워넣어야한다면 여기서 채운다. */
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_pModelCom->Set_Animation(1, true);
+	if (FAILED(Ready_PartObjects()))
+		return E_FAIL;
+
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y, Desc->pos.z, 1.f));
 
 	return S_OK;
 }
 
 void CPlayer::Priority_Update(_float fTimeDelta)
 {
+	__super::Priority_Update(fTimeDelta);
 }
 
 void CPlayer::Update(_float fTimeDelta)
 {
-	m_pModelCom->Play_Animation(fTimeDelta);
+
+	if (GetKeyState(VK_DOWN) & 0x8000)
+	{
+		m_pTransformCom->Go_Backward(fTimeDelta);
+	}
+
+	if (GetKeyState(VK_LEFT) & 0x8000)
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
+	}
+
+	if (GetKeyState(VK_RIGHT) & 0x8000)
+	{
+
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
+	}
+
+	if (GetKeyState(VK_UP) & 0x8000)
+	{
+		m_pTransformCom->Go_Straight(fTimeDelta);
+
+		if (m_iState & PLAYERSTATE::IDLE)
+			m_iState ^= PLAYERSTATE::IDLE;
+
+		m_iState |= PLAYERSTATE::WALK;
+	}
+	else
+	{
+		if (m_iState & PLAYERSTATE::WALK)
+			m_iState ^= PLAYERSTATE::WALK;
+
+		m_iState |= PLAYERSTATE::IDLE;
+	}
+
+
+	__super::Update(fTimeDelta);
 }
 
 void CPlayer::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDERGROUP::NONBLEND, this);
+	__super::Late_Update(fTimeDelta);
 }
 
 HRESULT CPlayer::Render()
 {
-	if (FAILED(Bind_ShaderResources()))
-		return E_FAIL;
 
-	size_t iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	for (size_t i = 0; i < iNumMeshes; i++)
-	{
-		m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, aiTextureType_DIFFUSE, 0);
-		m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", i);
-
-		if (FAILED(m_pShaderCom->Begin(0)))
-			return E_FAIL;
-
-		m_pModelCom->Render(i);
-	}
 
 	return S_OK;
 }
 
 HRESULT CPlayer::Ready_Components()
 {
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-		return E_FAIL;
-
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Player"),
-		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
-		return E_FAIL;
 
 
-	// 모델컴이랑 쉐이더 컴 데가져오기 addcomponent
+
 	return S_OK;
 }
 
-HRESULT CPlayer::Bind_ShaderResources()
+HRESULT CPlayer::Ready_PartObjects()
 {
-	// 행렬 넘기는거월드 뷰 투영 빛 캠포지션
+	CBody_Player::BODY_PLAYER_DESC		BodyDesc{};
+	BodyDesc.pParentState = &m_iState;
+	BodyDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();
 
-	if(FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom,"g_WorldMatrix")))
-		return E_FAIL;
-	
-	if (FAILED(m_pGameInstance->Bind_TransformMatrix(D3DTS::VIEW, m_pShaderCom, "g_ViewMatrix")))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Bind_TransformMatrix(D3DTS::PROJ, m_pShaderCom, "g_ProjMatrix")))
+	if (FAILED(__super::Add_PartObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_Player"),
+		TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_CamPosition(m_pShaderCom, "g_vCamPosition")))
+	CBody_Player* pBody = dynamic_cast<CBody_Player*>(m_PartObjects[TEXT("Part_Body")]);
+	if (nullptr == pBody)
 		return E_FAIL;
 
-	const LIGHT_DESC* pLightDesc = m_pGameInstance->Get_LightDesc(0);
-	if (nullptr == pLightDesc)
+	CWeapon::WEAPON_DESC				WeaponDesc{};
+	WeaponDesc.pParentState = &m_iState;
+	WeaponDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	WeaponDesc.pSocketMatrix = pBody->Get_SocketBoneMatrixPtr("J_R_Weapon_Socket");
 
+	if (FAILED(__super::Add_PartObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
+		TEXT("Part_Weapon"), &WeaponDesc)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
-		return E_FAIL;
-
 
 	return S_OK;
 }
+
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -119,11 +141,12 @@ CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Faild to Created : CPlayer");
+		MSG_BOX("Failed to Created : CPlayer");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
+
 
 CGameObject* CPlayer::Clone(void* pArg)
 {
@@ -131,7 +154,7 @@ CGameObject* CPlayer::Clone(void* pArg)
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Faild to Cloned : CPlayer");
+		MSG_BOX("Failed to Cloned : CPlayer");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
@@ -141,6 +164,4 @@ void CPlayer::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "ContainerObject.h"
+#include "GameObject.h"
 
 NS_BEGIN(Engine)
 class CShader;
@@ -10,18 +10,12 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CPlayer final : public CContainerObject
+class CBunting final : public CGameObject
 {
-public:
-	enum PLAYERSTATE {
-		IDLE = 0x00000001,
-		WALK = 0x00000002,
-		ATTACK = 0x00000004,
-	};
 private:
-	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CPlayer(const CPlayer& Prototype);
-	virtual ~CPlayer() = default;
+	CBunting(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CBunting(const CBunting& Prototype);
+	virtual ~CBunting() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -32,16 +26,21 @@ public:
 	virtual HRESULT Render() override;
 
 protected:
-	HRESULT Ready_Components();
-	HRESULT Ready_PartObjects();
+	CShader* m_pShaderCom = { nullptr };
+	CModel* m_pModelCom = { nullptr };
 
-private:
-	_uint			m_iState = {};
+
+protected:
+	HRESULT Ready_Components();
+	HRESULT Bind_ShaderResources();
+
 
 public:
-	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CBunting* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
+
 };
+
 
 NS_END

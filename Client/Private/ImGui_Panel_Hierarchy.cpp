@@ -4,6 +4,7 @@
 #include "Layer.h"
 #include "GameObject.h"
 #include "ImGui_Manager.h"
+#include "ImGuizmo.h"
 
 
 std::string WStringToString(const std::wstring& wstr)
@@ -52,6 +53,7 @@ void CImGui_Panel_Hierarchy::Render()
 
     for (auto& pair : player)
     {
+        int a = 0;
         wstring layerTag = pair.first;
         CLayer* layer = pair.second;
         std::string utf8LayerTag = WStringToString(layerTag);
@@ -64,7 +66,7 @@ void CImGui_Panel_Hierarchy::Render()
             {
                 ImGui::PushID(pObj);
 
-                std::string utf8ObjName = WStringToString(pObj->Get_ObjectName()  );
+                std::string utf8ObjName = WStringToString(pObj->Get_ObjectName());
 
 
                 bool isSelected = (CImGui_Manager::GetInstance()->Get_SelectObject() == pObj);
@@ -97,9 +99,10 @@ void CImGui_Panel_Hierarchy::Render()
                     
                     cameraTransform->Set_State(STATE::POSITION, XMVectorSet(objPos.x + 0.4, objPos.y + 5.5f, objPos.z -4,  1.f));
 
+                    cout << "현재 오브젝트 X값 : " << objPos.x << "\t Y값 : "<< objPos.y << "\t Z값 : " << objPos.z << endl;
                     cout << "카메라 날라가는중~" << endl;
                 }
-
+                
                 ImGui::PopID();
             }
             ImGui::TreePop(); 
@@ -208,6 +211,8 @@ void CImGui_Panel_Hierarchy::Render()
     {
         if (selectedPrototypeName != "" && isClone)
         {
+            
+
             CGameObject::GAMEOBJECT_DESC desc;
             desc.name = cloneName;
             desc.pos = CImGui_Manager::GetInstance()->Get_PickingPos();
@@ -230,6 +235,56 @@ void CImGui_Panel_Hierarchy::Render()
     
 
     ImGui::End();
+
+
+    // =====================================================================
+//  1. 윗 빵: 기즈모 도화지 세팅 (매 프레임 호출되어야 함)
+// =====================================================================
+    ImGuizmo::SetOrthographic(false);
+    ImGuizmo::BeginFrame();
+
+    //  수정 필요: 유저님의 윈도우 창 가로, 세로 길이를 넣어주세요! (예: 1920, 1080)
+    ImGuizmo::SetRect(0.f, 0.f, 1920.f, 1080.f);
+
+    if (CImGui_Manager::GetInstance()->Get_SelectObject() != nullptr)
+    {
+        // =====================================================================
+        //  1-2. 윗 빵: 행렬 가져오기 
+        // =====================================================================
+        //  수정 필요: 유저님의 엔진에서 카메라 View, Proj 행렬을 가져오는 코드로 바꾸세요!
+        _float4x4 ViewMatrix = *CGameInstance::GetInstance()->Get_Transform(D3DTS::VIEW);
+        _float4x4 ProjMatrix = *CGameInstance::GetInstance()->Get_Transform(D3DTS::PROJ);
+
+        CTransform* pTransform = dynamic_cast<CTransform*>(CImGui_Manager::GetInstance()->Get_SelectObject()->Get_Component(TEXT("Com_Transform")));
+        _float4x4 WorldMatrix = *pTransform->Get_WorldMatrixPtr();
+
+        // =====================================================================
+        //  2. 고기 패티: 조작 및 마법의 함수 (유저님이 보여주신 코드)
+        // =====================================================================
+        static ImGuizmo::OPERATION mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+
+        if (ImGui::IsKeyPressed(ImGuiKey_W)) mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+        if (ImGui::IsKeyPressed(ImGuiKey_E)) mCurrentGizmoOperation = ImGuizmo::ROTATE;
+        if (ImGui::IsKeyPressed(ImGuiKey_R)) mCurrentGizmoOperation = ImGuizmo::SCALE;
+
+        ImGuizmo::Manipulate(
+            &ViewMatrix.m[0][0],
+            &ProjMatrix.m[0][0],
+            mCurrentGizmoOperation,
+            ImGuizmo::WORLD,
+            &WorldMatrix.m[0][0]
+        );
+
+        // =====================================================================
+        //  3. 밑 빵: 결과 적용하기 (가장 중요!)
+        // =====================================================================
+        // 만약 유저가 기즈모 화살표를 마우스로 잡고 드래그했다면?
+        if (ImGuizmo::IsUsing())
+        {
+            // 바뀐 월드 행렬을 건물에게 다시 덮어씌워서 실제로 맵에서 움직이게 만듭니다!
+            pTransform->Set_WorldMatrix(WorldMatrix);
+        }
+    }
 
 
 }

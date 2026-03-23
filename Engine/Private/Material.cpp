@@ -68,8 +68,7 @@ HRESULT CMaterial::Initialize(const aiMaterial* pAIMaterial, const _char* pModel
 
             m_MaterialTextures[i].push_back(pSRV);
         }
-
-     
+            
     }
 
     return S_OK;
@@ -77,7 +76,7 @@ HRESULT CMaterial::Initialize(const aiMaterial* pAIMaterial, const _char* pModel
 
 HRESULT CMaterial::Bind_Material(CShader* pShader, const _char* pConstantName, aiTextureType eMaterialType, _uint iTextureIndex)
 {
-    if (nullptr == m_MaterialTextures[eMaterialType][iTextureIndex] ||
+    if (nullptr == m_MaterialTextures[eMaterialType][iTextureIndex]||
         iTextureIndex >= m_MaterialTextures[eMaterialType].size())
         return E_FAIL;
 

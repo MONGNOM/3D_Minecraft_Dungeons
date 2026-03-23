@@ -14,11 +14,12 @@ private:
 public:
 	HRESULT Initialize(const aiAnimation* pAIAnimation, class CModel* pModel);
 	_bool Update_TransformationMatrices(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop);
-
+	_char		animationName[MAX_PATH];
 private:
 	_float		m_fDuration = {};		// ?? 애니메이션을 늦추는게 뭐야 
 	_float		m_fTickPerSecond = {};  // 애니메이션 재생 속도?
 
+	
 
 	_float		m_fCurrentTrackPosition = {}; // 현재 재생 위치 -> 계속 위치를 저장
 
