@@ -116,6 +116,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 		return E_FAIL;
 
 
+	/*if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sky"),
+		ETOI(LEVEL::GAMEPLAY), strLayerTag)))
+		return E_FAIL;*/
+
 	return S_OK;
 }
 

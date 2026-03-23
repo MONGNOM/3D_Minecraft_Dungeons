@@ -115,14 +115,20 @@
     <Filter Include="01.Utility\04.Component\Model\Animation\Channel">
       <UniqueIdentifier>{9670bcde-2130-4968-9435-426a1743638e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\08. Picking">
-      <UniqueIdentifier>{3a230075-b36f-43ae-b0e3-bb71b37fd746}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.GameObjects\ContainerObject">
       <UniqueIdentifier>{b96f53e7-bb9d-4209-8356-90008db7e581}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.GameObjects\ContainerObject\PartObject">
       <UniqueIdentifier>{97f00897-9c02-4718-8b4a-98e956583f36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\09.Fonts">
+      <UniqueIdentifier>{32095dd1-beb2-4a1c-ae22-7b9482f8d77d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\08.Picking">
+      <UniqueIdentifier>{3a230075-b36f-43ae-b0e3-bb71b37fd746}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\09.Fonts\Manager">
+      <UniqueIdentifier>{4a821252-9c6a-4b58-ba29-5dcc1912563b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -238,13 +244,22 @@
       <Filter>01.Utility\04.Component\Model\Animation\Channel</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Picking_Manager.h">
-      <Filter>01.Utility\08. Picking</Filter>
+      <Filter>01.Utility\08.Picking</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ContainerObject.h">
       <Filter>01.Utility\03.GameObjects\ContainerObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PartObject.h">
       <Filter>01.Utility\03.GameObjects\ContainerObject\PartObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Cube.h">
+      <Filter>01.Utility\04.Component\VIBuffer\Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CustomFont.h">
+      <Filter>01.Utility\09.Fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Font_Manager.h">
+      <Filter>01.Utility\09.Fonts\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -342,13 +357,22 @@
       <Filter>01.Utility\04.Component\Model\Animation\Channel</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Picking_Manager.cpp">
-      <Filter>01.Utility\08. Picking</Filter>
+      <Filter>01.Utility\08.Picking</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ContainerObject.cpp">
       <Filter>01.Utility\03.GameObjects\ContainerObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PartObject.cpp">
       <Filter>01.Utility\03.GameObjects\ContainerObject\PartObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Cube.cpp">
+      <Filter>01.Utility\04.Component\VIBuffer\Cube</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CustomFont.cpp">
+      <Filter>01.Utility\09.Fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Font_Manager.cpp">
+      <Filter>01.Utility\09.Fonts\Manager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

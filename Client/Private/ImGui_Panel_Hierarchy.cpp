@@ -43,6 +43,8 @@ HRESULT CImGui_Panel_Hierarchy::Intiailzie()
 
 void CImGui_Panel_Hierarchy::Render()
 {
+
+
     ImGui::Begin("Hierarchy");
 
     ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -163,9 +165,11 @@ void CImGui_Panel_Hierarchy::Render()
     // 1. 창 시작
     ImGui::Begin("Object Creator");
 
+   
+
     ImGui::Text("Prototype List");
 
-    if (ImGui::BeginListBox("##ProtoTypes", ImVec2(-FLT_MIN, 5 * ImGui::GetTextLineHeightWithSpacing())))
+    if (ImGui::BeginListBox("##ProtoTypes", ImVec2(-FLT_MIN, -FLT_MIN)))
     {
         int id_counter = 0;
 
@@ -204,33 +208,31 @@ void CImGui_Panel_Hierarchy::Render()
         ImGui::EndListBox();
     }
 
-    ImGui::Separator();
+   // ImGui::Separator();
+
     isClone = CImGui_Manager::GetInstance()->Get_isClone();
-    // 3. 생성 버튼
-   // if (ImGui::Button("Create to Clone", ImVec2(-FLT_MIN, 30))) // 버튼 크기 지정
-    {
+    
         if (selectedPrototypeName != "" && isClone)
         {
+                CGameObject::GAMEOBJECT_DESC desc;
+                desc.name = cloneName;
+                desc.pos = CImGui_Manager::GetInstance()->Get_PickingPos();
+                if (FAILED(CGameInstance::GetInstance()->Add_GameObject(ETOI(LEVEL::GAMEPLAY), cloneName,
+                    ETOI(LEVEL::GAMEPLAY), TEXT("Layer_Clone"), &desc)))                                                                                                            
+                {
+                    MSG_BOX("Editor: Failed to Clone");
+                };
+                isClone = false;
+                CImGui_Manager::GetInstance()->Set_isClone(isClone);
+                // ==========================================================
+                //  [여기에 코드를 작성해주세요!] 
+                // 1. 프로토타입 매니저에서 selectedPrototypeName 으로 원본 찾기
+                // 2. 원본->Clone() 호출하여 새 오브젝트 생성
+                // 3. 생성된 새 오브젝트를 현재 Scene(하이어라키) 리스트에 추가
+                // ==========================================================
             
 
-            CGameObject::GAMEOBJECT_DESC desc;
-            desc.name = cloneName;
-            desc.pos = CImGui_Manager::GetInstance()->Get_PickingPos();
-            if (FAILED(CGameInstance::GetInstance()->Add_GameObject(ETOI(LEVEL::GAMEPLAY), cloneName,
-                ETOI(LEVEL::GAMEPLAY), TEXT("Layer_Clone"), &desc)))
-            {
-                MSG_BOX("Editor: Failed to Clone");
-            };
-            isClone = false;
-            CImGui_Manager::GetInstance()->Set_isClone(isClone);
-            // ==========================================================
-            //  [여기에 코드를 작성해주세요!] 
-            // 1. 프로토타입 매니저에서 selectedPrototypeName 으로 원본 찾기
-            // 2. 원본->Clone() 호출하여 새 오브젝트 생성
-            // 3. 생성된 새 오브젝트를 현재 Scene(하이어라키) 리스트에 추가
-            // ==========================================================
         }
-    }
 
     
 

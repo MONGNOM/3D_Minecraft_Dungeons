@@ -83,6 +83,9 @@ public: /* For.Picking_Manager */
 	_bool Picking_Pos(HWND hWnd, class CVIBuffer_Terrain* pTerrainBufferCom, class CTransform* pTerrainTransformCom, _uint numZ, _uint numX, _float3* pos);
 	class CGameObject* Picking_Object(HWND hWnd);
 
+public: /* For.Font_Manager */
+	HRESULT Add_Font(const _wstring& strFontTag, const _tchar* pFontFilePath);
+	void Draw_Font(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor = XMVectorSet(1.f, 1.f, 1.f, 1.f));
 
 private:
 	class CGraphic_Device* m_pGraphic_Device = { nullptr };
@@ -95,6 +98,7 @@ private:
 	class CInput_Device* m_pInput_Device = { nullptr };
 	class CLight_Manager* m_pLight_Manager = { nullptr };
 	class CPicking_Manager* m_pPicking_Manager = { nullptr };
+	class CFont_Manager* m_pFont_Manager = { nullptr };
 
 public:
 	void Release_Engine();

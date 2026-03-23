@@ -31,6 +31,7 @@ private:
 	ID3D11DeviceContext* m_pContext = { nullptr };
 
 private:
+	HRESULT Ready_Fonts();
 	HRESULT Ready_Prototype_For_Static_Level();
 	HRESULT Ready_StartLevel(LEVEL eStartLevelID);
 	HRESULT Ready_Layer_UI(const _tchar* pLayerTag);

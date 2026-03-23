@@ -7,7 +7,7 @@
 #include "Monster.h"
 
 IMPLEMENT_SINGLETON(CImGui_Manager)
-
+static bool bIsCreateMode = false;
 CImGui_Manager::CImGui_Manager()
 {
 }
@@ -45,7 +45,7 @@ HRESULT CImGui_Manager::Initialize_Manager(ID3D11Device* pDevice, ID3D11DeviceCo
 	if (!::ImGui_ImplDX11_Init(m_pDevice, m_pDeviceContext))
 		return E_FAIL;
 
-	m_pGalleryTexture = CTexture::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/mincraft/Test/block%d.png"), 4);
+	m_pGalleryTexture = CTexture::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4);
 	images = m_pGalleryTexture->Get_Texture();
 
 	m_pPanels[ETOI(PanelType::INSPECTOR)] = CImGui_Panel_Inspector::Create();
@@ -57,9 +57,17 @@ void CImGui_Manager::Update_Engine()
 {
 	if (ImGui::GetIO().WantCaptureMouse)
 		return;
+
+	if (m_pGameInstance->Get_DIKeyDown(DIK_T))
+	{
+		bIsCreateMode = !bIsCreateMode;
+	}
 	
 	if (m_pGameInstance->Get_DIMouseDown(DIMB::LBUTTON))
-	{
+	{	
+
+		if (!bIsCreateMode)
+			return;
 		
 		CVIBuffer_Terrain* terrain = dynamic_cast<CVIBuffer_Terrain*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_VIBuffer")));
 		CTransform* transform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Transform")));
@@ -116,6 +124,8 @@ void CImGui_Manager::Render_Panels()
 
 
 	ImGui::Begin("Texture Gallery");
+	
+	
 
 	ImGui::Text("Select a Texture:");
 	ImGui::Separator();
@@ -132,14 +142,18 @@ void CImGui_Manager::Render_Panels()
 		}
 		else
 		{
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)); // 투명색
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
 		}
 
 		// 2. 텍스트 대신 '이미지 버튼'을 그립니다! (크기 64x64 예시)
 		// m_vecTextures[i] 는 유저님의 텍스쳐 포인터 변수에 맞게 수정해주세요.
-		if (ImGui::ImageButton("##Image", (void*)images[i], ImVec2(64.f, 64.f)))
+		if (ImGui::ImageButton("##Image",
+			(void*)images[i],
+			ImVec2(64.f, 64.f),
+			ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), // 기본 UV 좌표
+			ImVec4(0.0f, 0.0f, 0.0f, 0.0f),         // 배경색 (투명)
+			ImVec4(1.0f, 1.0f, 1.0f, 1.0f)))        // 틴트색 (R, G, B, Alpha) -> 알파를 1.0으로 강제 고정!
 		{
-			// 이미지를 클릭하면, 자신의 방 번호(인덱스)를 기억장치에 저장합니다!
 			m_SelectedTextureIndex = i;
 		}
 
@@ -179,6 +193,13 @@ void CImGui_Manager::Render_Panels()
 			}
 		}
 	}
+
+	ImGui::NewLine();
+	ImGui::Separator();
+
+	ImGui::Text("Tool Mode:");
+	ImGui::Checkbox("Enable Create Mode", &bIsCreateMode);
+	ImGui::Separator();
 
 	ImGui::End();
 }

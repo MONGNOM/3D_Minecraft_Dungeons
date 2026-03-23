@@ -10,6 +10,7 @@
 #include "Input_Device.h"
 #include "Light_Manager.h"
 #include "Picking_Manager.h"
+#include "Font_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -59,6 +60,10 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 
 	m_pPicking_Manager = CPicking_Manager::Create(*ppDevice, *ppContext);
 	if (nullptr == m_pPicking_Manager)
+		return E_FAIL;
+
+	m_pFont_Manager = CFont_Manager::Create(*ppDevice, *ppContext);
+	if (nullptr == m_pFont_Manager)
 		return E_FAIL;
 
 	return S_OK;
@@ -260,8 +265,20 @@ CGameObject* CGameInstance::Picking_Object(HWND hWnd)
 	return m_pPicking_Manager->Picking_Object(hWnd);
 }
 
+HRESULT CGameInstance::Add_Font(const _wstring& strFontTag, const _tchar* pFontFilePath)
+{
+	return m_pFont_Manager->Add_Font(strFontTag, pFontFilePath);
+}
+
+void CGameInstance::Draw_Font(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor)
+{
+	m_pFont_Manager->Draw(strFontTag, pText, vPosition, vColor);
+}
+
+
 void CGameInstance::Release_Engine()
 {
+	Safe_Release(m_pFont_Manager);
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pInput_Device);
 	Safe_Release(m_pPipeLine);

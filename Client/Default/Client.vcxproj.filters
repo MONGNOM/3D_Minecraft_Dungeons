@@ -94,6 +94,12 @@
     <Filter Include="02.GameObject\Player\Weapon">
       <UniqueIdentifier>{48e65ad4-c533-4545-b09e-093ef7255004}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Sky">
+      <UniqueIdentifier>{b126ed80-5136-4a32-a2a4-3e8611f7488b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\DefaultBlock">
+      <UniqueIdentifier>{4b21a9c5-1736-4903-a007-12ba545cbd98}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -204,6 +210,12 @@
     <ClInclude Include="..\public\Weapon.h">
       <Filter>02.GameObject\Player\Weapon</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Sky.h">
+      <Filter>02.GameObject\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DefalutBlock.h">
+      <Filter>02.GameObject\DefaultBlock</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -312,6 +324,12 @@
     <ClCompile Include="..\private\Weapon.cpp">
       <Filter>02.GameObject\Player\Weapon</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Sky.cpp">
+      <Filter>02.GameObject\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DefalutBlock.cpp">
+      <Filter>02.GameObject\DefaultBlock</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
@@ -324,6 +342,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

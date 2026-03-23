@@ -4,7 +4,9 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "VIBuffer_Rect.h"
+#include "VIBuffer_Cube.h"
 #include "VIBuffer_Terrain.h"
+
 
 /* 생성한 원형객체를 보관한다. */
 /* 요청에 따라 보관하고있던 원형객체를 복제하여 리턴해준다. */

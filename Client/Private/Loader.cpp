@@ -12,6 +12,7 @@
 #include "Bunting.h"
 #include "Body_Player.h"
 #include "Weapon.h"
+#include "Sky.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice { pDevice }
@@ -163,7 +164,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	}
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Imgui"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/Test/block%d.png"), 4))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Imgui Texture");
 		return E_FAIL;
@@ -237,7 +238,8 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	
 
 	/* Prototype_Component_Model_ForkLift */
-	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f); //* XMMatrixRotationY(XMConvertToRadians(180.f));
+
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_ForkLift"),
 		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/Models/ForkLift/ForkLift.fbx", PreLocalTransformMatrix))))
 	{
@@ -359,6 +361,40 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Sword/Sword.fbx", PreLocalTransformMatrix))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
+		return E_FAIL;
+	}
+
+
+	/* Prototype_Component_VIBuffer_Cube */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Cube"),
+		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : VIBuffer_Cube");
+		return E_FAIL;
+	}
+
+
+	/* Prototype_GameObject_Sky */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sky"),
+		CSky::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Sky");
+		return E_FAIL;
+	}
+
+	/* Prototype_Component_Texture_Sky */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Sky"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Cube Texture");
+		return E_FAIL;
+	}
+
+	/* Prototype_Component_Shader_VtxCube */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxCube"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCube.hlsl"), VTXCUBE::Elements, VTXCUBE::iNumElements))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Shader_VtxCube");
 		return E_FAIL;
 	}
 

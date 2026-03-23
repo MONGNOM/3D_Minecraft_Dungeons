@@ -9,21 +9,20 @@ CMainApp::CMainApp()
 {
 	Safe_AddRef(m_pGameInstance);
 
-	//D3D11_SAMPLER_DESC
+	// D3D11_SAMPLER_DESC
+
+	//D3D11_BLEND_DESC
+	//D3D11_DEPTH_STENCIL_DESC
+	//D3D11_RASTERIZER_DESC
+	//m_pContext->RSSetState();
+	//m_pContext->OMSetBlendState();
+	// m_pContext->OMSetDepthStencilState();
 
 }
 
 HRESULT CMainApp::Initialize()
 {
 	/* 내 게임을 구동하기위한 기초 초기화작업을 수행한다. */
-	//g_hCustomCursor = LoadCursorFromFile(TEXT("../../Resources/mincraft/UI/CursorT_defaultCursor.png"));
-
-	//// 만약 파일을 못 찾았다면 경고창을 띄워줍니다.
-	//if (g_hCustomCursor == NULL)
-	//{
-	//	MessageBox(NULL, TEXT("커서 파일을 찾을 수 없습니다!"), TEXT("에러"), MB_OK);
-	//}
-
 
 	/* 엔진을 이용하기위해 엔진프로젝트를 준비시킨다. */
 	ENGINE_DESC		EngineDesc{};
@@ -35,6 +34,10 @@ HRESULT CMainApp::Initialize()
 	EngineDesc.iViewportHeight = g_iWinSizeY;
 
 	if (FAILED(m_pGameInstance->Initialize_Engine(EngineDesc, &m_pDevice, &m_pContext)))
+		return E_FAIL;
+
+
+	if (FAILED(Ready_Fonts()))
 		return E_FAIL;
 
 	if (FAILED(Ready_Prototype_For_Static_Level()))
@@ -67,11 +70,26 @@ HRESULT CMainApp::Render()
 	if (FAILED(m_pGameInstance->Draw()))
 		return E_FAIL;
 
+	m_pGameInstance->Draw_Font(TEXT("Font_Default"), TEXT("니네들은 싸우지마, 욕하지마!"), _float2(100.f, 0.f));
+
+
 	if (FAILED(m_pGameInstance->Present()))
 		return E_FAIL;
 
 	return S_OK;
 }
+
+HRESULT CMainApp::Ready_Fonts()
+{
+	/*MakeSpriteFont "넥슨lv1고딕 Bold" /FontSize:16 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 158ex.spritefont */
+
+	if (FAILED(m_pGameInstance->Add_Font(TEXT("Font_Default"), TEXT("../Bin/Resources/Fonts/158ex.SpriteFont"))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+
 
 HRESULT CMainApp::Ready_Prototype_For_Static_Level()
 {	
