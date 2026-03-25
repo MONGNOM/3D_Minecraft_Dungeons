@@ -115,8 +115,8 @@ HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _
      /*   if (FAILED(Ready_Materials(strBinFilePath.c_str())))
             return E_FAIL;*/
 
-        if (FAILED(Ready_Animations()))
-            return E_FAIL;
+        /*if (FAILED(Ready_Animations()))
+            return E_FAIL;*/
     }
     else
     {
@@ -328,6 +328,7 @@ HRESULT CModel::Ready_TestLoad(const string& strFilePath, const string& name)
 {
     string fullname = strFilePath + name;
     // 1. 쓰기(out) 대신 읽기(in) 모드로 파일을 엽니다.
+
     ifstream fin(fullname.c_str(), ios::in | ios::binary);
 
     //  [방어 코드] 만약 .bin 파일이 없다면 실패 반환!

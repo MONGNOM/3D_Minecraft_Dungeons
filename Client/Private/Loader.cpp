@@ -238,20 +238,20 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 
 	
 
-	/* Prototype_Component_Model_ForkLift */
-	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f); //* XMMatrixRotationY(XMConvertToRadians(180.f));
+	///* Prototype_Component_Model_ForkLift */
+	//PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f); //* XMMatrixRotationY(XMConvertToRadians(180.f));
 
-	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_ForkLift"),
-		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/Models/ForkLift/ForkLift.fbx", "", PreLocalTransformMatrix))))
-	{
-		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
-		return E_FAIL;
-	}
+	//if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_ForkLift"),
+	//	CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/Models/ForkLift/ForkLift.fbx", "", PreLocalTransformMatrix))))
+	//{
+	//	MSG_BOX("Faild to Add_Prototype : Model_Fiona");
+	//	return E_FAIL;
+	//}
 
 
 	PreLocalTransformMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Bunting"),
-		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Bunting/Bunting.fbx", "", PreLocalTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Bunting/Bunting.fbx", "Prototype_Component_Model_Bunting", PreLocalTransformMatrix))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Model_Bunting");
 		return E_FAIL;
@@ -316,7 +316,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 
 	PreLocalTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Skeleton"),
-		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/Skeleton.fbx", "", PreLocalTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Character/Monster/Skeleton.fbx", "Prototype_Component_Model_Skeleton", PreLocalTransformMatrix))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Model_Skeleton");
 		return E_FAIL;

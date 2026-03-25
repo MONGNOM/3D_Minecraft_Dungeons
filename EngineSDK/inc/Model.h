@@ -44,7 +44,6 @@ public:
 	HRESULT Bind_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 	HRESULT Ready_TestBinary(const string& name);
 	HRESULT Ready_TestLoad(const string& strFilePath, const string& name);
-	HRESULT Ready_VIBuffer_Pass_Binary(VTXMESH* pVertices, _uint iNumVertices, _ulong* pIndices, _uint iNumIndices, _uint iMaterialIndex);
 
 private:
 	const aiScene* m_pAIScene = { nullptr };
