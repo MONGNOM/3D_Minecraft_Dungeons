@@ -214,7 +214,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	lstrcpy(m_szLoadingText, TEXT("사운드를 로딩 중 입니다."));
 
 
-	lstrcpy(m_szLoadingText, TEXT("모델를 로딩 중 입니다."));
+	
 
 	/* Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Terrain"),
@@ -224,12 +224,13 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		return E_FAIL;
 	}
 
-	_matrix			PreLocalTransformMatrix = { XMMatrixIdentity() };
+	lstrcpy(m_szLoadingText, TEXT("모델를 로딩 중 입니다."));
 
+	_matrix			PreLocalTransformMatrix = { XMMatrixIdentity() };
 	/* Prototype_Component_Model_Fiona */
 	PreLocalTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/Models/Fiona/Fiona.fbx", PreLocalTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/Models/Fiona/Fiona.fbx", ("Prototype_Component_Model_Fiona"), PreLocalTransformMatrix))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
 		return E_FAIL;
@@ -241,7 +242,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f); //* XMMatrixRotationY(XMConvertToRadians(180.f));
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_ForkLift"),
-		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/Models/ForkLift/ForkLift.fbx", PreLocalTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/Models/ForkLift/ForkLift.fbx", "", PreLocalTransformMatrix))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
 		return E_FAIL;
@@ -250,7 +251,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 
 	PreLocalTransformMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Bunting"),
-		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Bunting/Bunting.fbx", PreLocalTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Bunting/Bunting.fbx", "", PreLocalTransformMatrix))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Model_Bunting");
 		return E_FAIL;
@@ -315,7 +316,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 
 	PreLocalTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixScaling(0.01f, 0.01f, 0.01f);
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Skeleton"),
-		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/Skeleton.fbx", PreLocalTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/Skeleton.fbx", "", PreLocalTransformMatrix))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Model_Skeleton");
 		return E_FAIL;
@@ -332,7 +333,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 
 	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Player"),
-		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Player.fbx", PreLocalTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Character/Player.fbx", "Prototype_Component_Model_Player", PreLocalTransformMatrix))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Model_Player");
 		return E_FAIL;
@@ -358,7 +359,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	/* Prototype_Component_Model_ForkLift */
 	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Sword"),
-		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Sword/Sword.fbx", PreLocalTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Sword/Sword.fbx", "Prototype_Component_Model_Sword", PreLocalTransformMatrix))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
 		return E_FAIL;
@@ -449,24 +450,25 @@ HRESULT CLoader::Loading_For_Dungeon()
 	lstrcpy(m_szLoadingText, TEXT("모델를 로딩 중 입니다."));
 
 
-	_matrix			PreLocalTransformMatrix = { XMMatrixIdentity() };
-	/* Prototype_Component_Model_Fiona */
-	PreLocalTransformMatrix =  XMMatrixRotationY(XMConvertToRadians(180.f))* XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Skeleton"),
-		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/Skeleton.fbx", PreLocalTransformMatrix))))
-	{
-		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
-		return E_FAIL;
-	}
+	// 테스트후 풀어주기
+	//_matrix			PreLocalTransformMatrix = { XMMatrixIdentity() };
+	///* Prototype_Component_Model_Fiona */
+	//PreLocalTransformMatrix =  XMMatrixRotationY(XMConvertToRadians(180.f))* XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	//if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Skeleton"),
+	//	CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/Skeleton.fbx", PreLocalTransformMatrix))))
+	//{
+	//	MSG_BOX("Faild to Add_Prototype : Model_Fiona");
+	//	return E_FAIL;
+	//}
 
-	PreLocalTransformMatrix = { XMMatrixIdentity() };
-	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
-	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Player"),
-		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Player.fbx", PreLocalTransformMatrix))))
-	{
-		MSG_BOX("Faild to Add_Prototype : Model_Player");
-		return E_FAIL;
-	}
+	//PreLocalTransformMatrix = { XMMatrixIdentity() };
+	//PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	//if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Player"),
+	//	CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Player.fbx", PreLocalTransformMatrix))))
+	//{
+	//	MSG_BOX("Faild to Add_Prototype : Model_Player");
+	//	return E_FAIL;
+	//}
 
 	/* Prototype_GameObject_Monster */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Monster"),

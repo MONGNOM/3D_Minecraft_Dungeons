@@ -33,7 +33,9 @@ HRESULT CMonster::Initialize(void* pArg)
 
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
 
-	m_pModelCom->Set_Animation(rand() % 20, true);
+	/*m_pModelCom->Set_Animation(rand() % 20, true);*/
+
+	
 	
 	return S_OK;
 }
@@ -45,8 +47,8 @@ void CMonster::Priority_Update(_float fTimeDelta)
 
 void CMonster::Update(_float fTimeDelta)
 {
-	if (true == m_pModelCom->Play_Animation(fTimeDelta))
-		int a = 10;
+	/*if (true == m_pModelCom->Play_Animation(fTimeDelta))
+		int a = 10;*/
 }
 
 void CMonster::Late_Update(_float fTimeDelta)
@@ -70,7 +72,7 @@ HRESULT CMonster::Render()
 		
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
-
+			
 		m_pModelCom->Render(i);
 	}
 
@@ -85,7 +87,7 @@ HRESULT CMonster::Ready_Components()
 {
 
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 

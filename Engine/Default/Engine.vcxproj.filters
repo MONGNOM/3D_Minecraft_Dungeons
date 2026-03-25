@@ -130,6 +130,12 @@
     <Filter Include="01.Utility\09.Fonts\Manager">
       <UniqueIdentifier>{4a821252-9c6a-4b58-ba29-5dcc1912563b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.ShaderFiles">
+      <UniqueIdentifier>{1c711434-2bfc-4bc5-90bd-9b1bd8a500ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\10.ModelConverter">
+      <UniqueIdentifier>{f50185ff-6dbd-424b-a5e1-cee094dc4aca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Base.h">
@@ -261,6 +267,9 @@
     <ClInclude Include="..\Public\Font_Manager.h">
       <Filter>01.Utility\09.Fonts\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ModelConverter.h">
+      <Filter>01.Utility\10.ModelConverter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -374,5 +383,13 @@
     <ClCompile Include="..\Private\Font_Manager.cpp">
       <Filter>01.Utility\09.Fonts\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\ModelConverter.cpp">
+      <Filter>01.Utility\10.ModelConverter</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli">
+      <Filter>02.ShaderFiles</Filter>
+    </None>
   </ItemGroup>
 </Project>

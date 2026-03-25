@@ -11,7 +11,7 @@ CMesh::CMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 }
 
 CMesh::CMesh(const CMesh& Prototype)
-	: CVIBuffer{ Prototype }
+	: CVIBuffer( Prototype )
 {
 }
 
@@ -70,6 +70,58 @@ HRESULT CMesh::Initialize_Prototype(MODEL eType, const aiMesh* pAIMesh, class CM
 
 HRESULT CMesh::Initialize(void* pArg)
 {
+
+	return S_OK;
+}
+
+HRESULT CMesh::TestInitialize(MODEL eType, VTXMESH* pVertices, _uint iNumVertices, _ulong* pIndices, _uint iNumIndices, _uint iMaterialIndex, _fmatrix PreTransformMatrix)
+{
+	// 애니메이션 없는거 정적 모델 불러오기 
+	// ==========================================================
+	//  1. 정점 버퍼 (m_pVB) 배달
+	// ==========================================================
+
+	m_iMaterialIndex = iMaterialIndex;
+	D3D11_BUFFER_DESC VertexBufferDesc{};
+	VertexBufferDesc.ByteWidth = sizeof(VTXMESH) * iNumVertices;
+	VertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	VertexBufferDesc.StructureByteStride = sizeof(VTXMESH);
+	VertexBufferDesc.CPUAccessFlags = 0;
+	VertexBufferDesc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA VertexInitialData{};
+	//  묻지도 따지지도 않고, 매개변수로 받은 pVertices를 그대로 꽂아버립니다! (memcpy 싹 다 필요 없음!!)
+	VertexInitialData.pSysMem = pVertices;
+
+	if (FAILED(m_pDevice->CreateBuffer(&VertexBufferDesc, &VertexInitialData, &m_pVB)))
+		return E_FAIL;
+
+	// ==========================================================
+	//  2. 인덱스 버퍼 (m_pIB) 배달
+	// ==========================================================
+	D3D11_BUFFER_DESC IndexBufferDesc{};
+	IndexBufferDesc.ByteWidth = sizeof(_ulong) * iNumIndices;
+	IndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	IndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	IndexBufferDesc.StructureByteStride = sizeof(_ulong);
+	IndexBufferDesc.CPUAccessFlags = 0;
+	IndexBufferDesc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA IndexInitialData{};
+	//  매개변수로 받은 pIndices를 그대로 꽂아버립니다!
+	IndexInitialData.pSysMem = pIndices;
+
+	if (FAILED(m_pDevice->CreateBuffer(&IndexBufferDesc, &IndexInitialData, &m_pIB)))
+		return E_FAIL;
+
+	// 멤버 변수 개수 저장 (나중에 Draw 할 때 필요함!)
+	m_iNumVertices = iNumVertices;
+	m_iNumIndices = iNumIndices;
+	m_iVertexStride = sizeof(VTXMESH);
+	m_iIndexStride = sizeof(_ulong);
+	m_iNumVertexBuffers = 1;
+	m_ePrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	return S_OK;
 }
@@ -225,6 +277,18 @@ CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL
 	CMesh* pInstance = new CMesh(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype(eType, pAIMesh, pModel, PreTransformMatrix)))
+	{
+		MSG_BOX("Failed to Created : CMesh");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, VTXMESH* pVertices, _uint iNumVertices, _ulong* pIndices, _uint iNumIndices, _uint iMaterialIndex,_fmatrix PreTransformMatrix)
+{
+	CMesh* pInstance = new CMesh(pDevice, pContext);
+
+	if (FAILED(pInstance->TestInitialize(eType, pVertices, iNumVertices, pIndices, iNumIndices, iMaterialIndex, PreTransformMatrix)))
 	{
 		MSG_BOX("Failed to Created : CMesh");
 		Safe_Release(pInstance);

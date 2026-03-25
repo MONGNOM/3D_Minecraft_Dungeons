@@ -85,6 +85,30 @@ HRESULT CMaterial::Bind_Material(CShader* pShader, const _char* pConstantName, a
     return S_OK;
 }
 
+HRESULT CMaterial::Binary_Mat(const _char* pstrFilePath)
+{
+    ID3D11ShaderResourceView* pSRV = nullptr;
+
+    _tchar szTextureFilePath[MAX_PATH] = {};
+    MultiByteToWideChar(CP_ACP, 0, pstrFilePath, strlen(pstrFilePath), szTextureFilePath, MAX_PATH);
+
+    // 1. 텍스처를 딱 한 번만 로드합니다!
+    HRESULT hr = CreateWICTextureFromFile(m_pDevice, szTextureFilePath, nullptr, &pSRV);
+
+    if (FAILED(hr))
+    {
+        // 파일이 없으면 그냥 S_OK를 넘기거나 예외 처리를 합니다.
+        // (색깔만 있는 텍스처 없는 재질일 수도 있으니까요!)
+        return E_FAIL;
+    }
+
+    // 2. 알아낸 텍스처를 딱 '디퓨즈(Diffuse)' 주머니에만 안전하게 넣습니다!! 
+    // (aiTextureType_DIFFUSE 는 어심프에서 기본 색상 슬롯을 의미합니다. 보통 1번입니다.)
+    m_MaterialTextures[aiTextureType_DIFFUSE].push_back(pSRV);
+
+    return S_OK;
+}
+
 CMaterial* CMaterial::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const aiMaterial* pAIMaterial, const _char* pModelFilePath)
 {
     CMaterial* pInstance = new CMaterial(pDevice, pContext);
@@ -96,6 +120,20 @@ CMaterial* CMaterial::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     }
     return pInstance;
 }
+
+CMaterial* CMaterial::CreateBinary(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const aiMaterial* pAIMaterial, const _char* pstrFilePath)
+{
+    CMaterial* pInstance = new CMaterial(pDevice, pContext);
+
+    if (FAILED(pInstance->Binary_Mat(pstrFilePath)))
+    {
+        MSG_BOX("Failed to Created : CMaterial");
+        Safe_Release(pInstance);
+    }
+    return pInstance;
+}
+
+
 
 
 void CMaterial::Free()

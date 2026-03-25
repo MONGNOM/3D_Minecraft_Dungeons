@@ -35,6 +35,7 @@ private:
 	HRESULT Ready_Prototype_For_Static_Level();
 	HRESULT Ready_StartLevel(LEVEL eStartLevelID);
 	HRESULT Ready_Layer_UI(const _tchar* pLayerTag);
+	HRESULT Gara_Binary();
 private:
 	
 

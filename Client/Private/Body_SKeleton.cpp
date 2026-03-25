@@ -38,7 +38,7 @@ HRESULT CBody_Skeleton::Initialize(void* pArg)
 
 	
 
-	m_pModelCom->Set_Animation(0, true);
+	//m_pModelCom->Set_Animation(0, true);
 	
 
 
@@ -52,7 +52,7 @@ void CBody_Skeleton::Priority_Update(_float fTimeDelta)
 void CBody_Skeleton::Update(_float fTimeDelta)
 {
 
-	if (*m_pParentState & CSkeleton::SKELETONSTATE::IDLE)
+	/*if (*m_pParentState & CSkeleton::SKELETONSTATE::IDLE)
 		m_pModelCom->Set_Animation(3, true);
 
 	if (*m_pParentState & CSkeleton::SKELETONSTATE::WALK)
@@ -61,7 +61,7 @@ void CBody_Skeleton::Update(_float fTimeDelta)
 	if (true == m_pModelCom->Play_Animation(fTimeDelta))
 		int a = 10;
 
-	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));*/
 
 }
 
@@ -96,7 +96,7 @@ HRESULT CBody_Skeleton::Render()
 HRESULT CBody_Skeleton::Ready_Components()
 {
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 

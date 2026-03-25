@@ -16,6 +16,11 @@ public:
 		return m_Meshes.size();
 	}
 
+	vector<class CMaterial*> Get_m_Materials()
+	{
+		return m_Materials;
+	}
+
 	void Set_Animation(_uint iIndex, _bool isLoop)
 	{
 		m_iCurrentAnimIndex = iIndex;
@@ -27,7 +32,7 @@ public:
 	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName);
 
 public:
-	virtual HRESULT Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreLocalTransformMatrix);
+	virtual HRESULT Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreLocalTransformMatrix, const string& name);
 	virtual HRESULT Initialize(void* pArg);
 	virtual HRESULT Render(_uint iMeshIndex);
 
@@ -37,6 +42,8 @@ public:
 public:
 	HRESULT Bind_Material(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eMaterialType, _uint iTextureIndex = 0);
 	HRESULT Bind_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
+	HRESULT Ready_TestBinary(const string& name);
+	HRESULT Ready_TestLoad(const string& strFilePath, const string& name);
 
 private:
 	const aiScene* m_pAIScene = { nullptr };
@@ -59,8 +66,6 @@ private:
 	_uint						m_iNumAnimations = {};
 	vector<class CAnimation*>	m_Animations;
 
-	
-
 private:
 	HRESULT Ready_Meshes();
 	HRESULT Ready_Materials(const _char* pModelFilePath);
@@ -68,7 +73,7 @@ private:
 	HRESULT Ready_Animations(); /* 각 뼈들이 시간에 따라서 어떤 상태를 띈다. */
 
 public:
-	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const _char* pModelFilePath, _fmatrix PreLocalTransformMatrix = XMMatrixIdentity());
+	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const _char* pModelFilePath, const string& name = nullptr, _fmatrix PreLocalTransformMatrix = XMMatrixIdentity());
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 };

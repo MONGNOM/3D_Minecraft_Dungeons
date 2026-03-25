@@ -87,6 +87,10 @@ public: /* For.Font_Manager */
 	HRESULT Add_Font(const _wstring& strFontTag, const _tchar* pFontFilePath);
 	void Draw_Font(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor = XMVectorSet(1.f, 1.f, 1.f, 1.f));
 
+
+public: /* For.ModelConverter */
+	HRESULT Ready_StaticBinary(_uint numMeshs, const aiScene* m_pAIScene, const string& name, _fmatrix PreTransformMatrix);
+
 private:
 	class CGraphic_Device* m_pGraphic_Device = { nullptr };
 	class CTimer_Manager* m_pTimer_Manager = { nullptr };
@@ -99,6 +103,7 @@ private:
 	class CLight_Manager* m_pLight_Manager = { nullptr };
 	class CPicking_Manager* m_pPicking_Manager = { nullptr };
 	class CFont_Manager* m_pFont_Manager = { nullptr };
+	class CModelConverter* m_pModelConverter = { nullptr };
 
 public:
 	void Release_Engine();

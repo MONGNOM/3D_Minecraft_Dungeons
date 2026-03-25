@@ -170,6 +170,7 @@
     <ClInclude Include="..\public\Material.h" />
     <ClInclude Include="..\public\Mesh.h" />
     <ClInclude Include="..\public\Model.h" />
+    <ClInclude Include="..\public\ModelConverter.h" />
     <ClInclude Include="..\public\Object_Manager.h" />
     <ClInclude Include="..\public\PartObject.h" />
     <ClInclude Include="..\public\Picking_Manager.h" />
@@ -209,6 +210,7 @@
     <ClCompile Include="..\private\Material.cpp" />
     <ClCompile Include="..\private\Mesh.cpp" />
     <ClCompile Include="..\private\Model.cpp" />
+    <ClCompile Include="..\private\ModelConverter.cpp" />
     <ClCompile Include="..\private\Object_Manager.cpp" />
     <ClCompile Include="..\private\PartObject.cpp" />
     <ClCompile Include="..\private\Picking_Manager.cpp" />
@@ -225,6 +227,9 @@
     <ClCompile Include="..\private\VIBuffer_Cube.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Terrain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

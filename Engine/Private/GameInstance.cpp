@@ -11,6 +11,7 @@
 #include "Light_Manager.h"
 #include "Picking_Manager.h"
 #include "Font_Manager.h"
+#include "ModelConverter.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -66,6 +67,11 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 	if (nullptr == m_pFont_Manager)
 		return E_FAIL;
 
+	m_pModelConverter = CModelConverter::Create();
+	if (nullptr == m_pModelConverter)
+		return E_FAIL;
+
+	
 	return S_OK;
 }
 
@@ -275,9 +281,15 @@ void CGameInstance::Draw_Font(const _wstring& strFontTag, const _tchar* pText, c
 	m_pFont_Manager->Draw(strFontTag, pText, vPosition, vColor);
 }
 
+HRESULT CGameInstance::Ready_StaticBinary(_uint numMeshs, const aiScene* m_pAIScene, const string& name, _fmatrix PreTransformMatrix)
+{
+	return m_pModelConverter->Ready_StaticBinary(numMeshs, m_pAIScene, name, PreTransformMatrix);
+}
+
 
 void CGameInstance::Release_Engine()
 {
+	Safe_Release(m_pModelConverter);
 	Safe_Release(m_pFont_Manager);
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pInput_Device);

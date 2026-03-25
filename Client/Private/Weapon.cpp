@@ -53,14 +53,14 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 
 void CWeapon::Update(_float fTimeDelta)
 {
-	_matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
+	/*_matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
 
 	for (size_t i = 0; i < 3; i++)
 		SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
 
 
 
-	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix);
+	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix);*/
 }
 
 void CWeapon::Late_Update(_float fTimeDelta)

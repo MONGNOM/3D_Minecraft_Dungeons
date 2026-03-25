@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 #include "Cursor.h"
+#include <fstream>
 
 
 CMainApp::CMainApp()
@@ -141,6 +142,37 @@ HRESULT CMainApp::Ready_Layer_UI(const _tchar* pLayerTag)
 		return E_FAIL;
 
 	return S_OK;
+}
+
+HRESULT CMainApp::Gara_Binary()
+{
+	//// 1. 파일 쓰기 모드로 열기 (확장자는 마음대로!)
+	//ofstream fout("House_Model.bin", ios::out | ios::binary);
+
+	//// 2.  1호차 (목차) 세팅 및 저장
+	//STATIC_MODEL_HEADER tHeader;
+	//tHeader.iNumVertices = vecVertices.size();   // Assimp로 모아둔 정점 개수
+	//tHeader.iNumIndices = vecIndices.size();     // Assimp로 모아둔 인덱스 개수
+	//tHeader.iNumMaterials = vecMaterials.size(); // 재질 개수
+
+	//// 목차를 통째로 파일에 도장 찍듯 쾅! 씁니다.
+	//fout.write((char*)&tHeader, sizeof(STATIC_MODEL_HEADER));
+
+	//// 3.  2호차 (정점 데이터) 저장
+	//// vecVertices 배열의 첫 번째 주소부터 끝까지 통째로 파일에 복사!
+	//fout.write((char*)vecVertices.data(), sizeof(VTXMODEL) * tHeader.iNumVertices);
+
+	//// 4.  3호차 (인덱스 데이터) 저장
+	//fout.write((char*)vecIndices.data(), sizeof(_ulong) * tHeader.iNumIndices);
+
+	//// 5.  4호차 (재질 데이터) 저장
+	//fout.write((char*)vecMaterials.data(), sizeof(MATERIAL_DATA) * tHeader.iNumMaterials);
+
+	//// 6. 기차 문 닫기 (저장 끝!)
+	//fout.close();
+	//
+	//	
+		return S_OK;
 }
 
 

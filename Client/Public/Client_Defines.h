@@ -20,7 +20,11 @@ namespace Client
 	const unsigned int		g_iWinSizeY = { 1440 };
 
 	enum class LEVEL { STATIC, LOADING, LOGO, GAMEPLAY, DUNGEON, END };
+
+    
 }
+
+
 
 
 using namespace std;

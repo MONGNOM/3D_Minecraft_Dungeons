@@ -18,6 +18,8 @@ public:
 	virtual HRESULT Initialize(void* pArg);
 	virtual HRESULT Bind_Resources();
 	virtual HRESULT Render();
+	ID3D11Buffer** Get_VB() { return &m_pVB; }
+	ID3D11Buffer** Get_IB() { return &m_pIB; }
 
 protected:
 	ID3D11Buffer*				m_pVB = { nullptr };
