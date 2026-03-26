@@ -6,6 +6,7 @@
 NS_BEGIN(Engine)
 class CShader;
 class CTexture;
+class CNavigation;
 class CVIBuffer_Terrain;
 NS_END
 
@@ -35,6 +36,7 @@ protected:
 	CShader* m_pShaderCom = { nullptr };
 	CVIBuffer_Terrain* m_pVIBufferCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
+	CNavigation* m_pNavigationCom = { nullptr };
 
 protected:
 	HRESULT Ready_Components();

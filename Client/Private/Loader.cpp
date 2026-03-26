@@ -399,7 +399,14 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		return E_FAIL;
 	}
 
-
+	lstrcpy(m_szLoadingText, TEXT("네비게이션을 로딩 중 입니다."));
+	/* Prototype_Component_Navigation */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Navigation"),
+		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.dat")))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
+		return E_FAIL;
+	}
 
 
 	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));

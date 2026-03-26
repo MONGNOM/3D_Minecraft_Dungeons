@@ -57,6 +57,9 @@ HRESULT CTerrain::Render()
 	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
 
+#ifdef _DEBUG
+	m_pNavigationCom->Render();
+#endif
 
 	return S_OK;
 }
@@ -73,6 +76,10 @@ HRESULT CTerrain::Ready_Components()
 
 	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Terrain"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
+		return E_FAIL;
+
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Navigation"),
+		TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom))))
 		return E_FAIL;
 
 	return S_OK;
@@ -140,8 +147,9 @@ void CTerrain::Free()
 {
 	__super::Free();
 
-	
+	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
+
 }
