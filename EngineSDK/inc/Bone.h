@@ -28,6 +28,9 @@ public:
 	_bool isCompare(const _char* pBoneName) {
 		return !strcmp(pBoneName, m_szName);
 	}
+	const _char* Get_Name() { return m_szName; }
+	_int Get_ParentIndex() { return m_iParentBoneIndex; }
+	_float4x4 Get_TransformMatrix() { return m_TransformationMatrix; }
 
 	void Update_CombinedTransformationMatrix(const vector<CBone*>& Bones, _fmatrix PreTransformMatrix);
 

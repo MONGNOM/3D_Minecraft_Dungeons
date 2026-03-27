@@ -38,7 +38,7 @@ HRESULT CNavigation::Initialize_Prototype(const _tchar* pNavigationDataFile)
 		if (0 == dwByte)
 			break;
 
-		CCell* pCell = CCell::Create(m_pDevice, m_pContext, vPoints);
+		CCell* pCell = CCell::Create(m_pDevice, m_pContext, vPoints, m_Cells.size());
 		if (nullptr == pCell)
 			return E_FAIL;
 
@@ -46,6 +46,8 @@ HRESULT CNavigation::Initialize_Prototype(const _tchar* pNavigationDataFile)
 	}
 
 	CloseHandle(hFile);
+
+	SetUp_Neighbors();
 
 #ifdef _DEBUG
 	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Cell.hlsl"), VTXPOS::Elements, VTXPOS::iNumElements);
@@ -57,7 +59,66 @@ HRESULT CNavigation::Initialize_Prototype(const _tchar* pNavigationDataFile)
 
 HRESULT CNavigation::Initialize(void* pArg)
 {
+	if (nullptr == pArg)
+		return S_OK;
+
+	auto		pDesc = static_cast<NAVIGATION_DESC*>(pArg);
+
+	m_iCurrentCellIndex = pDesc->iCurrentCellIndex;
+
 	return S_OK;
+}
+
+void CNavigation::SetUp_Neighbors()
+{
+	for (auto& pSourCell : m_Cells) // 모든 셀을 돌면서 하나하나 체크 
+	{
+		for (auto& pDestCell : m_Cells)
+		{
+			if (pSourCell == pDestCell)
+				continue;
+
+			if (true == pDestCell->Compare_Points(pSourCell->Get_Point(POINT::A), pSourCell->Get_Point(POINT::B))) // 데스트셀의 점  A와 같다? 그럼 B의 점이 데스트의 B또는C랑 같은게 존재하면 AB와 이웃라인? 밑에도 동일한내용
+				pSourCell->Set_Neighbor(LINE::AB, pDestCell);
+
+			if (true == pDestCell->Compare_Points(pSourCell->Get_Point(POINT::B), pSourCell->Get_Point(POINT::C)))
+				pSourCell->Set_Neighbor(LINE::BC, pDestCell);
+
+			if (true == pDestCell->Compare_Points(pSourCell->Get_Point(POINT::C), pSourCell->Get_Point(POINT::A)))
+				pSourCell->Set_Neighbor(LINE::CA, pDestCell);
+		}
+	}
+}
+
+_bool CNavigation::isMove(_vector vPoint)
+{
+	if (-1 == m_iCurrentCellIndex)
+		return false;
+
+	_int		iNeighborIndex = { -1 };
+
+	if (false == m_Cells[m_iCurrentCellIndex]->isIn(vPoint, &iNeighborIndex))
+	{
+		if (-1 != iNeighborIndex)
+		{
+			while (true)
+			{
+				if (true == m_Cells[iNeighborIndex]->isIn(vPoint, &iNeighborIndex))
+					break;
+
+				if (-1 == iNeighborIndex)	// 이웃이 없으면 이동을 못한다.
+					return false;
+			}
+
+			m_iCurrentCellIndex = iNeighborIndex;
+			return true;
+		}
+		else
+			return false;
+	}
+	else
+		return true;
+
 }
 
 #ifdef _DEBUG

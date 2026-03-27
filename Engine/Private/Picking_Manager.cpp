@@ -18,7 +18,7 @@ HRESULT CPicking_Manager::Initialize()
 
 _bool CPicking_Manager::Picking_Pos(HWND hWnd, CVIBuffer_Terrain* pTerrainBufferCom, CTransform* pTerrainTransformCom, _uint numZ, _uint numX, _float3* pos) // 맵툴에 쓸 함수
 {
-	POINT	ptMouse{};
+	::POINT	ptMouse{};
 
 	GetCursorPos(&ptMouse);
 	ScreenToClient(hWnd, &ptMouse);
@@ -142,7 +142,7 @@ _bool CPicking_Manager::Picking_Pos(HWND hWnd, CVIBuffer_Terrain* pTerrainBuffer
 CGameObject* CPicking_Manager::Picking_Object(HWND hWnd) // 게임 씬에서 쓸 피킹
 {
 
-	POINT	ptMouse{};
+	::POINT	ptMouse{};
 
 	GetCursorPos(&ptMouse);
 	ScreenToClient(hWnd, &ptMouse);

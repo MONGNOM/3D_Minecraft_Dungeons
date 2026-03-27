@@ -11,14 +11,25 @@ private:
 	CNavigation(const CNavigation& Prototype);
 	virtual ~CNavigation() = default;
 
+public: 
+	typedef struct tagNavigationDesc
+	{
+		_int			iCurrentCellIndex;
+	}NAVIGATION_DESC;
+
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pNavigationDataFile);
 	virtual HRESULT Initialize(void* pArg) override;
+
+public:
+	void SetUp_Neighbors();
+	_bool isMove(_vector vPoint);
 
 #ifdef _DEBUG
 public:
 	HRESULT Render();
 #endif
+
 
 private:
 	_int								m_iCurrentCellIndex = { -1 };
