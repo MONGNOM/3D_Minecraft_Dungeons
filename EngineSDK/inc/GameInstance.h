@@ -90,6 +90,7 @@ public: /* For.Font_Manager */
 
 public: /* For.ModelConverter */
 	HRESULT Ready_StaticBinary(_uint numMeshs, const aiScene* m_pAIScene, const string& name, _fmatrix PreTransformMatrix);
+	HRESULT Ready_DynamicBinary(_uint numMeshs, const aiScene* m_pAIScene, const string& name, class CModel* pModel, vector<class CBone*>& bones);
 
 private:
 	class CGraphic_Device* m_pGraphic_Device = { nullptr };

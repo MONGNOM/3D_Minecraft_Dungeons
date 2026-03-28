@@ -19,7 +19,8 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype(MODEL eType, const aiMesh* pAIMesh, class CModel* pModel, _fmatrix PreTransformMatrix);
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual HRESULT TestInitialize(MODEL eType, VTXMESH* pVertices, _uint iNumVertices, _ulong* pIndices, _uint iNumIndices, _uint iMaterialIndex, _fmatrix PreTransformMatrix);
+	virtual HRESULT Static_BinaryInitialize(MODEL eType, VTXMESH* pVertices, _uint iNumVertices, _ulong* pIndices, _uint iNumIndices, _uint iMaterialIndex, _fmatrix PreTransformMatrix);
+	virtual HRESULT Dynamic_BinaryInitialize(MODEL eType, VTXANIMMESH* pVertices, _uint iNumVertices, _ulong* pIndices, _uint iNumIndices, _uint iMaterialIndex, _fmatrix PreTransformMatrix, _int iNumBonesInMesh, ifstream& fin);
 
 public:
 	HRESULT Bind_BoneMatrices(class CShader* pShader, const _char* pConstantName, const vector<class CBone*>& Bones);
@@ -41,6 +42,7 @@ private:
 public:
 	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const aiMesh* pAIMesh, class CModel* pModel, _fmatrix PreTransformMatrix);
 	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, VTXMESH* pVertices, _uint iNumVertices, _ulong* pIndices, _uint iNumIndices, _uint iMaterialIndex, _fmatrix PreTransformMatrix);
+	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, VTXANIMMESH* pVertices, _uint iNumVertices, _ulong* pIndices, _uint iNumIndices, _uint iMaterialIndex, _fmatrix PreTransformMatrix, _int iNumBonesInMesh, ifstream& fin);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 

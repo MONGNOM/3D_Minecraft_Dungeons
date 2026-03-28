@@ -13,6 +13,7 @@ private:
 
 public:
 	HRESULT Initialize(const aiAnimation* pAIAnimation, class CModel* pModel);
+	HRESULT Binary_Initialize(const string& strFilePath);
 	_bool Update_TransformationMatrices(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop);
 	_char		animationName[MAX_PATH];
 
@@ -35,6 +36,7 @@ private:
 
 public:
 	static CAnimation* Create(const aiAnimation* pAIAnimation, class CModel* pModel);
+	static CAnimation* Create(const string& strFilePath);
 	CAnimation* Clone(); 
 	virtual void Free() override;
 };

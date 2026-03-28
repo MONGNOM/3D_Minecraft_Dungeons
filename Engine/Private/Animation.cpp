@@ -1,6 +1,7 @@
 #include "Animation.h"
 
 #include "Channel.h"
+#include "fstream"
 
 CAnimation::CAnimation()
 {
@@ -42,6 +43,39 @@ HRESULT CAnimation::Initialize(const aiAnimation* pAIAnimation, class CModel* pM
 	return S_OK;
 }
 
+HRESULT CAnimation::Binary_Initialize(const string& strFilePath)
+{
+
+	ifstream fin(strFilePath, ios::in | ios::binary);
+
+	int iLength = 0;
+	fin.read((char*)&iLength, sizeof(int));
+	char* pName = new char[iLength + 1];
+	fin.read(pName, iLength);
+	pName[iLength] = '\0';
+	string strFileName = pName;
+
+	delete[] pName;
+
+	fin.read((char*)&m_fDuration, sizeof(_float));
+	fin.read((char*)&m_fTickPerSecond, sizeof(_float));
+	fin.read((char*)&m_iNumChannels, sizeof(_uint));
+
+	strcpy_s(animationName, strFileName.c_str());
+
+	m_CurrentKeyFrameIndices.resize(m_iNumChannels);
+
+	for (size_t i = 0; i < m_iNumChannels; i++)
+	{
+		CChannel* pChannel = CChannel::Create(fin);
+		m_Channels.push_back(pChannel);
+	}
+
+	fin.close();
+
+	return S_OK;
+}
+
 _bool CAnimation::Update_TransformationMatrices(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop)
 {
 	m_fCurrentTrackPosition += m_fTickPerSecond * fTimeDelta; // 현재 재생시간을 누적했다면 초당 재생속도 * timedelta
@@ -70,6 +104,18 @@ CAnimation* CAnimation::Create(const aiAnimation* pAIAnimation, class CModel* pM
 	CAnimation* pInstance = new CAnimation();
 
 	if (FAILED(pInstance->Initialize(pAIAnimation, pModel)))
+	{
+		MSG_BOX("Failed to Created : CAnimation");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CAnimation* CAnimation::Create(const string& strFilePath)
+{
+	CAnimation* pInstance = new CAnimation();
+
+	if (FAILED(pInstance->Binary_Initialize(strFilePath)))
 	{
 		MSG_BOX("Failed to Created : CAnimation");
 		Safe_Release(pInstance);

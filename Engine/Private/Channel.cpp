@@ -2,6 +2,7 @@
 
 #include "Model.h"
 #include "Bone.h"
+#include "fstream"
 
 CChannel::CChannel()
 {
@@ -50,6 +51,26 @@ HRESULT CChannel::Initialize(const aiNodeAnim* pAIChannel, class CModel* pModel)
 
 		m_KeyFrames.push_back(KeyFrame);
 	}
+
+
+
+	return S_OK;
+}
+
+HRESULT CChannel::Binary_Initialize(ifstream& fin)
+{
+	fin.read((char*)&m_iBoneIndex, sizeof(_int));
+	fin.read((char*)&m_iNumKeyFrames, sizeof(_uint));
+
+
+	for (size_t i = 0; i < m_iNumKeyFrames; i++)
+	{
+		KEYFRAME			KeyFrame{};
+		fin.read((char*)&KeyFrame, sizeof(KEYFRAME));
+
+		m_KeyFrames.push_back(KeyFrame);
+	}
+
 
 
 
@@ -110,6 +131,17 @@ CChannel* CChannel::Create(const aiNodeAnim* pAIChannel, class CModel* pModel)
 	CChannel* pInstance = new CChannel();
 
 	if (FAILED(pInstance->Initialize(pAIChannel, pModel)))
+	{
+		MSG_BOX("Failed to Created : CChannel");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+CChannel* CChannel::Create(ifstream& fin)
+{
+	CChannel* pInstance = new CChannel();
+
+	if (FAILED(pInstance->Binary_Initialize(fin)))
 	{
 		MSG_BOX("Failed to Created : CChannel");
 		Safe_Release(pInstance);

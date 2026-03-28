@@ -36,14 +36,25 @@ HRESULT CModelConverter::Ready_DynamicBinary(_uint numMeshs, const aiScene* m_pA
             memcpy(&pVertices[j].vTexcoord, &m_pAIScene->mMeshes[i]->mTextureCoords[0][j], sizeof(_float2));
         }
 
+        vector<_int> vecBoneIndices;
+        vector<_float4x4> vecOffsetMatrices;
+
         for (size_t k = 0; k < iNumBones; k++)
         {
             aiBone* pAIBone = m_pAIScene->mMeshes[i]->mBones[k];
 
             _int iBoneIndex = pModel->Get_BoneIndex(pAIBone->mName.data);
-            if (-1 == iBoneIndex)
-                return E_FAIL;
+            if (-1 == iBoneIndex) return E_FAIL;
 
+            //  파일에 바로 쓰지 않고 가방에 담습니다.
+            vecBoneIndices.push_back(iBoneIndex);
+
+            _float4x4 OffsetMatrix = {};
+            memcpy(&OffsetMatrix, &pAIBone->mOffsetMatrix, sizeof(_float4x4));
+            XMStoreFloat4x4(&OffsetMatrix, XMMatrixTranspose(XMLoadFloat4x4(&OffsetMatrix)));
+
+            //  파일에 바로 쓰지 않고 가방에 담습니다.
+            vecOffsetMatrices.push_back(OffsetMatrix);
             for (size_t l = 0; l < pAIBone->mNumWeights; l++)
             {
                 /* 이 뼈가 j번째로 영향을 주는 정점의 정보? */
@@ -51,25 +62,25 @@ HRESULT CModelConverter::Ready_DynamicBinary(_uint numMeshs, const aiScene* m_pA
 
                 if (0 == pVertices[AIVertexWeight.mVertexId].vBlendWeight.x)
                 {
-                    pVertices[AIVertexWeight.mVertexId].vBlendIndex.x = iBoneIndex;
+                    pVertices[AIVertexWeight.mVertexId].vBlendIndex.x = k;
                     pVertices[AIVertexWeight.mVertexId].vBlendWeight.x = AIVertexWeight.mWeight;
                 }
 
                 else if (0 == pVertices[AIVertexWeight.mVertexId].vBlendWeight.y)
                 {
-                    pVertices[AIVertexWeight.mVertexId].vBlendIndex.y = iBoneIndex;
+                    pVertices[AIVertexWeight.mVertexId].vBlendIndex.y = k;
                     pVertices[AIVertexWeight.mVertexId].vBlendWeight.y = AIVertexWeight.mWeight;
                 }
 
                 else if (0 == pVertices[AIVertexWeight.mVertexId].vBlendWeight.z)
                 {
-                    pVertices[AIVertexWeight.mVertexId].vBlendIndex.z = iBoneIndex;
+                    pVertices[AIVertexWeight.mVertexId].vBlendIndex.z = k;
                     pVertices[AIVertexWeight.mVertexId].vBlendWeight.z = AIVertexWeight.mWeight;
                 }
 
                 else if (0 == pVertices[AIVertexWeight.mVertexId].vBlendWeight.w)
                 {
-                    pVertices[AIVertexWeight.mVertexId].vBlendIndex.w = iBoneIndex;
+                    pVertices[AIVertexWeight.mVertexId].vBlendIndex.w = k;
                     pVertices[AIVertexWeight.mVertexId].vBlendWeight.w = AIVertexWeight.mWeight;
                 }
             }
@@ -88,16 +99,58 @@ HRESULT CModelConverter::Ready_DynamicBinary(_uint numMeshs, const aiScene* m_pA
         }
 
         fout.write(reinterpret_cast<const char*>(&iMaterialIndex), sizeof(int));
-        // 알아낸 개수를 내 커스텀 바이너리 파일(.bin)에 기록합니다.
         fout.write((char*)&iNumVerts, sizeof(int));
         fout.write((char*)&iNumIndices, sizeof(int));
         fout.write((char*)pVertices, sizeof(VTXANIMMESH) * iNumVerts);
         fout.write((char*)pIndices, sizeof(_ulong) * iNumIndices);
-        
+
+        //  새롭게 추가된 부분: 뼈대 개수를 쓰고, 모아둔 뼈대 정보를 쫙 씁니다!
+        fout.write((char*)&iNumBones, sizeof(int)); // Read 쪽의 iNumBonesInMesh 와 매칭됨!
+
+        for (size_t k = 0; k < iNumBones; k++)
+        {
+            fout.write((char*)&vecBoneIndices[k], sizeof(_int));
+            fout.write((char*)&vecOffsetMatrices[k], sizeof(_float4x4));
+        }
 
         delete[] pVertices;
         delete[] pIndices;
     }
+
+    // 1. 이 모델이 가진 전체 옷(머테리얼)의 개수를 구웁니다.
+    int iNumMaterials = m_pAIScene->mNumMaterials;
+    fout.write(reinterpret_cast<const char*>(&iNumMaterials), sizeof(int));
+
+    // 2. 옷의 개수만큼 반복하면서 텍스처 이름을 하나씩 꺼내옵니다.
+    for (int i = 0; i < iNumMaterials; ++i)
+    {
+        aiMaterial* pMaterial = m_pAIScene->mMaterials[i];
+        aiString aiTexName;
+
+
+
+        // Assimp에게 "이 옷의 기본 텍스처 이름 좀 줘!" 라고 물어봅니다.
+        if (AI_SUCCESS == pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &aiTexName))
+        {
+            // Assimp가 준 이름을 깔끔한 C++ string으로 받습니다. (예: "fiona_D.png")
+            string strTextureName = aiTexName.data;
+
+            // 3.  글자 수(길이)를 먼저 구웁니다! (택배 상자 크기 예고)
+            int iLength = strTextureName.length();
+            fout.write(reinterpret_cast<const char*>(&iLength), sizeof(int));
+
+            // 4.  진짜 글자들을 구웁니다!
+            fout.write(strTextureName.c_str(), iLength);
+        }
+        else
+        {
+            // 만약 텍스처 이미지가 없는 단색 재질이라면? 
+            // "글자 수가 0이다!" 라고 구워서 빈 상자임을 표시합니다.
+            int iZeroLength = 0;
+            fout.write(reinterpret_cast<const char*>(&iZeroLength), sizeof(int));
+        }
+    }
+
 
     _uint iNumBone = bones.size();
     fout.write((char*)&iNumBone, sizeof(_uint));
@@ -118,7 +171,95 @@ HRESULT CModelConverter::Ready_DynamicBinary(_uint numMeshs, const aiScene* m_pA
         fout.write((char*)&localMatrix, sizeof(_float4x4));
     }
 
-    
+    _uint iNumAnimtion = m_pAIScene->mNumAnimations;
+
+    fout.close(); // 파일 문 닫기!
+
+    for (size_t i = 0; i < iNumAnimtion; i++)
+    {
+        string strFileNameAni = ("../Bin/Resources/Binary/Dynamic/Animation/");
+        aiAnimation* pAnimation = m_pAIScene->mAnimations[i];
+        string strFullname = strFileNameAni + pAnimation->mName.data + ".Anim"; // 애니메에션 이름으로 저장
+
+        ofstream fAniout(strFullname.c_str(), ios::out | ios::binary);
+
+        _uint strNum = strlen(pAnimation->mName.data); // 애니메이션 이름의 갯수
+        _float duration = pAnimation->mDuration;
+        _float tickPerSecond = pAnimation->mTicksPerSecond;
+        _uint numChannels = pAnimation->mNumChannels;
+
+        fAniout.write((char*)&strNum, sizeof(_uint)); // 애니메이션 이름 갯수 저장
+        fAniout.write(pAnimation->mName.data, strNum); // 애니메이션 이름 갯수 저장
+
+        fAniout.write((char*)&duration, sizeof(_float)); // 애니메이션 길이 저장
+        fAniout.write((char*)&tickPerSecond, sizeof(_float)); // 애니메이션 재생 속도 저장
+        fAniout.write((char*)&numChannels, sizeof(_uint)); // 애니메이션 재생 속도 저장
+
+
+        for (size_t j = 0; j < numChannels; j++)
+        {
+            _uint  iBonindex = pModel->Get_BoneIndex(pAnimation->mChannels[j]->mNodeName.data);
+            _uint NumScale   = pAnimation->mChannels[j]->mNumScalingKeys;
+            _uint NumRot     = pAnimation->mChannels[j]->mNumRotationKeys;
+            _uint NumPos     = pAnimation->mChannels[j]->mNumPositionKeys;
+
+            fAniout.write((char*)&iBonindex, sizeof(_uint)); // 애니메이션 이름 갯수 저장
+           //fAniout.write((char*)&NumScale, sizeof(_uint)); //  채널 크기 크기 갯수
+           //fAniout.write((char*)&NumRot, sizeof(_uint)); //    채널 회전 갯수 저장
+           //fAniout.write((char*)&NumPos, sizeof(_uint)); //    채널 위치 갯수 저장
+
+
+            _uint iNumKeyFrame = max(NumScale, NumRot);
+            iNumKeyFrame = max(iNumKeyFrame, NumPos);
+
+            fAniout.write((char*)&iNumKeyFrame, sizeof(_uint)); //    채널 위치 갯수 저장
+
+
+            _float3 scale{};
+            _float4 rotation{};
+            _float3 pos{};
+
+            for (size_t k = 0; k < iNumKeyFrame; k++)
+            {
+                KEYFRAME keyframe{};
+                if (NumScale > k)
+                {
+                    memcpy(&scale, &pAnimation->mChannels[j]->mScalingKeys[k].mValue, sizeof(_float3));
+                    keyframe.fTrackPosition = pAnimation->mChannels[j]->mScalingKeys[k].mTime;
+                }
+                
+                if (NumRot > k)
+                {
+                    rotation.x = pAnimation->mChannels[j]->mRotationKeys[k].mValue.x;
+                    rotation.y = pAnimation->mChannels[j]->mRotationKeys[k].mValue.y;
+                    rotation.z = pAnimation->mChannels[j]->mRotationKeys[k].mValue.z;
+                    rotation.w = pAnimation->mChannels[j]->mRotationKeys[k].mValue.w;
+                    keyframe.fTrackPosition = pAnimation->mChannels[j]->mRotationKeys[k].mTime;
+                }
+
+                if (NumPos > k)
+                {
+                    memcpy(&pos, &pAnimation->mChannels[j]->mPositionKeys[k].mValue, sizeof(_float3));
+                    keyframe.fTrackPosition = pAnimation->mChannels[j]->mPositionKeys[k].mTime;
+
+                }
+
+                keyframe.vScale = scale;
+                keyframe.vRotation = rotation;
+                keyframe.vTranslation = pos;
+
+                fAniout.write((char*)&keyframe, sizeof(KEYFRAME));
+            }
+
+
+        }
+       
+
+
+        fAniout.close(); // 파일 문 닫기!
+    }
+
+   
 
 	return S_OK;
 }

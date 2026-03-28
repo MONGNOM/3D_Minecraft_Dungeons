@@ -45,7 +45,7 @@ void CCursor::Update(_float fTimeDelta)
 {
 	__super::Update_Transform();
 
-	POINT ptMouse;
+	::POINT ptMouse;
 
 	GetCursorPos(&ptMouse);
 

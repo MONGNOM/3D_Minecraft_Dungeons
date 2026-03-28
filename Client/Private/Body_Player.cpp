@@ -43,7 +43,10 @@ HRESULT CBody_Player::Initialize(void* pArg)
 		1.f
 	));*/
 
-	//m_pModelCom->Set_Animation(2, true);
+	m_pModelCom->Ready_Animations("Player_Master_Idle.Anim");
+	m_pModelCom->Ready_Animations("Player_Master_Run.Anim");
+
+	m_pModelCom->Set_Animation(0, true);
 
 	return S_OK;
 }
@@ -55,8 +58,8 @@ void CBody_Player::Priority_Update(_float fTimeDelta)
 void CBody_Player::Update(_float fTimeDelta)
 {
 
-	/*if (*m_pParentState & CPlayer::PLAYERSTATE::IDLE)
-		m_pModelCom->Set_Animation(2, true);
+	if (*m_pParentState & CPlayer::PLAYERSTATE::IDLE)
+		m_pModelCom->Set_Animation(0, true);
 
 	if (*m_pParentState & CPlayer::PLAYERSTATE::WALK)
 		m_pModelCom->Set_Animation(1, true);
@@ -64,7 +67,7 @@ void CBody_Player::Update(_float fTimeDelta)
 	if (true == m_pModelCom->Play_Animation(fTimeDelta))
 		int a = 10;
 
-	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));*/
+	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 }
 
@@ -77,7 +80,6 @@ HRESULT CBody_Player::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
-
 
 
 	size_t iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -100,7 +102,7 @@ HRESULT CBody_Player::Render()
 HRESULT CBody_Player::Ready_Components()
 {
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
@@ -115,6 +117,7 @@ HRESULT CBody_Player::Bind_ShaderResources()
 {
 	/*if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;*/
+	
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 

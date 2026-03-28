@@ -25,6 +25,7 @@ public:
 
 public:
 	HRESULT Initialize(const aiNode* pAINode, _int iParentBoneIndex);
+	HRESULT Binary_Initialize(const string& name, _int iParentBoneIndex, const _float4x4& localmatrix);
 	_bool isCompare(const _char* pBoneName) {
 		return !strcmp(pBoneName, m_szName);
 	}
@@ -44,6 +45,7 @@ private:
 
 public:
 	static CBone* Create(const aiNode* pAINode, _int iParentBoneIndex);
+	static CBone* Create(const string& name, _int iParentBoneIndex, const _float4x4& localmatrix);
 	CBone* Clone();
 	virtual void Free() override;
 };

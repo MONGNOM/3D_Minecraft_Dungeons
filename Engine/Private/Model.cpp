@@ -9,6 +9,7 @@
 #include "GameInstance.h"
 
 
+
 CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CComponent{ pDevice, pContext }
 {
@@ -109,18 +110,20 @@ HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _
     {
         fin.close();
 
-        if (FAILED(Ready_TestLoad(strBinFilePath, modelName)))
-            return E_FAIL;
-
-     /*   if (FAILED(Ready_Materials(strBinFilePath.c_str())))
-            return E_FAIL;*/
-
-        /*if (FAILED(Ready_Animations()))
-            return E_FAIL;*/
+        switch (eType)
+        {
+        case MODEL::NONANIM:
+            if (FAILED(Ready_Static_Model_Load(strBinFilePath, modelName)))
+                return E_FAIL;
+            break;
+        case MODEL::ANIM:
+            if (FAILED(Ready_Dynamic_Model_Load(strBinFilePath, modelName)))
+                return E_FAIL;
+            break;
+        }
     }
     else
     {
-       string a =  name;
       // 바이너리 안됐을떄 
       /* 뼈들의 정보를 생성한다. */
         if (FAILED(Ready_Bones(m_pAIScene->mRootNode, -1)))
@@ -144,7 +147,7 @@ HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _
             break;
 
         case MODEL::ANIM:
-
+            m_pGameInstance->Ready_DynamicBinary(m_iNumMeshes, m_pAIScene, modelName, this, m_Bones);
             break;
         }
 
@@ -260,71 +263,24 @@ HRESULT CModel::Ready_Animations()
     return S_OK;
 }
 
-HRESULT CModel::Ready_TestBinary(const string& name)
+HRESULT CModel::Ready_Animations(string strAniFileName)
 {
-    m_iNumMeshes = m_pAIScene->mNumMeshes;
-    string strFileName = ("../Bin/Resources/Models/");
-    string strModelName = ("Monster_Model.bin");
-    string strFullname = strFileName + strModelName;
+    string strFileFullName = "../Bin/Resources/Binary/Dynamic/Animation/" + strAniFileName;
+    
+    CAnimation* pAnimation = CAnimation::Create(strFileFullName); // 애니메이션 갯수 만큼 생성
+    if (nullptr == pAnimation)
+        return E_FAIL;
 
-    ofstream fout(strFullname.c_str(), ios::out | ios::binary);
-    fout.write((char*)&m_iNumMeshes, sizeof(int));
+    m_Animations.push_back(pAnimation); // 생성된 애니메이션을 저장
 
-
-    for (size_t i = 0; i < m_iNumMeshes; i++)
-    {
-        int iNumVerts = m_pAIScene->mMeshes[i]->mNumVertices;
-        int iNumIndices = m_pAIScene->mMeshes[i]->mNumFaces * 3; // 면 1개당 인덱스 3개
-
-        VTXMESH* pVertices = new VTXMESH[iNumVerts];
-
-        for (int j = 0; j < iNumVerts; ++j)
-        {
-
-            memcpy(&pVertices[j].vPosition, &m_pAIScene->mMeshes[i]->mVertices[j], sizeof(_float3));
-            XMStoreFloat3(&pVertices[j].vPosition,
-                XMVector3TransformCoord(XMLoadFloat3(&pVertices[j].vPosition), XMLoadFloat4x4(&m_PreLocalTransformMatrix)));
-
-            memcpy(&pVertices[j].vNormal, &m_pAIScene->mMeshes[i]->mNormals[j], sizeof(_float3));
-            XMStoreFloat3(&pVertices[j].vNormal,
-                XMVector3TransformCoord(XMLoadFloat3(&pVertices[j].vNormal), XMLoadFloat4x4(&m_PreLocalTransformMatrix)));
-
-            memcpy(&pVertices[j].vTangent, &m_pAIScene->mMeshes[i]->mTangents[j], sizeof(_float3));
-           XMStoreFloat3(&pVertices[j].vTangent,
-               XMVector3TransformNormal(XMLoadFloat3(&pVertices[j].vTangent), XMLoadFloat4x4(&m_PreLocalTransformMatrix)));
-
-            memcpy(&pVertices[j].vTexcoord, &m_pAIScene->mMeshes[i]->mTextureCoords[0][j], sizeof(_float2));
-        }
-
-        _ulong* pIndices = new _ulong[iNumIndices];
-        int iIndexOffset = 0;
-
-        // mNumFaces(삼각형 면의 개수)만큼 돌면서 꼭짓점 3개의 번호를 빼옵니다.
-        for (unsigned int j = 0; j < m_pAIScene->mMeshes[i]->mNumFaces; ++j)
-        {
-            aiFace face = m_pAIScene->mMeshes[i]->mFaces[j];
-            pIndices[iIndexOffset++] = face.mIndices[0];
-            pIndices[iIndexOffset++] = face.mIndices[1];
-            pIndices[iIndexOffset++] = face.mIndices[2];
-        }
-
-        // 알아낸 개수를 내 커스텀 바이너리 파일(.bin)에 기록합니다.
-        fout.write((char*)&iNumVerts, sizeof(int));
-        fout.write((char*)&iNumIndices, sizeof(int));
-        fout.write((char*)pVertices, sizeof(VTXMESH) * iNumVerts);
-        fout.write((char*)pIndices, sizeof(_ulong) * iNumIndices);
-
-
-        delete[] pVertices;
-        delete[] pIndices;
-    }
-
-    fout.close(); // 파일 문 닫기!
+    m_iNumAnimations++;
 
     return S_OK;
 }
 
-HRESULT CModel::Ready_TestLoad(const string& strFilePath, const string& name)
+
+
+HRESULT CModel::Ready_Static_Model_Load(const string& strFilePath, const string& name)
 {
     string fullname = strFilePath + name;
     // 1. 쓰기(out) 대신 읽기(in) 모드로 파일을 엽니다.
@@ -420,7 +376,7 @@ HRESULT CModel::Ready_TestLoad(const string& strFilePath, const string& name)
             // ============================================================
             string strFullPath = strFilePath + strFileName;
 
-            CMaterial* pMaterial = CMaterial::CreateBinary(m_pDevice, m_pContext, m_pAIScene->mMaterials[i], strFullPath.c_str());
+            CMaterial* pMaterial = CMaterial::CreateBinary(m_pDevice, m_pContext, strFullPath.c_str());
             if (nullptr == pMaterial)
                 return E_FAIL;
 
@@ -440,6 +396,145 @@ HRESULT CModel::Ready_TestLoad(const string& strFilePath, const string& name)
 
     return S_OK;
 
+}
+
+HRESULT CModel::Ready_Dynamic_Model_Load(const string& strFilePath, const string& name)
+{
+
+#pragma region Mesh
+
+    string fullname = strFilePath + name;
+    ifstream fin(fullname.c_str(), ios::in | ios::binary);
+    if (!fin.is_open())
+        return E_FAIL;
+
+    fin.read((char*)&m_iNumMeshes, sizeof(int));
+
+    int iNumVerts = 0;
+    int iNumIndices = 0;
+    _uint iMaterialIndex = 0;
+    int iNumBones = 0;
+    int iParentIndex = 0;
+    _float4x4 localMatrix = {};
+
+    for (size_t i = 0; i < m_iNumMeshes; i++)
+    {
+      
+        fin.read(reinterpret_cast<char*>(&iMaterialIndex), sizeof(int));
+        fin.read((char*)&iNumVerts, sizeof(int));
+        fin.read((char*)&iNumIndices, sizeof(int));
+
+    
+
+        VTXANIMMESH* pVertices = new VTXANIMMESH[iNumVerts];
+        _ulong* pIndices = new _ulong[iNumIndices];
+
+        fin.read((char*)pVertices, sizeof(VTXANIMMESH) * iNumVerts);
+        fin.read((char*)pIndices, sizeof(_ulong) * iNumIndices);
+
+        int iNumBonesInMesh = 0;
+        fin.read((char*)&iNumBonesInMesh, sizeof(int));
+
+
+        // 1. 파일에서 번호표를 먼저 싹 읽어옵니다!
+        // 2. 내 번호표를 꽉 쥐고 있습니다!!
+
+        CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, m_eType, pVertices, iNumVerts, pIndices, iNumIndices, iMaterialIndex, XMLoadFloat4x4(&m_PreLocalTransformMatrix), iNumBonesInMesh, fin);
+        if (nullptr == pMesh)
+            return E_FAIL;
+
+        m_Meshes.push_back(pMesh);
+        
+        Safe_Delete_Array(pVertices);
+        Safe_Delete_Array(pIndices);
+    }
+
+#pragma endregion
+
+#pragma region Materials
+
+    int iNumMaterials = 0;
+
+    fin.read(reinterpret_cast<char*>(&m_iNumMaterials), sizeof(int));
+
+    for (int i = 0; i < m_iNumMaterials; ++i)
+    {
+        int iLength = 0;
+
+        fin.read(reinterpret_cast<char*>(&iLength), sizeof(int));
+
+        if (iLength > 0)
+        {
+            // 4. 글자 수만큼 빈 방(char 배열)을 만듭니다. 
+            // (+1을 하는 이유: C++ 문자열의 끝을 알리는 마침표 '\0' 자리입니다)
+            char* pTextureName = new char[iLength + 1];
+
+            // 5.  빈 방에 파일의 진짜 글자들을 쫙 퍼담습니다.
+            fin.read(pTextureName, iLength);
+
+            // 6. "여기가 글자의 끝이야!" 하고 마침표를 딱 찍어줍니다.
+            pTextureName[iLength] = '\0';
+
+            // 7. 쓰기 편한 string으로 변환합니다!
+            string strFileName = pTextureName;
+
+            // 다 쓴 빈 방은 메모리 누수가 나지 않게 바로 삭제합니다.
+            delete[] pTextureName;
+
+            // ============================================================
+            // 여기가 핵심!! 읽어온 이름표와 현재 게임 폴더 주소를 합칩니다!!
+            // ============================================================
+            string strFullPath = strFilePath + strFileName;
+
+            CMaterial* pMaterial = CMaterial::CreateBinary(m_pDevice, m_pContext, strFullPath.c_str());
+            if (nullptr == pMaterial)
+                return E_FAIL;
+
+            m_Materials.push_back(pMaterial);
+
+        }
+
+    }
+
+#pragma endregion 
+    fin.read((char*)&iNumBones, sizeof(int));
+#pragma region Bones
+
+    for (size_t i = 0; i < iNumBones; i++)
+    {
+        int iLength = 0;
+
+        fin.read(reinterpret_cast<char*>(&iLength), sizeof(int));
+      
+
+            char* pTextureName = new char[iLength + 1];
+
+            fin.read(pTextureName, iLength);
+
+            pTextureName[iLength] = '\0';
+
+            string strFileName = pTextureName;
+
+            delete[] pTextureName;
+
+            fin.read((char*)&iParentIndex, sizeof(int));
+            fin.read((char*)&localMatrix, sizeof(_float4x4));
+            
+
+            CBone* pBone = CBone::Create(strFileName, iParentIndex, localMatrix);
+            if (nullptr == pBone)
+                return E_FAIL;
+
+            m_Bones.push_back(pBone);
+
+    }
+    
+
+    fin.close(); // 파일 문 닫기
+
+    return S_OK;
+
+#pragma endregion
 }
 
 

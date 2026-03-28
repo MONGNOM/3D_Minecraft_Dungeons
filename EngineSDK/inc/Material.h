@@ -24,7 +24,7 @@ private:
 
 public:
 	static CMaterial* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const aiMaterial* pAIMaterial, const _char* pModelFilePath);
-	static CMaterial* CreateBinary(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const aiMaterial* pAIMaterial, const _char* pstrFilePath);
+	static CMaterial* CreateBinary(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,  const _char* pstrFilePath);
 	virtual void Free() override;
 };
 

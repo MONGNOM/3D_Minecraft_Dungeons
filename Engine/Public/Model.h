@@ -42,8 +42,9 @@ public:
 public:
 	HRESULT Bind_Material(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eMaterialType, _uint iTextureIndex = 0);
 	HRESULT Bind_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
-	HRESULT Ready_TestBinary(const string& name);
-	HRESULT Ready_TestLoad(const string& strFilePath, const string& name);
+	HRESULT Ready_Static_Model_Load(const string& strFilePath, const string& name);
+	HRESULT Ready_Dynamic_Model_Load(const string& strFilePath, const string& name);
+	HRESULT Ready_Animations(string strAniFileName); /* 각 뼈들이 시간에 따라서 어떤 상태를 띈다. */
 
 private:
 	const aiScene* m_pAIScene = { nullptr };
