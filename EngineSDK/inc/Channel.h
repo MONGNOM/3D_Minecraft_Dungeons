@@ -15,7 +15,12 @@ private:
 
 public:
 	HRESULT Initialize(const aiNodeAnim* pAIChannel, class CModel* pModel);
+	HRESULT Binary_Initialize(ifstream& fin);
 	void Update_TransformationMatrix(_uint* pCurrentKeyFrameIndex, _float fCurrentTrackPosition, const vector<class CBone*>& Bones);
+
+	vector<KEYFRAME>& Get_KeyFrame() { return m_KeyFrames; }
+	_uint Get_BoneIndex() { return m_iBoneIndex; }
+
 
 private:
 	vector<KEYFRAME>			m_KeyFrames; // 사실상 애니메이션의 사용되는 뼈의 상태 행렬
@@ -25,6 +30,7 @@ private:
 
 public:
 	static CChannel* Create(const aiNodeAnim* pAIChannel, class CModel* pModel);
+	static CChannel* Create(ifstream& fin);
 	virtual void Free() override;
 };
 

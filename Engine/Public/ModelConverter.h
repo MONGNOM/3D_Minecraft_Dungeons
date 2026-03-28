@@ -10,7 +10,7 @@ private:
 	virtual ~CModelConverter() = default;
 
 public:
-	HRESULT Ready_DynamicBinary(_uint numMeshs, const aiMesh* pAIMesh, const string& name);
+	HRESULT Ready_DynamicBinary(_uint numMeshs, const aiScene* m_pAIScene, const string& name, class CModel* pModel, vector<class CBone*>& bones);
 	HRESULT Ready_StaticBinary(_uint numMeshs, const aiScene* m_pAIScene, const string& name, _fmatrix PreTransformMatrix);
 
 

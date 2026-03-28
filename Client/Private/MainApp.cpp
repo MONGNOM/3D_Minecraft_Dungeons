@@ -82,6 +82,35 @@ HRESULT CMainApp::Render()
 
 HRESULT CMainApp::Ready_Fonts()
 {
+	_ulong			dwByte = { };
+	HANDLE			hFile = CreateFile(TEXT("../Bin/DataFiles/Navigation.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (0 == hFile)
+		return E_FAIL;
+
+	_float3			vPoints[3] = {};
+
+	vPoints[0] = _float3(0.f, 0.f, 10.f);
+	vPoints[1] = _float3(10.f, 0.f, 0.f);
+	vPoints[2] = _float3(0.f, 0.f, 0.f);
+	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+
+	vPoints[0] = _float3(0.f, 0.f, 10.f);
+	vPoints[1] = _float3(10.f, 0.f, 10.f);
+	vPoints[2] = _float3(10.f, 0.f, 0.f);
+	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+
+	vPoints[0] = _float3(0.f, 0.f, 20.f);
+	vPoints[1] = _float3(10.f, 0.f, 10.f);
+	vPoints[2] = _float3(0.f, 0.f, 10.f);
+	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+
+	vPoints[0] = _float3(10.f, 0.f, 10.f);
+	vPoints[1] = _float3(20.f, 0.f, 0.f);
+	vPoints[2] = _float3(10.f, 0.f, 0.f);
+	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+
+	CloseHandle(hFile);
+
 	/*MakeSpriteFont "³Ø½¼lv1°íµñ Bold" /FontSize:16 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 158ex.spritefont */
 
 	if (FAILED(m_pGameInstance->Add_Font(TEXT("Font_Default"), TEXT("../Bin/Resources/Fonts/158ex.SpriteFont"))))

@@ -286,6 +286,11 @@ HRESULT CGameInstance::Ready_StaticBinary(_uint numMeshs, const aiScene* m_pAISc
 	return m_pModelConverter->Ready_StaticBinary(numMeshs, m_pAIScene, name, PreTransformMatrix);
 }
 
+HRESULT CGameInstance::Ready_DynamicBinary(_uint numMeshs, const aiScene* m_pAIScene, const string& name, CModel* pModel, vector<class CBone*>& bones)
+{
+	return m_pModelConverter->Ready_DynamicBinary(numMeshs, m_pAIScene, name, pModel, bones);
+}
+
 
 void CGameInstance::Release_Engine()
 {

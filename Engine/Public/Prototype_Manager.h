@@ -6,6 +6,7 @@
 #include "VIBuffer_Rect.h"
 #include "VIBuffer_Cube.h"
 #include "VIBuffer_Terrain.h"
+#include "Navigation.h"
 
 
 /* 생성한 원형객체를 보관한다. */

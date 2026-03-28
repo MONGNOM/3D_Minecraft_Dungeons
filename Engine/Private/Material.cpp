@@ -121,7 +121,7 @@ CMaterial* CMaterial::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     return pInstance;
 }
 
-CMaterial* CMaterial::CreateBinary(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const aiMaterial* pAIMaterial, const _char* pstrFilePath)
+CMaterial* CMaterial::CreateBinary(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _char* pstrFilePath)
 {
     CMaterial* pInstance = new CMaterial(pDevice, pContext);
 

@@ -40,7 +40,12 @@ HRESULT CSkeleton::Initialize(void* pArg)
 	if (FAILED(Ready_PartObjects()))
 		return E_FAIL;
 
+	if (Desc != nullptr)
+		m_fPos = Desc->pos;
+
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y, Desc->pos.z, 1.f));
+
+
 
 	return S_OK;
 }

@@ -18,6 +18,19 @@ HRESULT CBone::Initialize(const aiNode* pAINode, _int iParentBoneIndex)
 	return S_OK;
 }
 
+HRESULT CBone::Binary_Initialize(const string& name, _int iParentBoneIndex, const _float4x4& localmatrix)
+{
+	strcpy_s(m_szName, name.c_str());
+
+	m_iParentBoneIndex = iParentBoneIndex;
+
+	m_TransformationMatrix = localmatrix;
+
+	XMStoreFloat4x4(&m_CombinedTransformationMatrix, XMMatrixIdentity());
+
+	return S_OK;
+}
+
 void CBone::Update_CombinedTransformationMatrix(const vector<CBone*>& Bones, _fmatrix PreTransformMatrix)
 {
 	if (-1 == m_iParentBoneIndex)
@@ -43,6 +56,18 @@ CBone* CBone::Create(const aiNode* pAINode, _int iParentBoneIndex)
 	if (FAILED(pInstance->Initialize(pAINode, iParentBoneIndex)))
 	{
 		MSG_BOX("Failed to Created : CBone");
+		Safe_Release(pInstance);
+	}
+	return pInstance;
+}
+
+CBone* CBone::Create(const string& name, _int iParentBoneIndex, const _float4x4& localmatrix)
+{
+	CBone* pInstance = new CBone();
+
+	if (FAILED(pInstance->Binary_Initialize(name, iParentBoneIndex, localmatrix)))
+	{
+		MSG_BOX("Failed to Created : CBone_Binary");
 		Safe_Release(pInstance);
 	}
 	return pInstance;

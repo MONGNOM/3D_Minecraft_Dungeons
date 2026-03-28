@@ -34,7 +34,7 @@ HRESULT CWeapon::Initialize(void* pArg)
 
 	/*m_pTransformCom->SetUp_Scale(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), 90.f);
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.8f, 0.f, 0.f, 1.f));*/
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.8f, 0.f, 0.f, 1.f));
 
 	/*m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(
 		m_pGameInstance->Random(0.f, 10.f),
@@ -53,14 +53,14 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 
 void CWeapon::Update(_float fTimeDelta)
 {
-	/*_matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
+	_matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
 
 	for (size_t i = 0; i < 3; i++)
 		SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
 
 
 
-	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix);*/
+	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix);
 }
 
 void CWeapon::Late_Update(_float fTimeDelta)

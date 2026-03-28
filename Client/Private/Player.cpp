@@ -37,7 +37,12 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(Ready_PartObjects()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y, Desc->pos.z, 1.f));
+	if (Desc != nullptr)
+		m_fPos = Desc->pos;
+
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
+
+	//?? 플레이어 위치값으로 파트오브젝트들이 안가지..? 반영이 안되는데 
 
 	return S_OK;
 }
