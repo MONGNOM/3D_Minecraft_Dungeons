@@ -4,8 +4,8 @@
 #include "ContainerObject.h"
 
 NS_BEGIN(Engine)
-class CShader;
-class CModel;
+class CCollider;
+class CNavigation;
 NS_END
 
 NS_BEGIN(Client)
@@ -34,9 +34,14 @@ public:
 protected:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
+	_bool attacking = { false };
 
 private:
 	_uint			m_iState = {};
+
+	CCollider* m_pColliderCom = { nullptr };
+	CNavigation* m_pNavigationCom = { nullptr };
+
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

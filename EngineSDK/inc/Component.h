@@ -20,7 +20,7 @@ protected:
 	ID3D11DeviceContext* m_pContext = { nullptr };
 	class CGameInstance* m_pGameInstance = { nullptr }; 
 
-	_bool					m_isClone = { false };
+	_bool				m_isCloned = { false };
 
 public:
 	virtual CComponent* Clone(void* pArg) = 0;

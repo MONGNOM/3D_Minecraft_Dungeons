@@ -23,7 +23,7 @@ CNavigation::CNavigation(const CNavigation& Prototype)
 #endif
 }
 
-HRESULT CNavigation::Initialize_Prototype(const _tchar* pNavigationDataFile)
+HRESULT CNavigation::Initialize_Prototype(const _tchar* pNavigationDataFile, const _tchar* pNeighbors)
 {
 	_ulong			dwByte = { };
 	HANDLE			hFile = CreateFile(pNavigationDataFile, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
@@ -45,9 +45,23 @@ HRESULT CNavigation::Initialize_Prototype(const _tchar* pNavigationDataFile)
 		m_Cells.push_back(pCell);
 	}
 
+
+	SetUp_Neighbors(pNeighbors);
+
 	CloseHandle(hFile);
 
-	SetUp_Neighbors();
+
+	 /*hFile = CreateFile(TEXT("../Bin/DataFiles/Neighbors.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (0 == hFile)
+		return E_FAIL;
+
+	for (size_t i = 0; i < m_Cells.size(); i++)
+	{
+		WriteFile(hFile, m_Cells[i]->Get_NeighborIndices(), sizeof(_int) * 3, &dwByte, nullptr);
+	}
+
+	CloseHandle(hFile);*/
+
 
 #ifdef _DEBUG
 	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Cell.hlsl"), VTXPOS::Elements, VTXPOS::iNumElements);
@@ -90,6 +104,26 @@ void CNavigation::SetUp_Neighbors()
 	}
 }
 
+void CNavigation::SetUp_Neighbors(const _tchar* pNeighbors)
+{
+	_ulong dwByte = {};
+	HANDLE  hfile = CreateFile(pNeighbors, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (hfile == 0)
+		return;
+
+	for (auto& pCell : m_Cells)
+	{
+		_int iNeigbors[3] = {};
+
+		ReadFile(hfile, iNeigbors, sizeof(_int) * 3, &dwByte, nullptr);
+
+		pCell->Set_Neighbors(iNeigbors);
+
+	}
+
+	CloseHandle(hfile);
+}
+
 _bool CNavigation::isMove(_vector vPoint)
 {
 	if (-1 == m_iCurrentCellIndex)
@@ -121,6 +155,15 @@ _bool CNavigation::isMove(_vector vPoint)
 
 }
 
+void CNavigation::Compute_Height(CTransform* pTransform)
+{
+	if (-1 == m_iCurrentCellIndex)
+		return;
+
+	m_Cells[m_iCurrentCellIndex]->Compute_Height(pTransform);
+
+}
+
 #ifdef _DEBUG
 
 HRESULT CNavigation::Render()
@@ -128,29 +171,52 @@ HRESULT CNavigation::Render()
 	_float4x4		WorldMatrix = {};
 	XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
 
-	m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix);
 	m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform(D3DTS::VIEW));
 	m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform(D3DTS::PROJ));
 
+	_float4 vColor = {};
+	
+	if (-1 == m_iCurrentCellIndex)
+		vColor = _float4(0.f, 1.f, 0.f, 1.f);
+	else
+		vColor = _float4(1.f, 0.f, 0.f, 1.f);
 
-	m_pShader->Begin(0);
+	if (FAILED(m_pShader->Bind_RawValue("g_vColor", &vColor, sizeof vColor)))
+		return E_FAIL;
 
-	for (auto& pCell : m_Cells)
+	if (-1 == m_iCurrentCellIndex)
 	{
-		if (FAILED(pCell->Render()))
-			return E_FAIL;
+		m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix);
+		m_pShader->Begin(0);
+		
+		for (auto& pCell : m_Cells)
+		{
+			if (FAILED(pCell->Render()))
+				return E_FAIL;
+		}
+	
 	}
+	else
+	{
+		WorldMatrix.m[3][1] = 0.1f;
+		m_pShader->Bind_Matrix("g_WorldMatrix", &WorldMatrix);
+		m_pShader->Begin(0);
+
+		m_Cells[m_iCurrentCellIndex]->Render();
+	}
+
+	
 
 	return S_OK;
 }
 
 #endif
 
-CNavigation* CNavigation::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pNavigationDataFile)
+CNavigation* CNavigation::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pNavigationDataFile, const _tchar* pNeighbors)
 {
 	CNavigation* pInstance = new CNavigation(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(pNavigationDataFile)))
+	if (FAILED(pInstance->Initialize_Prototype(pNavigationDataFile, pNeighbors)))
 	{
 		MSG_BOX("Failed to Created : CNavigation");
 		Safe_Release(pInstance);

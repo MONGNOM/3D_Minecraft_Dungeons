@@ -42,7 +42,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
 
-	//?? 플레이어 위치값으로 파트오브젝트들이 안가지..? 반영이 안되는데 
 
 	return S_OK;
 }
@@ -71,35 +70,59 @@ void CPlayer::Update(_float fTimeDelta)
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
 	}
 
+
+	if (m_pGameInstance->Get_DIKeyDown(DIK_F))
+	{
+		if (m_iState & PLAYERSTATE::IDLE)
+			m_iState ^= PLAYERSTATE::IDLE;
+
+		if (m_iState & PLAYERSTATE::WALK)
+			m_iState ^= PLAYERSTATE::WALK;
+
+		m_iState |= PLAYERSTATE::ATTACK;
+	}
+
 	if (GetKeyState(VK_UP) & 0x8000)
 	{
-		m_pTransformCom->Go_Straight(fTimeDelta);
+		m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);
 
 		if (m_iState & PLAYERSTATE::IDLE)
 			m_iState ^= PLAYERSTATE::IDLE;
 
 		m_iState |= PLAYERSTATE::WALK;
 	}
+	
 	else
 	{
 		if (m_iState & PLAYERSTATE::WALK)
 			m_iState ^= PLAYERSTATE::WALK;
 
+		if (m_iState & PLAYERSTATE::ATTACK)
+			m_iState ^= PLAYERSTATE::ATTACK;
+
 		m_iState |= PLAYERSTATE::IDLE;
 	}
 
-
+	m_pNavigationCom->Compute_Height(m_pTransformCom);
+	
+	m_pColliderCom->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	
 	__super::Update(fTimeDelta);
 }
 
 void CPlayer::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
+
+	m_pGameInstance->Add_RenderGroup(RENDERGROUP::NONBLEND, this);
 }
 
 HRESULT CPlayer::Render()
 {
-
+#ifdef _DEBUG
+	m_pColliderCom->Render();
+	m_pNavigationCom->Render();
+#endif // _DEBUG
 
 
 	return S_OK;
@@ -107,8 +130,22 @@ HRESULT CPlayer::Render()
 
 HRESULT CPlayer::Ready_Components()
 {
+	CBounding_AABB::BOUNDING_AABB_DESC AABBDesc;
+
+	AABBDesc.vExtents = _float3(0.5f, 1.f, 0.5f);
+	AABBDesc.vCenter = _float3(0.f, AABBDesc.vExtents.y, 0.f);
 
 
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_AABB"),
+		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
+		return E_FAIL;
+
+	CNavigation::NAVIGATION_DESC		NavigationDesc{};
+	NavigationDesc.iCurrentCellIndex = 1;
+
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Navigation"),
+		TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom), &NavigationDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -169,4 +206,6 @@ void CPlayer::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pNavigationCom);
 }

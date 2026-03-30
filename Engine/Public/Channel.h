@@ -16,7 +16,7 @@ private:
 public:
 	HRESULT Initialize(const aiNodeAnim* pAIChannel, class CModel* pModel);
 	HRESULT Binary_Initialize(ifstream& fin);
-	void Update_TransformationMatrix(_uint* pCurrentKeyFrameIndex, _float fCurrentTrackPosition, const vector<class CBone*>& Bones);
+	void Update_TransformationMatrix(_uint* pCurrentKeyFrameIndex, _float fCurrentTrackPosition, const vector<class CBone*>& Bones, _float ratio);
 
 	vector<KEYFRAME>& Get_KeyFrame() { return m_KeyFrames; }
 	_uint Get_BoneIndex() { return m_iBoneIndex; }

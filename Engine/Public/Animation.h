@@ -14,13 +14,19 @@ private:
 public:
 	HRESULT Initialize(const aiAnimation* pAIAnimation, class CModel* pModel);
 	HRESULT Binary_Initialize(const string& strFilePath);
-	_bool Update_TransformationMatrices(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop);
+	_bool Update_TransformationMatrices(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _float ratio);
 	_char		animationName[MAX_PATH];
 
 	_float Get_Duration() { return m_fDuration; }
 	_float Get_TickPerSecond() { return m_fTickPerSecond; }
 	vector<class CChannel*>& Get_CChannel() { return m_Channels; }
 	_uint  Get_iNumChannels() { return m_iNumChannels; }
+
+	_float Get_CurrentTrackPostion() { return m_fCurrentTrackPosition; }
+
+	vector<_uint>& Get_CurrentKeyFrameIndices() { return m_CurrentKeyFrameIndices; }
+
+	void Reset_TrackPosition(_uint value) { m_fCurrentTrackPosition = value; }
 
 private:
 	_float		m_fDuration = {};		// ?? 애니메이션을 늦추는게 뭐야 

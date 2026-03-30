@@ -45,6 +45,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 	m_pModelCom->Ready_Animations("Player_Master_Idle.Anim");
 	m_pModelCom->Ready_Animations("Player_Master_Run.Anim");
+	m_pModelCom->Ready_Animations("Player_Master_SwordCombo.001.Anim");
 
 	m_pModelCom->Set_Animation(0, true);
 
@@ -63,6 +64,9 @@ void CBody_Player::Update(_float fTimeDelta)
 
 	if (*m_pParentState & CPlayer::PLAYERSTATE::WALK)
 		m_pModelCom->Set_Animation(1, true);
+	
+	if (*m_pParentState & CPlayer::PLAYERSTATE::ATTACK)
+		m_pModelCom->Set_Animation(2, true);
 
 	if (true == m_pModelCom->Play_Animation(fTimeDelta))
 		int a = 10;

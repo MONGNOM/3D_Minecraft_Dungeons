@@ -1,5 +1,9 @@
 #include "Cell.h"
 
+
+#include "Transform.h"
+
+
 #ifdef _DEBUG
 #include "VIBuffer_Cell.h"
 #endif
@@ -28,6 +32,12 @@ HRESULT CCell::Initialize(const _float3* pPoints, _int iIndex)
 
 	vLines[ETOI(LINE::CA)] = XMVector3Normalize(XMLoadFloat3(&m_vPoints[ETOI(POINT::A)]) - XMLoadFloat3(&m_vPoints[ETOI(POINT::C)]));
 	m_vNormals[ETOI(LINE::CA)] = _float3(XMVectorGetZ(vLines[ETOI(LINE::CA)]) * -1.f, 0.f, XMVectorGetX(vLines[ETOI(LINE::CA)]));
+
+	XMStoreFloat4(&m_vPlane, XMPlaneFromPoints(
+		XMLoadFloat3(&m_vPoints[ETOI(POINT::A)]),
+		XMLoadFloat3(&m_vPoints[ETOI(POINT::B)]),
+		XMLoadFloat3(&m_vPoints[ETOI(POINT::C)])));
+
 
 #ifdef _DEBUG
 	m_pVIBuffer = CVIBuffer_Cell::Create(m_pDevice, m_pContext, pPoints);
@@ -85,6 +95,18 @@ _bool CCell::Compare_Points(_fvector vSour, _fvector vDest)
 	}
 
 	return false;
+}
+
+void CCell::Compute_Height(CTransform* pTransform)
+{
+	_vector			vPosition = pTransform->Get_State(STATE::POSITION);
+
+	_float			fHeight = (-m_vPlane.x * XMVectorGetX(vPosition) - m_vPlane.z * XMVectorGetZ(vPosition) - m_vPlane.w) / m_vPlane.y;
+
+	vPosition = XMVectorSetY(vPosition, fHeight);
+
+	pTransform->Set_State(STATE::POSITION, vPosition);
+
 }
 
 
