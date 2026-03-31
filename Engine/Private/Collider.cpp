@@ -56,8 +56,10 @@ HRESULT CCollider::Initialize(void* pArg)
         m_pBounding = CBounding_AABB::Create(m_pDevice, m_pContext, pDesc);
         break;
     case COLLIDER::OBB:
+        m_pBounding = CBounding_OBB::Create(m_pDevice, m_pContext, pDesc);
         break;
     case COLLIDER::SPHERE:
+        m_pBounding = CBounding_Sphere::Create(m_pDevice, m_pContext, pDesc);
         break;
     }
 
@@ -83,7 +85,7 @@ HRESULT CCollider::Render()
 
     m_pBatch->Begin();
 
-    m_pBounding->Render(m_pBatch);
+    m_pBounding->Render(m_pBatch, false == m_isColl ? XMVectorSet(0.f, 1.f, 0.f, 1.f) : XMVectorSet(1.f, 0.f, 0.f, 1.f));
 
     m_pBatch->End();
 

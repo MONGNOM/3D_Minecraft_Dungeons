@@ -318,6 +318,12 @@
     <ClInclude Include="..\public\Bounding_AABB.h">
       <Filter>01.Utility\04.Component\Collider\Bounding\AABB</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Bounding_OBB.h">
+      <Filter>01.Utility\04.Component\Collider\Bounding\OBB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Bounding_Sphere.h">
+      <Filter>01.Utility\04.Component\Collider\Bounding\Sphere</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -454,6 +460,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Bounding_AABB.cpp">
       <Filter>01.Utility\04.Component\Collider\Bounding\AABB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bounding_OBB.cpp">
+      <Filter>01.Utility\04.Component\Collider\Bounding\OBB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bounding_Sphere.cpp">
+      <Filter>01.Utility\04.Component\Collider\Bounding\Sphere</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

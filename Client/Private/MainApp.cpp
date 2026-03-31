@@ -154,6 +154,19 @@ HRESULT CMainApp::Ready_Prototype_For_Static_Level()
 		return E_FAIL;
 	}
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_Sphere"),
+		CCollider::Create(m_pDevice, m_pContext, COLLIDER::SPHERE))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_Component_Collider_SPHERE");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_OBB"),
+		CCollider::Create(m_pDevice, m_pContext, COLLIDER::OBB))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_Component_Collider_OBB");
+		return E_FAIL;
+	}
 	return S_OK;
 }
 

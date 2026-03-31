@@ -10,6 +10,7 @@ public:
 	typedef struct tagNavigationDesc
 	{
 		_int			iCurrentCellIndex;
+		class CTransform* pTransform;
 	}NAVIGATION_DESC;
 private:
 	CNavigation(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

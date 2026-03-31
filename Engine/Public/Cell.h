@@ -20,6 +20,7 @@ public:
 		return m_iNeighborIndices;
 	}
 	
+	_vector Get_Center();
 
 	void Set_Neighbor(LINE eLine, CCell* pNeighbor)
 	{

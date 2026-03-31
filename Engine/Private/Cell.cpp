@@ -16,6 +16,16 @@ CCell::CCell(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	Safe_AddRef(m_pContext);
 }
 
+_vector CCell::Get_Center()
+{
+	_vector vCenter = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+	for (size_t i = 0; i < ETOI(POINT::END); i++)
+	{
+		vCenter += XMLoadFloat3(&m_vPoints[i]);
+	}
+	return XMVectorSetW(vCenter / 3, 1.f);
+}
+
 HRESULT CCell::Initialize(const _float3* pPoints, _int iIndex)
 {
 	m_iIndex = iIndex;
@@ -37,6 +47,8 @@ HRESULT CCell::Initialize(const _float3* pPoints, _int iIndex)
 		XMLoadFloat3(&m_vPoints[ETOI(POINT::A)]),
 		XMLoadFloat3(&m_vPoints[ETOI(POINT::B)]),
 		XMLoadFloat3(&m_vPoints[ETOI(POINT::C)])));
+
+
 
 
 #ifdef _DEBUG

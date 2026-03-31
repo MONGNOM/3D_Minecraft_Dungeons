@@ -22,7 +22,7 @@ HRESULT CWeapon::Initialize(void* pArg)
 {
 	auto	pDesc = static_cast<WEAPON_DESC*>(pArg);
 
-	m_pParentState = pDesc->pParentState;
+	//m_pParentState = pDesc->pParentState;
 	m_pSocketMatrix = pDesc->pSocketMatrix;
 
 
@@ -61,6 +61,9 @@ void CWeapon::Update(_float fTimeDelta)
 
 
 	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix);
+
+	m_pColliderCom->Update(XMLoadFloat4x4(&m_CombinedWorldMatrix));
+
 }
 
 void CWeapon::Late_Update(_float fTimeDelta)
@@ -87,6 +90,7 @@ HRESULT CWeapon::Render()
 		m_pModelCom->Render(i);
 	}
 
+	m_pColliderCom->Render();
 
 	return S_OK;
 }
@@ -101,6 +105,17 @@ HRESULT CWeapon::Ready_Components()
 	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Sword"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
+
+
+	CBounding_OBB::BOUNDING_OBB_DESC Desc{};
+	Desc.vCenter = _float3(0.f, Desc.vExtents.y, 0.f);
+	Desc.vExtents = _float3(1.f,1.f,1.f);
+		Desc.vRadians = _float3(0.f, XMConvertToRadians(45.f), 0.f);
+
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_OBB"),
+		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &Desc)))
+		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -169,6 +184,7 @@ void CWeapon::Free()
 {
 	__super::Free();
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pModelCom);
 
 }

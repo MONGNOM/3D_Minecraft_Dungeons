@@ -3,6 +3,9 @@
 #include "Component.h"
 
 #include "Bounding_AABB.h"
+#include "Bounding_OBB.h"
+#include "Bounding_Sphere.h"
+
 
 NS_BEGIN(Engine)
 
@@ -16,6 +19,8 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype(COLLIDER eType);
 	virtual HRESULT Initialize(void* pArg) override;
+	_bool	m_isColl = { false };
+
 public:
 	void Update(_fmatrix WorldMatrix);
 

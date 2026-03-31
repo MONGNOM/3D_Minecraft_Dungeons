@@ -45,6 +45,7 @@ public:
 	//	//m_Animations[m_iCurrentAnimIndex]->Reset_TrackPosition();
 	//}
 
+
 	_int Get_BoneIndex(const _char* pBoneName);
 
 	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName);

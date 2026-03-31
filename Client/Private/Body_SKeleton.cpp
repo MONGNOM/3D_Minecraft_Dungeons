@@ -38,6 +38,7 @@ HRESULT CBody_Skeleton::Initialize(void* pArg)
 
 	
 	m_pModelCom->Ready_Animations("Skeleton_BowAction.Anim");
+	m_pModelCom->Ready_Animations("Skeleton_Idle.Anim");
 
 	m_pModelCom->Set_Animation(0, true);
 	
@@ -63,7 +64,7 @@ void CBody_Skeleton::Update(_float fTimeDelta)
 		int a = 10;
 
 	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
-
+	m_pColliderCom->Update(XMLoadFloat4x4(&m_CombinedWorldMatrix));
 }
 
 void CBody_Skeleton::Late_Update(_float fTimeDelta)
@@ -91,6 +92,7 @@ HRESULT CBody_Skeleton::Render()
 	}
 
 
+	m_pColliderCom->Render();
 	return S_OK;
 }
 
@@ -103,6 +105,14 @@ HRESULT CBody_Skeleton::Ready_Components()
 
 	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Skeleton"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+		return E_FAIL;
+
+	CBounding_Sphere::BOUNDING_SPHERE_DESC Desc{};
+	Desc.vCenter = _float3(0.f, Desc.fRadius, 0.f);
+	Desc.fRadius = 10.0f;
+
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &Desc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -120,8 +130,6 @@ HRESULT CBody_Skeleton::Bind_ShaderResources()
 
 	if (FAILED(m_pGameInstance->Bind_TransformMatrix(D3DTS::PROJ, m_pShaderCom, "g_ProjMatrix")))
 		return E_FAIL;
-
-
 
 	if (FAILED(m_pGameInstance->Bind_CamPosition(m_pShaderCom, "g_vCamPosition")))
 		return E_FAIL;
@@ -172,6 +180,8 @@ void CBody_Skeleton::Free()
 {
 	__super::Free();
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pModelCom);
 
+	
 }

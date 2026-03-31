@@ -19,9 +19,11 @@ protected:
 public:
 	virtual HRESULT Initialize(CBounding::BOUNDING_DESC* pDesc);
 	virtual void Update(_fmatrix WorldMatrix) = 0;
+	virtual _bool Intersect(CBounding* pTarget) = 0;
+
 #ifdef _DEBUG
 public:
-	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch) = 0;
+	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) = 0;
 #endif
 
 protected:

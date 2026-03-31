@@ -10,14 +10,20 @@ NS_END
 
 NS_BEGIN(Client)
 
+
+enum PLAYERSTATE {
+	IDLE = 0,
+	WALK,
+	ATTACK,
+	HEAL,
+	FAILING,
+	BOW,
+	DEATH,
+	END
+};
+
 class CPlayer final : public CContainerObject
 {
-public:
-	enum PLAYERSTATE {
-		IDLE = 0x00000001,
-		WALK = 0x00000002,
-		ATTACK = 0x00000004,
-	};
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CPlayer(const CPlayer& Prototype);
@@ -37,11 +43,9 @@ protected:
 	_bool attacking = { false };
 
 private:
-	_uint			m_iState = {};
-
 	CCollider* m_pColliderCom = { nullptr };
 	CNavigation* m_pNavigationCom = { nullptr };
-
+	PLAYERSTATE state = {};
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

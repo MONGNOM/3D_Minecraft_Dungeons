@@ -2,6 +2,7 @@
 #include "Cell.h"
 
 #include "GameInstance.h"
+#include "Transform.h"
 
 CNavigation::CNavigation(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent{ pDevice, pContext }
@@ -79,6 +80,8 @@ HRESULT CNavigation::Initialize(void* pArg)
 	auto		pDesc = static_cast<NAVIGATION_DESC*>(pArg);
 
 	m_iCurrentCellIndex = pDesc->iCurrentCellIndex;
+
+	pDesc->pTransform->Set_State(STATE::POSITION, m_Cells[m_iCurrentCellIndex]->Get_Center());
 
 	return S_OK;
 }

@@ -2,9 +2,12 @@
 
 #include "Client_Defines.h"
 #include "PartObject.h"
+#include "Player.h"
+
 NS_BEGIN(Engine)
 class CShader;
 class CModel;
+class CCollider;
 NS_END
 
 NS_BEGIN(Client)
@@ -14,7 +17,8 @@ class CBody_Player final : public CPartObject
 public:
 	typedef struct tagBodyPlayerDesc final : public CPartObject::PARTOBJECT_DESC
 	{
-		const _uint* pParentState = { nullptr };
+		 const PLAYERSTATE* pParentState = { nullptr };
+		//const _uint* pParentState = { nullptr };
 	}BODY_PLAYER_DESC;
 private:
 	CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -35,9 +39,11 @@ public:
 private:
 	CShader* m_pShaderCom = { nullptr };
 	CModel* m_pModelCom = { nullptr };
+	CCollider* m_pColliderCom = { nullptr };
 
 private:
-	const _uint* m_pParentState = { nullptr };
+	//const _uint* m_pParentState = { nullptr };
+	const PLAYERSTATE* m_pParentPlayerState = { nullptr };
 
 
 

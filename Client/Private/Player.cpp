@@ -38,10 +38,11 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 
 	if (Desc != nullptr)
+	{
 		m_fPos = Desc->pos;
-
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
-
+		
+		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
+	}
 
 	return S_OK;
 }
@@ -69,38 +70,32 @@ void CPlayer::Update(_float fTimeDelta)
 
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
 	}
-
-
-	if (m_pGameInstance->Get_DIKeyDown(DIK_F))
+	if (m_pGameInstance->Get_DIMouseDown(DIMB::RBUTTON)) // 활 쏘기
 	{
-		if (m_iState & PLAYERSTATE::IDLE)
-			m_iState ^= PLAYERSTATE::IDLE;
-
-		if (m_iState & PLAYERSTATE::WALK)
-			m_iState ^= PLAYERSTATE::WALK;
-
-		m_iState |= PLAYERSTATE::ATTACK;
+		state = PLAYERSTATE::BOW;
 	}
-
-	if (GetKeyState(VK_UP) & 0x8000)
+	else if (m_pGameInstance->Get_DIMouseDown(DIMB::LBUTTON)) // 칼 공격
+	{
+		state = PLAYERSTATE::ATTACK;
+	}
+	else if (GetKeyState(VK_UP) & 0x8000)
 	{
 		m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);
 
-		if (m_iState & PLAYERSTATE::IDLE)
-			m_iState ^= PLAYERSTATE::IDLE;
-
-		m_iState |= PLAYERSTATE::WALK;
+		state = PLAYERSTATE::WALK;
 	}
-	
+	else if (m_pGameInstance->Get_DIKeyDown(DIK_SPACE)) // 구르는 애니메이션
+	{
+		state = PLAYERSTATE::FAILING;
+	}
+	else if (m_pGameInstance->Get_DIKeyDown(DIK_R)) // 포션 마시는 애니메이션
+	{
+		state = PLAYERSTATE::HEAL;
+	}
 	else
 	{
-		if (m_iState & PLAYERSTATE::WALK)
-			m_iState ^= PLAYERSTATE::WALK;
-
-		if (m_iState & PLAYERSTATE::ATTACK)
-			m_iState ^= PLAYERSTATE::ATTACK;
-
-		m_iState |= PLAYERSTATE::IDLE;
+	//	끝나면 해줘야하늗네 애니메이션이 진행이 끝나면 이거 켜ㅑ줘야하는데 이거 근데 바디에서 해주잖아 애니메이션 판단이;
+	// 	state = PLAYERSTATE::IDLE;
 	}
 
 	m_pNavigationCom->Compute_Height(m_pTransformCom);
@@ -142,6 +137,7 @@ HRESULT CPlayer::Ready_Components()
 
 	CNavigation::NAVIGATION_DESC		NavigationDesc{};
 	NavigationDesc.iCurrentCellIndex = 1;
+	NavigationDesc.pTransform = m_pTransformCom;
 
 	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Navigation"),
 		TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom), &NavigationDesc)))
@@ -153,7 +149,7 @@ HRESULT CPlayer::Ready_Components()
 HRESULT CPlayer::Ready_PartObjects()
 {
 	CBody_Player::BODY_PLAYER_DESC		BodyDesc{};
-	BodyDesc.pParentState = &m_iState;
+	BodyDesc.pParentState = &state;
 	BodyDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();
 
 	if (FAILED(__super::Add_PartObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_Player"),
@@ -165,7 +161,6 @@ HRESULT CPlayer::Ready_PartObjects()
 		return E_FAIL;
 
 	CWeapon::WEAPON_DESC				WeaponDesc{};
-	WeaponDesc.pParentState = &m_iState;
 	WeaponDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();
 	WeaponDesc.pSocketMatrix = pBody->Get_SocketBoneMatrixPtr("J_R_Weapon_Socket");
 

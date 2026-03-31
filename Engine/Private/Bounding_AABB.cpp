@@ -28,12 +28,19 @@ void CBounding_AABB::Update(_fmatrix WorldMatrix)
 	m_pOriginalDesc->Transform(*m_pDesc, TransformMatrix);
 }
 
+_bool CBounding_AABB::Intersect(CBounding* pTarget)
+{
+	return _bool();
+}
+
+
+
 
 #ifdef _DEBUG
 
-HRESULT CBounding_AABB::Render(PrimitiveBatch<VertexPositionColor>* pBatch)
+HRESULT CBounding_AABB::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
 {
-	DX::Draw(pBatch, *m_pDesc);
+	DX::Draw(pBatch, *m_pDesc, vColor);
 
 	return S_OK;
 }
@@ -61,3 +68,4 @@ void CBounding_AABB::Free()
 	Safe_Delete(m_pDesc);
 
 }
+

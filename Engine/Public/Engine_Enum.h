@@ -7,7 +7,7 @@ namespace Engine
 
 	enum class PROTOTYPE { GAMEOBJECT, COMPONENT };
 
-	enum class RENDERGROUP { PRIORITY, NONBLEND, BLEND, UI, END };
+	enum class RENDERGROUP { PRIORITY, NONBLEND, BLEND, UI, CURSOR, END };
 	
 	enum class STATE { RIGHT, UP, LOOK, POSITION, END };
 	

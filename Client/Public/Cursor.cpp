@@ -60,7 +60,7 @@ void CCursor::Update(_float fTimeDelta)
 
 void CCursor::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDERGROUP::UI, this);
+	m_pGameInstance->Add_RenderGroup(RENDERGROUP::CURSOR, this);
 }
 
 HRESULT CCursor::Render()
@@ -74,7 +74,7 @@ HRESULT CCursor::Render()
 	if (FAILED(__super::Bind_ShaderResource(m_pShaderCom, "g_ProjMatrix", D3DTS::PROJ)))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, "g_Texture", 0)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, "g_Texture", m_iNumTexture)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Begin(0)))

@@ -47,6 +47,7 @@ CModel::CModel(const CModel& Prototype)
     
 }
 
+
 _int CModel::Get_BoneIndex(const _char* pBoneName)
 {
     _int    iBoneIndex = { -1 };
