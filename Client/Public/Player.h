@@ -46,6 +46,7 @@ private:
 	CCollider* m_pColliderCom = { nullptr };
 	CNavigation* m_pNavigationCom = { nullptr };
 	PLAYERSTATE state = {};
+	class CBody_Player* pBody; 
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

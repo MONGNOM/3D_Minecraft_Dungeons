@@ -26,7 +26,15 @@ public:
 
 	vector<_uint>& Get_CurrentKeyFrameIndices() { return m_CurrentKeyFrameIndices; }
 
-	void Reset_TrackPosition(_uint value) { m_fCurrentTrackPosition = value; }
+	void Reset_TrackPosition() 
+	{
+		m_fCurrentTrackPosition = 0;
+
+		for (size_t i = 0; i < m_iNumChannels; ++i)
+		{
+			m_CurrentKeyFrameIndices[i] = 0;
+		}
+	}
 
 private:
 	_float		m_fDuration = {};		// ?? 애니메이션을 늦추는게 뭐야 

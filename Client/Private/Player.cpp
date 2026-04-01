@@ -23,7 +23,7 @@ HRESULT CPlayer::Initialize_Prototype()
 HRESULT CPlayer::Initialize(void* pArg)
 {
 	CContainerObject::CONTAINEROBJECT_DESC* Desc = static_cast<CONTAINEROBJECT_DESC*>(pArg);
-
+	
 	Desc->fSpeedPerSec = 10.f;
 	Desc->fDegreePerSec = 180.f;
 
@@ -44,6 +44,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
 	}
 
+	
 	return S_OK;
 }
 
@@ -55,48 +56,45 @@ void CPlayer::Priority_Update(_float fTimeDelta)
 void CPlayer::Update(_float fTimeDelta)
 {
 
-	if (GetKeyState(VK_DOWN) & 0x8000)
-	{
-		m_pTransformCom->Go_Backward(fTimeDelta);
-	}
+	bool bIsActionState = (state == PLAYERSTATE::HEAL || state == PLAYERSTATE::FAILING || state == PLAYERSTATE::BOW || state == PLAYERSTATE::ATTACK);
 
-	if (GetKeyState(VK_LEFT) & 0x8000)
+	if (bIsActionState)
 	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
-	}
-
-	if (GetKeyState(VK_RIGHT) & 0x8000)
-	{
-
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
-	}
-	if (m_pGameInstance->Get_DIMouseDown(DIMB::RBUTTON)) // 활 쏘기
-	{
-		state = PLAYERSTATE::BOW;
-	}
-	else if (m_pGameInstance->Get_DIMouseDown(DIMB::LBUTTON)) // 칼 공격
-	{
-		state = PLAYERSTATE::ATTACK;
-	}
-	else if (GetKeyState(VK_UP) & 0x8000)
-	{
-		m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);
-
-		state = PLAYERSTATE::WALK;
-	}
-	else if (m_pGameInstance->Get_DIKeyDown(DIK_SPACE)) // 구르는 애니메이션
-	{
-		state = PLAYERSTATE::FAILING;
-	}
-	else if (m_pGameInstance->Get_DIKeyDown(DIK_R)) // 포션 마시는 애니메이션
-	{
-		state = PLAYERSTATE::HEAL;
+		// 조작 불가 상태
+		if (pBody->IsAnimationFinished())
+			state = PLAYERSTATE::IDLE;
 	}
 	else
 	{
-	//	끝나면 해줘야하늗네 애니메이션이 진행이 끝나면 이거 켜ㅑ줘야하는데 이거 근데 바디에서 해주잖아 애니메이션 판단이;
-	// 	state = PLAYERSTATE::IDLE;
+		// 조작상태
+		if (m_pGameInstance->Get_DIMouseDown(DIMB::RBUTTON)) // 활 쏘기
+		{
+			state = PLAYERSTATE::BOW;
+		}
+		else if (m_pGameInstance->Get_DIMouseDown(DIMB::LBUTTON)) // 칼 공격
+		{
+			state = PLAYERSTATE::ATTACK;
+		}
+		
+		else if (m_pGameInstance->Get_DIKeyDown(DIK_SPACE)) // 구르기
+		{
+			state = PLAYERSTATE::FAILING;
+		}
+		else if (m_pGameInstance->Get_DIKeyDown(DIK_R)) // 힐
+		{
+			state = PLAYERSTATE::HEAL;
+		}
+		else if (GetKeyState(VK_UP) & 0x8000)
+		{
+			m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);
+			state = PLAYERSTATE::WALK;
+		}
+		else
+		{
+			state = PLAYERSTATE::IDLE;
+		}
 	}
+
 
 	m_pNavigationCom->Compute_Height(m_pTransformCom);
 	
@@ -155,10 +153,11 @@ HRESULT CPlayer::Ready_PartObjects()
 	if (FAILED(__super::Add_PartObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_Player"),
 		TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
-
-	CBody_Player* pBody = dynamic_cast<CBody_Player*>(m_PartObjects[TEXT("Part_Body")]);
+	pBody = dynamic_cast<CBody_Player*>(m_PartObjects[TEXT("Part_Body")]);
 	if (nullptr == pBody)
 		return E_FAIL;
+
+	
 
 	CWeapon::WEAPON_DESC				WeaponDesc{};
 	WeaponDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();

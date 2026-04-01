@@ -64,46 +64,45 @@ void CBody_Player::Priority_Update(_float fTimeDelta)
 
 void CBody_Player::Update(_float fTimeDelta)
 {
-	switch (*m_pParentPlayerState)
+	// 이렇게 하면 안될 것 같은데 아무리 봐도 
+
+	if (m_PrevPlayerState != *m_pParentPlayerState)
 	{
-	case PLAYERSTATE::IDLE:
-		m_pModelCom->Set_Animation(0, true);
-		if (true == m_pModelCom->Play_Animation(fTimeDelta))
-			PLAYERSTATE::IDLE;
-		break;
+		m_PrevPlayerState = *m_pParentPlayerState;
+		
+		m_bIsAnimFinished = false;
 
-	case PLAYERSTATE::WALK:
-		m_pModelCom->Set_Animation(1, true);
-		if (true == m_pModelCom->Play_Animation(fTimeDelta))
+		switch (*m_pParentPlayerState)
+		{
+		case PLAYERSTATE::IDLE:
 			m_pModelCom->Set_Animation(0, true);
-		break;
+			break;
 
-	case PLAYERSTATE::HEAL:
-		m_pModelCom->Set_Animation(2, false);
-		if (true == m_pModelCom->Play_Animation(fTimeDelta))
-			m_pModelCom->Set_Animation(0, true);
+		case PLAYERSTATE::WALK:
+			m_pModelCom->Set_Animation(1, true);
+			break;
 
-		break;
+		case PLAYERSTATE::HEAL:
+			m_pModelCom->Set_Animation(2, false);
+			break;
 
-	case PLAYERSTATE::FAILING:
-		m_pModelCom->Set_Animation(3, true);
-		if (true == m_pModelCom->Play_Animation(fTimeDelta))
-			PLAYERSTATE::IDLE;
-		break;
+		case PLAYERSTATE::FAILING:
+			m_pModelCom->Set_Animation(3, false);
+			break;
 
-	case PLAYERSTATE::BOW:
-		m_pModelCom->Set_Animation(4, true);
-		if (true == m_pModelCom->Play_Animation(fTimeDelta))
-			PLAYERSTATE::IDLE;
-		break;
+		case PLAYERSTATE::BOW:
+			m_pModelCom->Set_Animation(4, false);
+			break;
 
-	case PLAYERSTATE::ATTACK:
-		m_pModelCom->Set_Animation(5, true);
-		if (true == m_pModelCom->Play_Animation(fTimeDelta))
-			PLAYERSTATE::IDLE;
-		break;
+		case PLAYERSTATE::ATTACK:
+			m_pModelCom->Set_Animation(5, false);
+			break;
+		}
 	}
-	
+
+	if (true == m_pModelCom->Play_Animation(fTimeDelta))
+		m_bIsAnimFinished = true;
+
 
 	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 

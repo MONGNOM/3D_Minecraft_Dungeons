@@ -26,6 +26,8 @@ public:
 	_float m_fBlendDuration = 0.2f;  // √— ºØ¿ª Ω√∞£ (0.2√ )
 
 	void Set_Animation(_uint iIndex, _bool isLoop);
+
+	void Reset_Animation();
 	//{
 	//	m_iPrevAnimIndex = m_iCurrentAnimIndex;
 	//	m_iCurrentAnimIndex = iIndex;

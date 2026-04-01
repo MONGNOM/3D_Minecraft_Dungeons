@@ -120,19 +120,19 @@ void CChannel::Update_TransformationMatrix(_uint* pCurrentKeyFrameIndex, _float 
 	}
 	
 
-	if (ratio < 1.0f)
-	{
-		// 1. 뼈대가 아까 찍어둔 과거 사진(Old)을 꺼내옵니다.
-		_vector vOldScale = Bones[m_iBoneIndex]->Get_BlendScale();
-		_vector vOldRot = Bones[m_iBoneIndex]->Get_BlendRotation();
-		_vector vOldTrans = Bones[m_iBoneIndex]->Get_BlendTranslation();
+	//if (ratio < 1.0f)
+	//{
+	//	// 1. 뼈대가 아까 찍어둔 과거 사진(Old)을 꺼내옵니다.
+	//	_vector vOldScale = Bones[m_iBoneIndex]->Get_BlendScale();
+	//	_vector vOldRot = Bones[m_iBoneIndex]->Get_BlendRotation();
+	//	_vector vOldTrans = Bones[m_iBoneIndex]->Get_BlendTranslation();
 
-		// 2. 과거 사진(Old)과 방금 계산된 현재(vScale 등)를 섞어버립니다!
-		vScale = XMVectorLerp(vOldScale, vScale, ratio);
-		vRotation = XMQuaternionSlerp(vOldRot, vRotation, ratio);
-		vTranslation = XMVectorLerp(vOldTrans, vTranslation, ratio);
-	}
-	// ==========================================================
+	//	// 2. 과거 사진(Old)과 방금 계산된 현재(vScale 등)를 섞어버립니다!
+	//	vScale = XMVectorLerp(vOldScale, vScale, ratio);
+	//	vRotation = XMQuaternionSlerp(vOldRot, vRotation, ratio);
+	//	vTranslation = XMVectorLerp(vOldTrans, vTranslation, ratio);
+	//}
+	//// ==========================================================
 
 
 	// 다음 번 사진 찍기를 대비해서, "지금 적용된 최종 상태"를 뼈대에 계속 갱신해 줍니다.

@@ -35,6 +35,7 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	_bool IsAnimationFinished() const { return m_bIsAnimFinished; }
 
 private:
 	CShader* m_pShaderCom = { nullptr };
@@ -44,6 +45,8 @@ private:
 private:
 	//const _uint* m_pParentState = { nullptr };
 	const PLAYERSTATE* m_pParentPlayerState = { nullptr };
+	PLAYERSTATE  m_PrevPlayerState = { PLAYERSTATE::END };
+	_bool m_bIsAnimFinished = { false };
 
 
 
