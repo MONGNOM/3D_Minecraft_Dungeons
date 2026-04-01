@@ -17,6 +17,7 @@ private:
 	string selectedPrototypeName = "";
 	_wstring cloneName = {};
 	_bool isClone = false;
+	_int iSelectedProtoIndex = 0;
 public:
 	static CImGui_Panel_Hierarchy* Create();
 	virtual void Free() override;

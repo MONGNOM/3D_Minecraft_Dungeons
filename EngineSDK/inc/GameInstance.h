@@ -81,7 +81,7 @@ public: /* For.Light_Manager */
 
 public: /* For.Picking_Manager */
 	_bool Picking_Pos(HWND hWnd, class CVIBuffer_Terrain* pTerrainBufferCom, class CTransform* pTerrainTransformCom, _uint numZ, _uint numX, _float3* pos);
-	class CGameObject* Picking_Object(HWND hWnd);
+	_bool Picking_Object(HWND hWnd, RayHit& hit);
 
 public: /* For.Font_Manager */
 	HRESULT Add_Font(const _wstring& strFontTag, const _tchar* pFontFilePath);

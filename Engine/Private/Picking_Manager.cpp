@@ -139,7 +139,7 @@ _bool CPicking_Manager::Picking_Pos(HWND hWnd, CVIBuffer_Terrain* pTerrainBuffer
 
 
 
-CGameObject* CPicking_Manager::Picking_Object(HWND hWnd) // 게임 씬에서 쓸 피킹
+_bool CPicking_Manager::Picking_Object(HWND hWnd, RayHit& hit) // 게임 씬에서 쓸 피킹
 {
 
 	::POINT	ptMouse{};
@@ -182,9 +182,78 @@ CGameObject* CPicking_Manager::Picking_Object(HWND hWnd) // 게임 씬에서 쓸 피킹
 	_vector rayDir = vMousePos - rayPos;
 	rayPos = XMVector3TransformCoord(rayPos, matView);
 	rayDir = XMVector3TransformNormal(rayDir, matView);
-	
 
-	return nullptr; //CGameObject;
+	rayDir = XMVector3Normalize(rayDir);
+
+	_float MaxfDistance = 10.f;
+
+	CGameObject* pPickedObject = nullptr; 
+	_float3 hitNormal{};
+	CTransform* pTransfrom = nullptr;
+	for (auto& iter : m_pGameInstance->Get_GameObjects(3))
+	{	
+		if (iter->Get_ObjectType() == CGameObject::OBJECTTYPE::ENVIRONMENT)
+		{
+			_float fDistance = 0.f;
+
+			 pTransfrom = dynamic_cast<CTransform*>(iter->Get_Component(TEXT("Com_Transform")));
+
+			_vector ObjectPos = pTransfrom->Get_State(STATE::POSITION);
+
+			_vector dir = ObjectPos - rayPos; // 방향백터
+
+			_float fDot = XMVectorGetX(XMVector3Dot(dir, rayDir));
+
+			_vector closepoint = rayPos + rayDir * fDot;
+
+			_float fDistFromRay = XMVectorGetX(XMVector3Length(ObjectPos - closepoint));
+
+			_vector vDiff = closepoint - ObjectPos;
+
+			// 계산을 위해 _vector를 XMFLOAT3로 빼냅니다.
+			_float3 diff;
+			XMStoreFloat3(&diff, vDiff);
+
+			// 4. X, Y, Z 중 '절댓값'이 가장 큰 축(Dominant Axis)을 찾습니다!
+			float absX = std::abs(diff.x);
+			float absY = std::abs(diff.y);
+			float absZ = std::abs(diff.z);
+
+			if (absX >= absY && absX >= absZ)
+			{
+				// X가 제일 크다! -> 왼쪽 아니면 오른쪽 면
+				hitNormal.x = (diff.x > 0.f) ? 1.f : -1.f;
+			}
+			else if (absY >= absX && absY >= absZ)
+			{
+				// Y가 제일 크다! -> 윗면 아니면 아랫면
+				hitNormal.y = (diff.y > 0.f) ? 1.f : -1.f;
+			}
+			else
+			{
+				// Z가 제일 크다! -> 앞면 아니면 뒷면
+				hitNormal.z = (diff.z > 0.f) ? 1.f : -1.f;
+			}
+
+			if (fDistFromRay <= 0.5f)
+			{
+				pPickedObject = iter;
+
+			}
+
+			
+		}
+	}
+
+	if (pPickedObject == nullptr)
+		return false;
+
+	hit.gameObject = pPickedObject;
+	XMStoreFloat3(&hit.vPosition,pTransfrom->Get_State(STATE::POSITION));
+	hit.Normal = hitNormal;
+
+	return true;
+
 }
 
 

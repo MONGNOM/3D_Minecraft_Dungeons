@@ -14,7 +14,7 @@ private:
 
 public:
 	_bool Picking_Pos(HWND hWnd, class CVIBuffer_Terrain* pTerrainBufferCom, class CTransform* pTerrainTransformCom, _uint numZ, _uint numX, _float3* pos);
-	class CGameObject* Picking_Object(HWND hWnd);
+	_bool Picking_Object(HWND hWnd, RayHit& hit);
 
 private:
 	ID3D11Device* m_pDevice = { nullptr };

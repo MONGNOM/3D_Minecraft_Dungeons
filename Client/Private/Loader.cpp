@@ -13,6 +13,7 @@
 #include "Body_Player.h"
 #include "Weapon.h"
 #include "Sky.h"
+#include "DefalutBlock.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice { pDevice }
@@ -200,6 +201,14 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCube.hlsl"), VTXCUBE::Elements, VTXCUBE::iNumElements))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Shader_VtxCube");
+		return E_FAIL;
+	}
+
+	/* Prototype_Component_Shader_VtxDefaultCube */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxDefaultCube"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxDefaultCube.hlsl"), VTXCUBE::Elements, VTXCUBE::iNumElements))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Shader_VtxDefaultCube");
 		return E_FAIL;
 	}
 
@@ -409,7 +418,12 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	}
 
 
-
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_DefaultBlock"),
+		CDefalutBlock::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_DefaultBlock");
+		return E_FAIL;
+	}
 	
 
 

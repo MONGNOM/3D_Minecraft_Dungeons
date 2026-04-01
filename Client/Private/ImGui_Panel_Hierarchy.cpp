@@ -7,6 +7,7 @@
 #include "ImGuizmo.h"
 
 
+
 std::string WStringToString(const std::wstring& wstr)
 {
     if (wstr.empty()) return std::string();
@@ -214,27 +215,68 @@ void CImGui_Panel_Hierarchy::Render()
     
         if (selectedPrototypeName != "" && isClone)
         {
+			RAYHIT hit;
+            if (CGameInstance::GetInstance()->Picking_Object(g_hWnd, hit))
+            {
+                // 오브젝트의 법선백터 구해서 어디에 설치 할지 고려
+                
+                wcout << "Picked Object : " << hit.gameObject->Get_ObjectName() << endl;
+
+                CTransform* pObjTransform = dynamic_cast<CTransform*>(hit.gameObject->Get_Component(TEXT("Com_Transform")));
+				_vector objectPos = pObjTransform->Get_State(STATE::POSITION);
+                _float3 pos;
+				XMStoreFloat3(&pos, objectPos);
                 CGameObject::GAMEOBJECT_DESC desc;
-                desc.name = cloneName;
-                desc.pos = CImGui_Manager::GetInstance()->Get_PickingPos();
+                desc.name = cloneName + std::to_wstring(iSelectedProtoIndex);
+                desc.pos = hit.vPosition; // 법선백터 방향에 따라 크기 만큼 더해줘서 위치 설치
+                
+				_float3 Normal = hit.Normal;
+                _float3 a = { 1.f, 1.f, 1.f };
+
+                if (Normal.x == a.x || Normal.x == (a.x * -1))
+                {
+                    desc.pos = _float3(hit.vPosition.x + 1.f , hit.vPosition.y, hit.vPosition.z);
+                }
+                else if (Normal.y == a.y || Normal.y == (a.y * -1))
+                {
+                    desc.pos = _float3(hit.vPosition.x , hit.vPosition.y + 1.f, hit.vPosition.z);
+                }
+                else
+                {
+                    desc.pos = _float3(hit.vPosition.x , hit.vPosition.y, hit.vPosition.z + 1.f); // 이거 법선은 잘구했는데 설치 위치가 별로 마음에 안드는것 같음 설치 위치에 큐브 크기를 더하는걸 내일 더 추가해라
+                }
+
                 if (FAILED(CGameInstance::GetInstance()->Add_GameObject(ETOI(LEVEL::GAMEPLAY), cloneName,
-                    ETOI(LEVEL::GAMEPLAY), TEXT("Layer_Clone"), &desc)))                                                                                                            
+                    ETOI(LEVEL::GAMEPLAY), TEXT("Layer_Clone"), &desc)))
                 {
                     MSG_BOX("Editor: Failed to Clone");
                 };
                 isClone = false;
                 CImGui_Manager::GetInstance()->Set_isClone(isClone);
-                // ==========================================================
-                //  [여기에 코드를 작성해주세요!] 
-                // 1. 프로토타입 매니저에서 selectedPrototypeName 으로 원본 찾기
-                // 2. 원본->Clone() 호출하여 새 오브젝트 생성
-                // 3. 생성된 새 오브젝트를 현재 Scene(하이어라키) 리스트에 추가
-                // ==========================================================
-            
-
+            }
+            else
+            {
+                CGameObject::GAMEOBJECT_DESC desc;
+                desc.name = cloneName + std::to_wstring(iSelectedProtoIndex);
+                desc.pos = CImGui_Manager::GetInstance()->Get_PickingPos();
+                if (FAILED(CGameInstance::GetInstance()->Add_GameObject(ETOI(LEVEL::GAMEPLAY), cloneName,
+                    ETOI(LEVEL::GAMEPLAY), TEXT("Layer_Clone"), &desc)))
+                {
+                    MSG_BOX("Editor: Failed to Clone");
+                };
+                isClone = false;
+                CImGui_Manager::GetInstance()->Set_isClone(isClone);
+            }
+            iSelectedProtoIndex++;
+             
+            // ==========================================================
+             //  [여기에 코드를 작성해주세요!] 
+             // 1. 프로토타입 매니저에서 selectedPrototypeName 으로 원본 찾기
+             // 2. 원본->Clone() 호출하여 새 오브젝트 생성
+             // 3. 생성된 새 오브젝트를 현재 Scene(하이어라키) 리스트에 추가
+             // ==========================================================
         }
 
-    
 
     ImGui::End();
 

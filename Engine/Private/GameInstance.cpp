@@ -266,10 +266,12 @@ _bool CGameInstance::Picking_Pos(HWND hWnd, CVIBuffer_Terrain* pTerrainBufferCom
 	return m_pPicking_Manager->Picking_Pos(hWnd, pTerrainBufferCom, pTerrainTransformCom, numZ, numX, pos);
 }
 
-CGameObject* CGameInstance::Picking_Object(HWND hWnd) 
+_bool CGameInstance::Picking_Object(HWND hWnd, RayHit& hit)
 {
-	return m_pPicking_Manager->Picking_Object(hWnd);
+	return m_pPicking_Manager->Picking_Object(hWnd, hit);
 }
+
+
 
 HRESULT CGameInstance::Add_Font(const _wstring& strFontTag, const _tchar* pFontFilePath)
 {

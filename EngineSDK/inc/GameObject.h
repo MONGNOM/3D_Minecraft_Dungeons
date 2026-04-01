@@ -6,7 +6,7 @@ NS_BEGIN(Engine)
 
 class ENGINE_DLL CGameObject abstract : public CBase
 {
-protected:
+public:
 	enum OBJECTTYPE { MONSTER, INTERACT, ENVIRONMENT, END};
 
 public:

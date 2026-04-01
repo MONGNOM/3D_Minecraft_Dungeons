@@ -135,6 +135,15 @@ namespace Engine
 	}VTXANIMMESH;
 
 
+	typedef struct RayHit
+	{
+		CGameObject* gameObject = nullptr;
+		XMFLOAT3 vPosition;
+		XMFLOAT3 Normal;
+
+	}RAYHIT;
+
+
 }
 
 
