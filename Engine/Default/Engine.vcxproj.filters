@@ -163,6 +163,9 @@
     <Filter Include="01.Utility\04.Component\Collider\DebugDraw">
       <UniqueIdentifier>{028a4aac-65f6-4484-af23-5104c0d1477e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\11.DataManager">
+      <UniqueIdentifier>{310554a9-597e-44dc-93e8-d281c17941c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Base.h">
@@ -324,6 +327,9 @@
     <ClInclude Include="..\public\Bounding_Sphere.h">
       <Filter>01.Utility\04.Component\Collider\Bounding\Sphere</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DataManager.h">
+      <Filter>01.Utility\11.DataManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -466,6 +472,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Bounding_Sphere.cpp">
       <Filter>01.Utility\04.Component\Collider\Bounding\Sphere</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DataManager.cpp">
+      <Filter>01.Utility\11.DataManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

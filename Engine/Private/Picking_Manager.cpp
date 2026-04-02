@@ -188,6 +188,7 @@ _bool CPicking_Manager::Picking_Object(HWND hWnd, RayHit& hit) // 게임 씬에서 쓸
 	_float MaxfDistance = 10.f;
 
 	CGameObject* pPickedObject = nullptr; 
+	_float MinfDistance = 1000.f; // [수정 1] 최단 거리 비교용 변수 부활
 	_float3 hitNormal{};
 	CTransform* pTransfrom = nullptr;
 	for (auto& iter : m_pGameInstance->Get_GameObjects(3))
@@ -204,52 +205,57 @@ _bool CPicking_Manager::Picking_Object(HWND hWnd, RayHit& hit) // 게임 씬에서 쓸
 
 			_float fDot = XMVectorGetX(XMVector3Dot(dir, rayDir));
 
+			if (fDot < 0.f || fDot > MinfDistance)
+				continue;
+
 			_vector closepoint = rayPos + rayDir * fDot;
 
 			_float fDistFromRay = XMVectorGetX(XMVector3Length(ObjectPos - closepoint));
 
-			_vector vDiff = closepoint - ObjectPos;
-
-			// 계산을 위해 _vector를 XMFLOAT3로 빼냅니다.
-			_float3 diff;
-			XMStoreFloat3(&diff, vDiff);
-
-			// 4. X, Y, Z 중 '절댓값'이 가장 큰 축(Dominant Axis)을 찾습니다!
-			float absX = std::abs(diff.x);
-			float absY = std::abs(diff.y);
-			float absZ = std::abs(diff.z);
-
-			if (absX >= absY && absX >= absZ)
-			{
-				// X가 제일 크다! -> 왼쪽 아니면 오른쪽 면
-				hitNormal.x = (diff.x > 0.f) ? 1.f : -1.f;
-			}
-			else if (absY >= absX && absY >= absZ)
-			{
-				// Y가 제일 크다! -> 윗면 아니면 아랫면
-				hitNormal.y = (diff.y > 0.f) ? 1.f : -1.f;
-			}
-			else
-			{
-				// Z가 제일 크다! -> 앞면 아니면 뒷면
-				hitNormal.z = (diff.z > 0.f) ? 1.f : -1.f;
-			}
-
 			if (fDistFromRay <= 0.5f)
 			{
+				MinfDistance = fDot;
 				pPickedObject = iter;
 
 			}
-
-			
 		}
 	}
-
 	if (pPickedObject == nullptr)
 		return false;
 
+	// 1등 오브젝트의 Transform을 다시 가져옵니다.
+	CTransform* pPickedTransform = dynamic_cast<CTransform*>(pPickedObject->Get_Component(TEXT("Com_Transform")));
+	_vector PickedPos = pPickedTransform->Get_State(STATE::POSITION);
+
+	// 1등 오브젝트 기준으로 투영점을 한 번만 다시 구합니다.
+	_vector dir = PickedPos - rayPos;
+	_float fDot = XMVectorGetX(XMVector3Dot(dir, rayDir));
+	_vector closepoint = rayPos + rayDir * fDot;
+
+	_vector vDiff = closepoint - PickedPos;
+	_float3 diff;
+	XMStoreFloat3(&diff, vDiff);
+
+	float absX = std::abs(diff.x);
+	float absY = std::abs(diff.y);
+	float absZ = std::abs(diff.z);
+
+	// 우세 축(Dominant Axis) 판별 로직은 완벽합니다!
+	if (absX >= absY && absX >= absZ) {
+		hitNormal.x = (diff.x > 0.f) ? 1.f : -1.f; hitNormal.y = 0.f; hitNormal.z = 0.f;
+	}
+	else if (absY >= absX && absY >= absZ) {
+		hitNormal.x = 0.f; hitNormal.y = (diff.y > 0.f) ? 1.f : -1.f; hitNormal.z = 0.f;
+	}
+	else {
+		hitNormal.x = 0.f; hitNormal.y = 0.f; hitNormal.z = (diff.z > 0.f) ? 1.f : -1.f;
+	}
+
+	// ==============================================================
+	// [ 3단계: 구조체에 최종 포장해서 반환 ]
+	// ==============================================================
 	hit.gameObject = pPickedObject;
-	XMStoreFloat3(&hit.vPosition,pTransfrom->Get_State(STATE::POSITION));
+	XMStoreFloat3(&hit.vPosition, PickedPos);
 	hit.Normal = hitNormal;
 
 	return true;

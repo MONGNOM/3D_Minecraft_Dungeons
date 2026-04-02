@@ -6,6 +6,7 @@
 #include <d3dcompiler.h>
 #include <DirectXCollision.h>
 
+
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <iostream>
@@ -26,7 +27,9 @@
 #include "Assimp/scene.h"
 #include "Assimp/Importer.hpp"
 #include "Assimp/postprocess.h"
+#include "json.hpp"
 
+using json = nlohmann::json;
 
 using namespace DirectX;
 

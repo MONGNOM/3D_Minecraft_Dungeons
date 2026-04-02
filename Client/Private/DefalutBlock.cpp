@@ -32,7 +32,7 @@ HRESULT CDefalutBlock::Initialize(void* pArg)
 	if (Desc != nullptr)
 	{
 		m_fPos = Desc->pos;
-		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y + 1, Desc->pos.z, 1.f));
+		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y + 0.5f,  Desc->pos.z, 1.f));
 	}
 	// 설치 될 때 큐브의 크기 만큼 위로 올려줘야할텐데
 

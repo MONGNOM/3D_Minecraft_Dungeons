@@ -233,17 +233,30 @@ void CImGui_Panel_Hierarchy::Render()
 				_float3 Normal = hit.Normal;
                 _float3 a = { 1.f, 1.f, 1.f };
 
-                if (Normal.x == a.x || Normal.x == (a.x * -1))
+                wcout << "Normal : " << Normal.x << ", " << Normal.y << ", " << Normal.z << endl;
+
+                if (Normal.y == a.y || Normal.y == (a.y * -1))
                 {
-                    desc.pos = _float3(hit.vPosition.x + 1.f , hit.vPosition.y, hit.vPosition.z);
+                    if (Normal.y == a.y)
+                        desc.pos = _float3(hit.vPosition.x , hit.vPosition.y + 0.5f, hit.vPosition.z);
+                    else
+                        desc.pos = _float3(hit.vPosition.x, hit.vPosition.y + 0.5f * -1, hit.vPosition.z);
+
                 }
-                else if (Normal.y == a.y || Normal.y == (a.y * -1))
+                else if (Normal.x == a.x || Normal.x == (a.x * -1))
                 {
-                    desc.pos = _float3(hit.vPosition.x , hit.vPosition.y + 1.f, hit.vPosition.z);
+                    if (Normal.x == a.x)
+                        desc.pos = _float3(hit.vPosition.x + 1.f, hit.vPosition.y - 0.5f, hit.vPosition.z);
+                    else 
+                        desc.pos = _float3(hit.vPosition.x + 1.f * -1, hit.vPosition.y - 0.5f, hit.vPosition.z);
                 }
                 else
                 {
-                    desc.pos = _float3(hit.vPosition.x , hit.vPosition.y, hit.vPosition.z + 1.f); // 이거 법선은 잘구했는데 설치 위치가 별로 마음에 안드는것 같음 설치 위치에 큐브 크기를 더하는걸 내일 더 추가해라
+                    if (Normal.z == a.z)
+                        desc.pos = _float3(hit.vPosition.x, hit.vPosition.y - 0.5f, hit.vPosition.z + 1.f); 
+                    else
+                        desc.pos = _float3(hit.vPosition.x, hit.vPosition.y - 0.5f, hit.vPosition.z + 1.f * -1);
+
                 }
 
                 if (FAILED(CGameInstance::GetInstance()->Add_GameObject(ETOI(LEVEL::GAMEPLAY), cloneName,

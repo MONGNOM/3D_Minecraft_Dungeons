@@ -12,6 +12,7 @@
 #include "Picking_Manager.h"
 #include "Font_Manager.h"
 #include "ModelConverter.h"
+#include "DataManager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -69,6 +70,10 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 
 	m_pModelConverter = CModelConverter::Create();
 	if (nullptr == m_pModelConverter)
+		return E_FAIL;
+
+	m_pDataManager = CDataManager::Create();
+	if (nullptr == m_pDataManager)
 		return E_FAIL;
 
 	
@@ -293,10 +298,22 @@ HRESULT CGameInstance::Ready_DynamicBinary(_uint numMeshs, const aiScene* m_pAIS
 	return m_pModelConverter->Ready_DynamicBinary(numMeshs, m_pAIScene, name, pModel, bones);
 }
 
+HRESULT CGameInstance::Save_Date()
+{
+	return m_pDataManager->Save_Date();
+}
+
+HRESULT CGameInstance::Load_Date(const _tchar* filePath)
+{
+	return m_pDataManager->Load_Date(filePath);
+}
+
+
 
 void CGameInstance::Release_Engine()
 {
 	Safe_Release(m_pModelConverter);
+	Safe_Release(m_pDataManager);
 	Safe_Release(m_pFont_Manager);
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pInput_Device);
