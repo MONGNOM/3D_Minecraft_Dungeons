@@ -143,6 +143,18 @@ namespace Engine
 
 	}RAYHIT;
 
+	typedef struct tagObjectInfo
+	{
+		//CGameObject::OBJECTTYPE eType;
+		_float3 Scale;
+		_float3 Rotation;
+		_float3 Translation;
+		string Name;
+		string PrototypeName;
+		_int type;
+
+	}OBJECTINFO;
+
 
 }
 

@@ -57,6 +57,9 @@ HRESULT CTerrain::Render()
 	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
 
+	m_eObjectType = OBJECTTYPE::ENVIRONMENT;
+
+
 #ifdef _DEBUG
 	//m_pNavigationCom->Render();
 #endif

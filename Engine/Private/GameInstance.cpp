@@ -298,14 +298,14 @@ HRESULT CGameInstance::Ready_DynamicBinary(_uint numMeshs, const aiScene* m_pAIS
 	return m_pModelConverter->Ready_DynamicBinary(numMeshs, m_pAIScene, name, pModel, bones);
 }
 
-HRESULT CGameInstance::Save_Date()
+HRESULT CGameInstance::Save_Date(const vector<tagObjectInfo>& objectinfo)
 {
-	return m_pDataManager->Save_Date();
+	return m_pDataManager->Save_Date(objectinfo);
 }
 
-HRESULT CGameInstance::Load_Date(const _tchar* filePath)
+HRESULT CGameInstance::Load_Date(const _tchar* filePath, vector<tagObjectInfo>& objectinfo)
 {
-	return m_pDataManager->Load_Date(filePath);
+	return m_pDataManager->Load_Date(filePath, objectinfo);
 }
 
 

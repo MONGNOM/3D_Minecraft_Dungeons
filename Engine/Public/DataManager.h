@@ -12,8 +12,8 @@ private:
 	virtual ~CDataManager() = default;
 
 public:
-	HRESULT Save_Date();
-	HRESULT Load_Date(const _tchar* filePath);
+	HRESULT Save_Date(const vector<tagObjectInfo>& objectinfo);
+	HRESULT Load_Date(const _tchar* filePath, vector<tagObjectInfo>& objectinfo);
 	
 
 public:

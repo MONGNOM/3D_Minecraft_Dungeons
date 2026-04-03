@@ -53,9 +53,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	m_pGameInstance->Save_Date();
-
-	m_pGameInstance->Load_Date(TEXT("../Bin/DataFiles/Test_Save.json"));
+	
 
 	return S_OK;
 }

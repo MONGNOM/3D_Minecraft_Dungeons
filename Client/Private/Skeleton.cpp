@@ -20,15 +20,19 @@ HRESULT CSkeleton::Initialize_Prototype()
 	return S_OK;
 }
 
+
+
 HRESULT CSkeleton::Initialize(void* pArg)
 {
+
+	
 
 	CContainerObject::CONTAINEROBJECT_DESC* Desc = static_cast<CONTAINEROBJECT_DESC*>(pArg);
 
 	if (Desc != nullptr)
 	{
-		m_fPos = Desc->pos;
-		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y, Desc->pos.z, 1.f));
+		//m_fPos = Desc->pos;
+		//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y, Desc->pos.z, 1.f));
 		Desc->fSpeedPerSec = 10.f;
 		Desc->fDegreePerSec = 180.f;
 	}
@@ -44,7 +48,7 @@ HRESULT CSkeleton::Initialize(void* pArg)
 	if (FAILED(Ready_PartObjects()))
 		return E_FAIL;
 
-
+	m_eObjectType = OBJECTTYPE::MONSTER;
 
 	return S_OK;
 }

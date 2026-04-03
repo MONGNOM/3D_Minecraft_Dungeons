@@ -22,10 +22,27 @@ std::string WStringToString(const std::wstring& wstr)
     return strTo;
 }
 
+std::wstring StringToWString(const std::string& str)
+{
+    if (str.empty()) return std::wstring();
+
+    // 1. 변환 후 글자 길이가 얼마나 될지 미리 계산 (이번엔 MultiByteToWideChar 사용)
+    int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
+
+    // 2. 계산된 길이만큼 빈 wstring을 만듭니다.
+    std::wstring wstrTo(size_needed, 0);
+
+    // 3. 진짜로 변환해서 집어넣습니다.
+    MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
+
+    return wstrTo;
+}
+
 CImGui_Panel_Hierarchy::CImGui_Panel_Hierarchy()
     : CImGui_Panel("HIERARCHY")
 {
 }
+	
 
 CImGui_Panel_Hierarchy::~CImGui_Panel_Hierarchy()
 {
@@ -51,8 +68,6 @@ void CImGui_Panel_Hierarchy::Render()
     ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
     const auto& player = CGameInstance::GetInstance()->Get_Layer(ETOI(LEVEL::GAMEPLAY));
-    
-  
 
     for (auto& pair : player)
     {
@@ -64,7 +79,7 @@ void CImGui_Panel_Hierarchy::Render()
 
         if (ImGui::TreeNodeEx(utf8LayerTag.c_str(), baseFlags))
         {
-            const auto& objects = layer->Get_GameObjects();
+            //const auto& objects = layer->Get_GameObjects();
             for (CGameObject* pObj : objects)
             {
                 ImGui::PushID(pObj);
@@ -229,7 +244,7 @@ void CImGui_Panel_Hierarchy::Render()
                 CGameObject::GAMEOBJECT_DESC desc;
                 desc.name = cloneName + std::to_wstring(iSelectedProtoIndex);
                 desc.pos = hit.vPosition; // 법선백터 방향에 따라 크기 만큼 더해줘서 위치 설치
-                
+                desc.m_sPrototype = WStringToString(cloneName);
 				_float3 Normal = hit.Normal;
                 _float3 a = { 1.f, 1.f, 1.f };
 
@@ -272,6 +287,7 @@ void CImGui_Panel_Hierarchy::Render()
                 CGameObject::GAMEOBJECT_DESC desc;
                 desc.name = cloneName + std::to_wstring(iSelectedProtoIndex);
                 desc.pos = CImGui_Manager::GetInstance()->Get_PickingPos();
+                desc.m_sPrototype = WStringToString(cloneName);
                 if (FAILED(CGameInstance::GetInstance()->Add_GameObject(ETOI(LEVEL::GAMEPLAY), cloneName,
                     ETOI(LEVEL::GAMEPLAY), TEXT("Layer_Clone"), &desc)))
                 {
@@ -290,6 +306,88 @@ void CImGui_Panel_Hierarchy::Render()
              // ==========================================================
         }
 
+
+    ImGui::End();
+
+
+    ImGui::Begin("Map Editor Menu");
+
+    ImGui::Text("Map_Data");
+    ImGui::Separator(); // 예쁜 가로줄 긋기
+
+    // 1. 저장 버튼
+    // 버튼을 클릭하는 바로 그 순간(프레임)에만 true가 반환됩니다.
+    if (ImGui::Button("Save"))
+    {
+        vector<OBJECTINFO> objectInfoList;
+        const auto& player = CGameInstance::GetInstance()->Get_Layer(ETOI(LEVEL::GAMEPLAY));
+        for (auto& pair : player) // 해당 씬에 존재하는 레이어 만큼 반복
+        {
+            CLayer* layer = pair.second;
+            auto& objects = layer->Get_GameObjects();
+
+           
+            for (auto& object : objects)    // 각각 레이어안에 존재하는 오브젝트
+            {
+                if (object->Get_ObjectName() == TEXT("Camera") || object->Get_ObjectName() == TEXT("Terrain"))
+                    continue;
+
+                OBJECTINFO objectInfo{};
+                CTransform* pTransform = dynamic_cast<CTransform*>(object->Get_Component(TEXT("Com_Transform")));
+                objectInfo.Name = WStringToString(object->Get_ObjectName());
+                objectInfo.Scale = pTransform->Get_Scaled();
+                objectInfo.Rotation = pTransform->Get_Rotation();
+                XMStoreFloat3(&objectInfo.Translation,pTransform->Get_State(STATE::POSITION));
+                objectInfo.type  = object->Get_ObjectType();
+                objectInfo.PrototypeName = object->Get_PrototypeName();
+                objectInfoList.push_back(objectInfo);
+            }
+               
+        }
+
+        CGameInstance::GetInstance()->Save_Date(objectInfoList);
+        MSG_BOX("저장 완료!");
+
+    }
+    ImGui::SameLine(); // "다음 UI 요소는 줄바꿈 하지 말고 내 바로 옆에 붙어라!"
+    // 2. 불러오기 버튼
+    if (ImGui::Button("Load"))
+    {
+        vector<OBJECTINFO> objectInfoList;
+        CGameInstance::GetInstance()->Load_Date(TEXT("../Bin/DataFiles/Test_Save.json"), objectInfoList);
+
+        for (auto& object : objectInfoList)
+        {
+            CGameObject::GAMEOBJECT_DESC Desc{};
+            Desc.name = StringToWString(object.Name);
+            Desc.pos = object.Translation;
+
+            if (FAILED(CGameInstance::GetInstance()->Add_GameObject(ETOI(LEVEL::GAMEPLAY), StringToWString(object.PrototypeName),
+                ETOI(LEVEL::GAMEPLAY), TEXT("Load_Layer"), &Desc)))
+                return;
+        }
+
+
+        //const auto& player = CGameInstance::GetInstance()->Get_Layer(ETOI(LEVEL::GAMEPLAY));
+        //for (auto& pair : player) // 해당 씬에 존재하는 레이어 만큼 반복
+        //{
+        //    CLayer* layer = pair.second;
+        //    auto& objects = layer->Get_GameObjects();
+
+        //    for (auto& object : objects)    // 각각 레이어안에 존재하는 오브젝트
+        //    {
+        //        CTransform* pTransform = dynamic_cast<CTransform*>(object->Get_Component(TEXT("Com_Transform")));
+        //        pTransform->SetUp_Scale();
+        //        pTransform->Set_Rotation();
+        //        pTransform->Set_State(STATE::POSITION,);
+        //        object->Get_ObjectName
+        //    }
+
+        //}
+
+
+        MSG_BOX("불러오기 완료!");
+    }
 
     ImGui::End();
 

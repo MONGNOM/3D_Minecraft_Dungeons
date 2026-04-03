@@ -93,8 +93,8 @@ public: /* For.ModelConverter */
 	HRESULT Ready_DynamicBinary(_uint numMeshs, const aiScene* m_pAIScene, const string& name, class CModel* pModel, vector<class CBone*>& bones);
 
 public: /* For.CDataManaget */
-	HRESULT Save_Date();
-	HRESULT Load_Date(const _tchar* filePath);
+	HRESULT Save_Date(const vector<tagObjectInfo>& objectinfo);
+	HRESULT Load_Date(const _tchar* filePath, vector<tagObjectInfo>& objectinfo);
 
 private:
 	class CGraphic_Device* m_pGraphic_Device = { nullptr };

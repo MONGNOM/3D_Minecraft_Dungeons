@@ -15,6 +15,7 @@ public:
 		_uint		iFlag = {};
 		_wstring	name = {};
 		_float3     pos = {};
+		string		m_sPrototype = {};
 
 	}GAMEOBJECT_DESC;
 protected:
@@ -26,6 +27,7 @@ public:
 	class CComponent* Get_Component(const _wstring& strComponentTag);
 	OBJECTTYPE Get_ObjectType() { return m_eObjectType; }
 	_wstring Get_ObjectName() { return m_Name; }
+	string Get_PrototypeName() { return m_sPrototype; }
 	void Set_m_iNumTexture(_uint numTex) { m_iNumTexture = numTex; }
 
 
@@ -46,6 +48,8 @@ protected:
 	_wstring m_Name = {};
 	_float3 m_fPos = {};
 	_uint			m_iNumTexture { 0 };
+	string m_sPrototype{};
+
 protected:
 	map<const _wstring, class CComponent*>		m_Components;
 

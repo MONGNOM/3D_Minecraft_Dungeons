@@ -29,7 +29,9 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
+	
 
+	//m_pGameInstance->Load_Date(TEXT("../Bin/DataFiles/Test_Save.json"));
 	return S_OK;
 }
 
@@ -40,7 +42,7 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 		if (FAILED(m_pGameInstance->Change_Level(ETOI(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::DUNGEON))))
 			return;
 	}*/
-
+	
 	CImGui_Manager::GetInstance()->Update_Engine();
 
 }
@@ -86,6 +88,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 	CameraDesc.fFar = 500.f;
 	CameraDesc.fMouseSensor = 0.05f;
 	CameraDesc.name = TEXT("Camera");
+	CameraDesc.m_sPrototype = "Prototype_GameObject_FreeCamera";
 
 	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_FreeCamera"),
 		ETOI(LEVEL::GAMEPLAY), strLayerTag, &CameraDesc)))
@@ -110,6 +113,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 	CGameObject::GAMEOBJECT_DESC desc{};
 	desc.name = TEXT("Terrain");
 	desc.pos = _float3(0,0,0);
+	desc.m_sPrototype = "Prototype_GameObject_Terrain";
 	
 	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
 		ETOI(LEVEL::GAMEPLAY), strLayerTag, &desc)))
@@ -125,10 +129,15 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 {
+	CGameObject::GAMEOBJECT_DESC desc{};
+	desc.m_sPrototype = "Prototype_GameObject_Skeleton";
+	desc.name = TEXT("Skeleton");
+
 	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Skeleton"),
-		ETOI(LEVEL::GAMEPLAY), strLayerTag)))
+		ETOI(LEVEL::GAMEPLAY), strLayerTag, &desc)))
 		return E_FAIL;
 
+	
 	return S_OK;
 }
 
