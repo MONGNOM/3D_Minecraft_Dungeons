@@ -1,4 +1,6 @@
 #include "Bounding_Sphere.h"
+#include "Bounding_OBB.h"
+#include "Bounding_AABB.h"
 
 #include "DebugDraw.h"
 
@@ -25,7 +27,20 @@ void CBounding_Sphere::Update(_fmatrix WorldMatrix)
 
 _bool CBounding_Sphere::Intersect(CBounding* pTarget)
 {
-	return _bool();
+	_bool		isCollision = { false };
+
+	const _char* pName = typeid(*pTarget).name();
+
+	if (false == strcmp("class Engine::CBounding_AABB", pName))
+		isCollision = m_pDesc->Intersects(*dynamic_cast<CBounding_AABB*>(pTarget)->Get_Desc());
+
+	else if (false == strcmp("class Engine::CBounding_OBB", pName))
+		isCollision = m_pDesc->Intersects(*dynamic_cast<CBounding_OBB*>(pTarget)->Get_Desc());
+	else
+		isCollision = m_pDesc->Intersects(*dynamic_cast<CBounding_Sphere*>(pTarget)->Get_Desc());
+
+
+	return isCollision;
 }
 
 

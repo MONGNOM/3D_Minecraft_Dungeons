@@ -41,6 +41,11 @@ private:
 
 	CCollider* m_pColliderCom = { nullptr };
 	CNavigation* m_pNavigationCom = { nullptr };
+	_bool Intersect_ToPlayer();
+
+	_float m_iMaxHp{};
+	_float m_iCurrentHp{};
+
 
 public:
 	static CSkeleton* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

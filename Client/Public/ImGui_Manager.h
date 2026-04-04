@@ -44,8 +44,11 @@ private:
 	_bool m_bClone  = false;
 	int m_iNumX = 129;
 	int m_iNumZ = 129;
+	_bool m_bNaviEditMode = false;
 
 	 CGameObject* pSelectedObject = nullptr;
+
+	 vector<_float3> m_vPoint;
 
 private:
 	int m_SelectedTextureIndex = -1;

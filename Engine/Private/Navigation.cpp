@@ -47,7 +47,8 @@ HRESULT CNavigation::Initialize_Prototype(const _tchar* pNavigationDataFile, con
 	}
 
 
-	SetUp_Neighbors(pNeighbors);
+	//SetUp_Neighbors(pNeighbors);
+	SetUp_Neighbors();
 
 	CloseHandle(hFile);
 

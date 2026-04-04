@@ -66,6 +66,15 @@ HRESULT CCollider::Initialize(void* pArg)
     return S_OK;
 }
 
+_bool CCollider::Intersect(CCollider* target)
+{
+    m_isColl = { false };
+
+    m_isColl = m_pBounding->Intersect(target->m_pBounding);
+
+    return m_isColl;
+}
+
 void CCollider::Update(_fmatrix WorldMatrix)
 {
     m_pBounding->Update(WorldMatrix);

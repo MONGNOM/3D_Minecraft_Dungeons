@@ -149,7 +149,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	CloseHandle(hFile);
 
 
-	hFile = CreateFile(TEXT("../Bin/DataFiles/Navigation.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	/*hFile = CreateFile(TEXT("../Bin/DataFiles/Navigation.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 	if (0 == hFile)
 		return E_FAIL;
 
@@ -160,7 +160,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 		WriteFile(hFile, &pVertices[pIndices[iIndex++]].vPosition, sizeof(_float3), &dwByte, nullptr);
 	}
 
-	CloseHandle(hFile);
+	CloseHandle(hFile);*/
 
 	Safe_Delete_Array(pVertices);
 	Safe_Delete_Array(pIndices);

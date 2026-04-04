@@ -1,4 +1,6 @@
 #include "Bounding_AABB.h"
+#include "Bounding_OBB.h"
+#include "Bounding_Sphere.h"
 
 #include "DebugDraw.h"
 
@@ -30,7 +32,19 @@ void CBounding_AABB::Update(_fmatrix WorldMatrix)
 
 _bool CBounding_AABB::Intersect(CBounding* pTarget)
 {
-	return _bool();
+	_bool isCollision = { false };
+
+	const _char* pName = typeid(*pTarget).name();
+
+	if (false == strcmp("class Engine::CBounding_AABB", pName))
+		isCollision = Intersect_ToAABB(dynamic_cast<CBounding_AABB*>(pTarget));
+	else if (false == strcmp("class Engine::CBounding_OBB", pName))
+		isCollision = m_pDesc->Intersects(*dynamic_cast<CBounding_OBB*>(pTarget)->Get_Desc());
+	else
+		isCollision = m_pDesc->Intersects(*dynamic_cast<CBounding_Sphere*>(pTarget)->Get_Desc());
+
+
+	return isCollision;
 }
 
 
@@ -43,6 +57,42 @@ HRESULT CBounding_AABB::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fve
 	DX::Draw(pBatch, *m_pDesc, vColor);
 
 	return S_OK;
+}
+
+_bool CBounding_AABB::Intersect_ToAABB(CBounding_AABB* pTarget)
+{
+	_float3 srcMax, DestMax, srcMin, DestMin;
+	
+	srcMin  = Compute_Min();
+	srcMax	= Compute_Max();
+
+	DestMin = pTarget->Compute_Min();
+	DestMax = pTarget->Compute_Max();
+
+	if (max(srcMin.x, DestMin.x) > min(srcMax.x, DestMax.x))
+		return false;
+
+	if (max(srcMin.y, DestMin.y) > min(srcMax.y, DestMax.y))
+		return false;
+
+	if (max(srcMin.z, DestMin.z) > min(srcMax.z, DestMax.z))
+		return false;
+
+	return true;
+}
+
+_float3 CBounding_AABB::Compute_Max()
+{
+	return _float3(m_pDesc->Center.x  + m_pDesc->Extents.x,
+					m_pDesc->Center.y + m_pDesc->Extents.y,
+					m_pDesc->Center.z + m_pDesc->Extents.z);
+}
+
+_float3 CBounding_AABB::Compute_Min()
+{
+	return _float3( m_pDesc->Center.x - m_pDesc->Extents.x,
+					m_pDesc->Center.y - m_pDesc->Extents.y,
+					m_pDesc->Center.z - m_pDesc->Extents.z);
 }
 
 #endif

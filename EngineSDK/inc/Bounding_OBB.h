@@ -20,6 +20,7 @@ public:
 	virtual HRESULT Initialize(CBounding::BOUNDING_DESC* pDesc);
 	virtual void Update(_fmatrix WorldMatrix);
 	virtual _bool Intersect(CBounding* pTarget) override;
+	BoundingOrientedBox* Get_Desc() { return m_pDesc; }
 
 #ifdef _DEBUG
 public:

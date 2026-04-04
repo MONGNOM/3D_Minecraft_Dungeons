@@ -37,16 +37,23 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+
 protected:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
 	_bool attacking = { false };
 
 private:
+	_bool Intersect_ToMonster();
+
+private:
 	CCollider* m_pColliderCom = { nullptr };
 	CNavigation* m_pNavigationCom = { nullptr };
 	PLAYERSTATE state = {};
 	class CBody_Player* pBody; 
+
+	_float m_iMaxHp{};
+	_float m_iCurrentHp{};
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

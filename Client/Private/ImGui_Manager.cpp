@@ -5,6 +5,7 @@
 #include "GameInstance.h"
 #include "ImGui_Manager.h"
 #include "Monster.h"
+#include "Engine_Macro.h"
 
 IMPLEMENT_SINGLETON(CImGui_Manager)
 static bool bIsCreateMode = false;
@@ -63,23 +64,77 @@ void CImGui_Manager::Update_Engine()
 		bIsCreateMode = !bIsCreateMode;
 	}
 
-	
+	if (CGameInstance::GetInstance()->Get_DIKeyDown(DIK_F))
+	{
+		m_bNaviEditMode = !m_bNaviEditMode;
+	}
+
+	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_LCONTROL) && CGameInstance::GetInstance()->Get_DIKeyDown(DIK_Z))
+	{
+		m_vPoint.pop_back();
+	}
+
+
 	if (m_pGameInstance->Get_DIMouseDown(DIMB::LBUTTON))
 	{	
+		if (bIsCreateMode)
+		{
+			CVIBuffer_Terrain* terrain = dynamic_cast<CVIBuffer_Terrain*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_VIBuffer")));
+			CTransform* transform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Transform")));
 
-		if (!bIsCreateMode)
-			return;
-		
-		CVIBuffer_Terrain* terrain = dynamic_cast<CVIBuffer_Terrain*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_VIBuffer")));
-		CTransform* transform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Transform")));
-		
-		_float3 hitpos{};
-		
-		if (!Picking_OnTerrain(g_hWnd, terrain, transform, m_iNumZ, m_iNumX, &hitpos))
-			return;
+			_float3 hitpos{};
 
-		m_bClone = true;
-		m_pickingPos = hitpos;
+			if (!Picking_OnTerrain(g_hWnd, terrain, transform, m_iNumZ, m_iNumX, &hitpos))
+				return;
+
+			m_bClone = true;
+			m_pickingPos = hitpos;
+		}
+
+
+		if (m_bNaviEditMode)
+		{
+			// 네비게이션 점(vPoints) 추가 로직 실행!
+
+			CVIBuffer_Terrain* terrain = dynamic_cast<CVIBuffer_Terrain*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_VIBuffer")));
+			CTransform* transform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Transform")));
+
+			_float3 hitpos{};
+
+			if (!Picking_OnTerrain(g_hWnd, terrain, transform, m_iNumZ, m_iNumX, &hitpos))
+				return;
+
+			m_bClone = true;
+			m_pickingPos = hitpos;
+
+			m_vPoint.push_back(hitpos);
+
+			// 이걸 써서 마우스 로 클릭클릭 하는느낌?
+
+			 /*vPoints[0]	= _float3(0.f, 0.f, 10.f);
+			 vPoints[1]		= _float3(10.f, 0.f, 10.f);
+			 vPoints[2] = _float3(10.f, 0.f, 0.f);
+			 WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+
+			 vPoints[0] = _float3(0.f, 0.f, 20.f);
+			 vPoints[1] = _float3(10.f, 0.f, 10.f);
+			 vPoints[2] = _float3(0.f, 0.f, 10.f);
+			 WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+
+			 vPoints[0] = _float3(10.f, 0.f, 10.f);
+			 vPoints[1] = _float3(20.f, 0.f, 0.f);
+			 vPoints[2] = _float3(10.f, 0.f, 0.f);
+			 WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);*/
+
+			
+		}
+		
+
+		
+
+		
+
+	
 		//XMStoreFloat3( Picking_OnTerrain(g_hWnd, terrain, transform, m_iNumZ, m_iNumX, ));
 	}
 	
@@ -109,7 +164,7 @@ void CImGui_Manager::Render()
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-
+	
 
 	
 }
@@ -122,6 +177,23 @@ void CImGui_Manager::Render_Panels()
 			pPanel->Render();
 
 	}
+	if (ImGui::Button("NaviGation_Save"))
+	{
+		_ulong			dwByte = { };
+
+		HANDLE			hFile = CreateFile(TEXT("../Bin/DataFiles/Navigation.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+		if (0 == hFile)
+			return;
+
+		WriteFile(hFile, m_vPoint.data(), sizeof(_float3) * m_vPoint.size(), &dwByte, nullptr);
+
+		MSG_BOX("네비게이션 저장 완료");
+		 
+		CloseHandle(hFile);
+	}
+
+
+	ImGui::Checkbox("Navigation_Cell Create", &m_bNaviEditMode);
 
 
 	ImGui::Begin("Texture Gallery");

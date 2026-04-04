@@ -94,12 +94,27 @@ void CSkeleton::Update(_float fTimeDelta)
 		m_iState |= SKELETONSTATE::IDLE;
 	}*/
 
-	m_iState |= SKELETONSTATE::IDLE;
+
+	if (Intersect_ToPlayer())
+	{
+		if (m_iState & SKELETONSTATE::IDLE)
+			m_iState ^= SKELETONSTATE::IDLE;
+
+		m_iState |= SKELETONSTATE::ATTACK;
+	}
+	else
+	{
+		if (m_iState & SKELETONSTATE::ATTACK)
+			m_iState ^= SKELETONSTATE::ATTACK;
+
+		m_iState |= SKELETONSTATE::IDLE;
+	}
 
 	m_pColliderCom->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 
 	__super::Update(fTimeDelta);
+
 }
 
 void CSkeleton::Late_Update(_float fTimeDelta)
@@ -118,24 +133,32 @@ HRESULT CSkeleton::Render()
 	return S_OK;
 }
 
+bool CSkeleton::Intersect_ToPlayer()
+{
+	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Collider")));
+
+	return collider ? m_pColliderCom->Intersect(collider) : false;
+}
+
 HRESULT CSkeleton::Ready_Components()
 {
-	CNavigation::NAVIGATION_DESC NavigationDesc;
+	/*CNavigation::NAVIGATION_DESC NavigationDesc;
 	NavigationDesc.iCurrentCellIndex = rand() % 100; 
 	NavigationDesc.pTransform = m_pTransformCom;
 
 	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Navigation"),
 		TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom), &NavigationDesc)))
-		return E_FAIL;
+		return E_FAIL;*/
 
-	CBounding_AABB::BOUNDING_AABB_DESC AABBDesc;
+	
+	
+	CBounding_Sphere::BOUNDING_SPHERE_DESC Desc{};
+	Desc.vCenter = _float3(0.f, Desc.fRadius, 0.f);
+	Desc.fRadius = 10.0f;
 
-	AABBDesc.vExtents = _float3(0.5f, 1.f, 0.5f);
-	AABBDesc.vCenter = _float3(0.f, AABBDesc.vExtents.y, 0.f);
 
-
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_AABB"),
-		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &Desc)))
 		return E_FAIL;
 
 

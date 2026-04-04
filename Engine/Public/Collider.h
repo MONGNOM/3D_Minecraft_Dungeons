@@ -21,6 +21,8 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	_bool	m_isColl = { false };
 
+	_bool Intersect(CCollider* target);
+
 public:
 	void Update(_fmatrix WorldMatrix);
 

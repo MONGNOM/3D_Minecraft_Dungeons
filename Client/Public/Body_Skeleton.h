@@ -46,6 +46,8 @@ private:
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();
+	_bool Intersect_ToPlayer();
+
 
 public:
 	static CBody_Skeleton* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

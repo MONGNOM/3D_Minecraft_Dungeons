@@ -56,6 +56,8 @@ void CPlayer::Priority_Update(_float fTimeDelta)
 void CPlayer::Update(_float fTimeDelta)
 {
 
+	Intersect_ToMonster();
+
 	bool bIsActionState = (state == PLAYERSTATE::HEAL || state == PLAYERSTATE::FAILING || state == PLAYERSTATE::BOW || state == PLAYERSTATE::ATTACK);
 
 	if (bIsActionState)
@@ -88,6 +90,19 @@ void CPlayer::Update(_float fTimeDelta)
 		{
 			m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);
 			state = PLAYERSTATE::WALK;
+		}
+		else if (GetKeyState(VK_DOWN) & 0x8000)
+		{
+			m_pTransformCom->Go_Backward(fTimeDelta);
+			state = PLAYERSTATE::WALK;
+		}
+		else if (GetKeyState(VK_LEFT) & 0x8000)
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f,1.f,0.f,0.f), fTimeDelta * -1.f);
+		}
+		else if (GetKeyState(VK_RIGHT) & 0x8000)
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta );
 		}
 		else
 		{
@@ -168,6 +183,15 @@ HRESULT CPlayer::Ready_PartObjects()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+_bool CPlayer::Intersect_ToMonster()
+{
+
+	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Skeleton"), TEXT("Layer_Monster"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Collider")));
+
+
+	return collider ? m_pColliderCom->Intersect(collider) : false;
 }
 
 

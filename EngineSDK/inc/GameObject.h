@@ -49,6 +49,7 @@ protected:
 	_float3 m_fPos = {};
 	_uint			m_iNumTexture { 0 };
 	string m_sPrototype{};
+	_bool	m_SetActive;
 
 protected:
 	map<const _wstring, class CComponent*>		m_Components;

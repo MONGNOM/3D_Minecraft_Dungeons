@@ -19,11 +19,18 @@ public:
 	virtual HRESULT Initialize(CBounding::BOUNDING_DESC* pDesc);
 	virtual void Update(_fmatrix WorldMatrix);
 	_bool Intersect(CBounding* pTarget) override;
+	BoundingBox* Get_Desc() { return m_pDesc; }
 
 #ifdef _DEBUG
 public:
 	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
 #endif
+
+private:
+	_bool Intersect_ToAABB(class CBounding_AABB* pTarget);
+
+	_float3 Compute_Max();
+	_float3 Compute_Min();
 
 private:
 	BoundingBox* m_pOriginalDesc = {};

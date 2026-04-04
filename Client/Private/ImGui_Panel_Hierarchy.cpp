@@ -62,6 +62,8 @@ HRESULT CImGui_Panel_Hierarchy::Intiailzie()
 void CImGui_Panel_Hierarchy::Render()
 {
 
+   
+   
 
     ImGui::Begin("Hierarchy");
 
