@@ -49,6 +49,7 @@ private:
 	 CGameObject* pSelectedObject = nullptr;
 
 	 vector<_float3> m_vPoint;
+	 vector<_float3> m_vAllPoint;
 
 private:
 	int m_SelectedTextureIndex = -1;

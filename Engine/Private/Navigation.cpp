@@ -53,7 +53,7 @@ HRESULT CNavigation::Initialize_Prototype(const _tchar* pNavigationDataFile, con
 	CloseHandle(hFile);
 
 
-	 /*hFile = CreateFile(TEXT("../Bin/DataFiles/Neighbors.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	 hFile = CreateFile(TEXT("../Bin/DataFiles/Neighbors.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 	if (0 == hFile)
 		return E_FAIL;
 
@@ -62,7 +62,7 @@ HRESULT CNavigation::Initialize_Prototype(const _tchar* pNavigationDataFile, con
 		WriteFile(hFile, m_Cells[i]->Get_NeighborIndices(), sizeof(_int) * 3, &dwByte, nullptr);
 	}
 
-	CloseHandle(hFile);*/
+	CloseHandle(hFile);
 
 
 #ifdef _DEBUG

@@ -107,7 +107,35 @@ void CImGui_Manager::Update_Engine()
 			m_bClone = true;
 			m_pickingPos = hitpos;
 
-			m_vPoint.push_back(hitpos);
+			m_vAllPoint.push_back(hitpos);
+			if (m_vAllPoint.size() >= 3)
+			{
+				_int lastindex = m_vAllPoint.size() - 1;
+
+				// [수정 완료] m_vPoint의 사이즈가 아니라 lastindex를 기준으로 가져옵니다.
+				_float3 p1 = m_vAllPoint[lastindex - 2];
+				_float3 p2 = m_vAllPoint[lastindex - 1];
+				_float3 p3 = m_vAllPoint[lastindex]; // 방금 피킹한 점
+
+				// 만들어질 삼각형의 순번 (1번째, 2번째, 3번째...)
+				_int iTriangleIndex = m_vAllPoint.size() - 2;
+
+				// 홀수 번째 삼각형 (1, 3, 5...)은 정상 순서대로 묶습니다.
+				if (iTriangleIndex % 2 == 1)
+				{
+					m_vPoint.push_back(p1);
+					m_vPoint.push_back(p2);
+					m_vPoint.push_back(p3);
+				}
+				// 짝수 번째 삼각형 (2, 4, 6...)은 시계 방향 유지를 위해 p1, p2 순서를 뒤집습니다!
+				else
+				{
+					m_vPoint.push_back(p2); // p2가 먼저 들어감
+					m_vPoint.push_back(p1); // p1이 뒤에 들어감
+					m_vPoint.push_back(p3);
+				}
+			}
+
 
 			// 이걸 써서 마우스 로 클릭클릭 하는느낌?
 
