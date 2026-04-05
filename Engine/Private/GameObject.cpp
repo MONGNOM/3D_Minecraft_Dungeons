@@ -59,13 +59,16 @@ HRESULT CGameObject::Initialize(void* pArg)
         if (pDesc)
         {
             m_Name = pDesc->name;
+            m_sPrototype = pDesc->m_sPrototype;
             m_fPos = pDesc->pos;
+            m_iNumTexture = pDesc->NumTexture;
         }
         else
         {
             m_Name = TEXT("None");
             m_fPos = _float3(0, 0, 0);
             m_iNumTexture = 0;
+            m_sPrototype = "";
         }
         /* 게임오브젝트 멤버를 채워넣어야한다면 여기서 채운다. */
     } 

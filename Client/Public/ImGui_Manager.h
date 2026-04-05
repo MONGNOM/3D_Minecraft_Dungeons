@@ -40,12 +40,19 @@ private:
 private:
 	class CTexture* m_pGalleryTexture = nullptr; // 갤러리용 텍스쳐 포인터
 	vector<ID3D11ShaderResourceView*> images = {};
+	class CTexture* m_pThumnailsTexture = nullptr;
+	vector<ID3D11ShaderResourceView*> m_vThum;
+	
 	_float3 m_pickingPos{};
 	_bool m_bClone  = false;
 	int m_iNumX = 129;
 	int m_iNumZ = 129;
+	_bool m_bNaviEditMode = false;
 
 	 CGameObject* pSelectedObject = nullptr;
+
+	 vector<_float3> m_vPoint;
+	 vector<_float3> m_vAllPoint;
 
 private:
 	int m_SelectedTextureIndex = -1;

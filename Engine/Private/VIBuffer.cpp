@@ -69,7 +69,7 @@ void CVIBuffer::Free()
 {
 	__super::Free();
 
-	if (false == m_isClone)
+	if (false == m_isCloned)
 		Safe_Delete_Array(m_pVertexPositions);
 
 	Safe_Release(m_pVB);

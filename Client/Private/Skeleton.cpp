@@ -20,15 +20,23 @@ HRESULT CSkeleton::Initialize_Prototype()
 	return S_OK;
 }
 
+
+
 HRESULT CSkeleton::Initialize(void* pArg)
 {
-	
-	CContainerObject::CONTAINEROBJECT_DESC*		Desc = static_cast<CONTAINEROBJECT_DESC*>(pArg);
-
-	Desc->fSpeedPerSec = 10.f;
-	Desc->fDegreePerSec = 180.f;
 
 	
+
+	CContainerObject::CONTAINEROBJECT_DESC* Desc = static_cast<CONTAINEROBJECT_DESC*>(pArg);
+
+	if (Desc != nullptr)
+	{
+		//m_fPos = Desc->pos;
+		//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y, Desc->pos.z, 1.f));
+		Desc->fSpeedPerSec = 10.f;
+		Desc->fDegreePerSec = 180.f;
+	}
+
 
 	/* 백그라운드의 멤버를 채워넣어야한다면 여기서 채운다. */
 	if (FAILED(__super::Initialize(pArg)))
@@ -40,12 +48,7 @@ HRESULT CSkeleton::Initialize(void* pArg)
 	if (FAILED(Ready_PartObjects()))
 		return E_FAIL;
 
-	if (Desc != nullptr)
-		m_fPos = Desc->pos;
-
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y, Desc->pos.z, 1.f));
-
-
+	m_eObjectType = OBJECTTYPE::MONSTER;
 
 	return S_OK;
 }
@@ -90,23 +93,75 @@ void CSkeleton::Update(_float fTimeDelta)
 
 		m_iState |= SKELETONSTATE::IDLE;
 	}*/
-	m_iState |= SKELETONSTATE::IDLE;
+
+
+	if (Intersect_ToPlayer())
+	{
+		if (m_iState & SKELETONSTATE::IDLE)
+			m_iState ^= SKELETONSTATE::IDLE;
+
+		m_iState |= SKELETONSTATE::ATTACK;
+	}
+	else
+	{
+		if (m_iState & SKELETONSTATE::ATTACK)
+			m_iState ^= SKELETONSTATE::ATTACK;
+
+		m_iState |= SKELETONSTATE::IDLE;
+	}
+
+	m_pColliderCom->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+
 
 	__super::Update(fTimeDelta);
+
 }
 
 void CSkeleton::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
+
+	m_pGameInstance->Add_RenderGroup(RENDERGROUP::NONBLEND, this);
 }
 
 HRESULT CSkeleton::Render()
 {
+#ifdef _DEBUG
+	m_pColliderCom->Render();
+#endif 
+
 	return S_OK;
+}
+
+bool CSkeleton::Intersect_ToPlayer()
+{
+	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Collider")));
+
+	return collider ? m_pColliderCom->Intersect(collider) : false;
 }
 
 HRESULT CSkeleton::Ready_Components()
 {
+	/*CNavigation::NAVIGATION_DESC NavigationDesc;
+	NavigationDesc.iCurrentCellIndex = rand() % 100; 
+	NavigationDesc.pTransform = m_pTransformCom;
+
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Navigation"),
+		TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom), &NavigationDesc)))
+		return E_FAIL;*/
+
+	
+	
+	CBounding_Sphere::BOUNDING_SPHERE_DESC Desc{};
+	Desc.vCenter = _float3(0.f, Desc.fRadius, 0.f);
+	Desc.fRadius = 10.0f;
+
+
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &Desc)))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -124,6 +179,8 @@ HRESULT CSkeleton::Ready_PartObjects()
 	CBody_Skeleton* pBody = dynamic_cast<CBody_Skeleton*>(m_PartObjects[TEXT("Part_Body")]);
 	if (nullptr == pBody)
 		return E_FAIL;
+
+	// 활 달아 줍시다 플레이어도 달아야함
 
 	/*CWeapon::WEAPON_DESC				WeaponDesc{};
 	WeaponDesc.pParentState = &m_iState;
@@ -166,5 +223,8 @@ CGameObject* CSkeleton::Clone(void* pArg)
 void CSkeleton::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pNavigationCom);
 
 }

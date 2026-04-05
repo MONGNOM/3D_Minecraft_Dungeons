@@ -76,7 +76,7 @@ HRESULT CAnimation::Binary_Initialize(const string& strFilePath)
 	return S_OK;
 }
 
-_bool CAnimation::Update_TransformationMatrices(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop)
+_bool CAnimation::Update_TransformationMatrices(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _float ratio)
 {
 	m_fCurrentTrackPosition += m_fTickPerSecond * fTimeDelta; // 현재 재생시간을 누적했다면 초당 재생속도 * timedelta
 
@@ -90,10 +90,10 @@ _bool CAnimation::Update_TransformationMatrices(_float fTimeDelta, const vector<
 
 	for (size_t i = 0; i < m_iNumChannels; i++)
 	{
-		m_Channels[i]->Update_TransformationMatrix(&m_CurrentKeyFrameIndices[i], m_fCurrentTrackPosition, Bones);
+		m_Channels[i]->Update_TransformationMatrix(&m_CurrentKeyFrameIndices[i], m_fCurrentTrackPosition, Bones, ratio);
 
 	}
-	
+
 
 	return false; // 애니메이션이 끝나지 않았어를 반환
 }

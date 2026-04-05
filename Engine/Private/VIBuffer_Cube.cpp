@@ -55,7 +55,7 @@ HRESULT CVIBuffer_Cube::Initialize_Prototype()
 
 	pVertices[7].vPosition = _float3(-0.5f, -0.5f, 0.5f);
 	pVertices[7].vTexcoord = pVertices[7].vPosition;
-
+	
 
 	D3D11_SUBRESOURCE_DATA			VertexInitialData{};
 	VertexInitialData.pSysMem = pVertices;

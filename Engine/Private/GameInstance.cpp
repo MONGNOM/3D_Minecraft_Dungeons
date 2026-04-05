@@ -12,6 +12,7 @@
 #include "Picking_Manager.h"
 #include "Font_Manager.h"
 #include "ModelConverter.h"
+#include "DataManager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -69,6 +70,10 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 
 	m_pModelConverter = CModelConverter::Create();
 	if (nullptr == m_pModelConverter)
+		return E_FAIL;
+
+	m_pDataManager = CDataManager::Create();
+	if (nullptr == m_pDataManager)
 		return E_FAIL;
 
 	
@@ -266,10 +271,12 @@ _bool CGameInstance::Picking_Pos(HWND hWnd, CVIBuffer_Terrain* pTerrainBufferCom
 	return m_pPicking_Manager->Picking_Pos(hWnd, pTerrainBufferCom, pTerrainTransformCom, numZ, numX, pos);
 }
 
-CGameObject* CGameInstance::Picking_Object(HWND hWnd) 
+_bool CGameInstance::Picking_Object(HWND hWnd, RayHit& hit)
 {
-	return m_pPicking_Manager->Picking_Object(hWnd);
+	return m_pPicking_Manager->Picking_Object(hWnd, hit);
 }
+
+
 
 HRESULT CGameInstance::Add_Font(const _wstring& strFontTag, const _tchar* pFontFilePath)
 {
@@ -291,10 +298,22 @@ HRESULT CGameInstance::Ready_DynamicBinary(_uint numMeshs, const aiScene* m_pAIS
 	return m_pModelConverter->Ready_DynamicBinary(numMeshs, m_pAIScene, name, pModel, bones);
 }
 
+HRESULT CGameInstance::Save_Date(const vector<tagObjectInfo>& objectinfo)
+{
+	return m_pDataManager->Save_Date(objectinfo);
+}
+
+HRESULT CGameInstance::Load_Date(const _tchar* filePath, vector<tagObjectInfo>& objectinfo)
+{
+	return m_pDataManager->Load_Date(filePath, objectinfo);
+}
+
+
 
 void CGameInstance::Release_Engine()
 {
 	Safe_Release(m_pModelConverter);
+	Safe_Release(m_pDataManager);
 	Safe_Release(m_pFont_Manager);
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pInput_Device);

@@ -6,21 +6,30 @@
 #include <d3dcompiler.h>
 #include <DirectXCollision.h>
 
+
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <iostream>
 
 #include "DirectXTK/DDSTextureLoader.h"
 #include "DirectXTK/WICTextureLoader.h"
+#include "DirectXTK/PrimitiveBatch.h"
+#include "DirectXTK/Effects.h"
+#include "DirectXTK/VertexTypes.h"
+
 #include "DirectXTK/SpriteBatch.h"
 #include "DirectXTK/SpriteFont.h"
+#include "DirectXTK/ScreenGrab.h"
+
 
 #include "Fx11/d3dx11effect.h"
 
 #include "Assimp/scene.h"
 #include "Assimp/Importer.hpp"
 #include "Assimp/postprocess.h"
+#include "json.hpp"
 
+using json = nlohmann::json;
 
 using namespace DirectX;
 

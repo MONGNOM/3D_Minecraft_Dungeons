@@ -1,5 +1,9 @@
 #include "Cell.h"
 
+
+#include "Transform.h"
+
+
 #ifdef _DEBUG
 #include "VIBuffer_Cell.h"
 #endif
@@ -10,6 +14,16 @@ CCell::CCell(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
+}
+
+_vector CCell::Get_Center()
+{
+	_vector vCenter = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+	for (size_t i = 0; i < ETOI(POINT::END); i++)
+	{
+		vCenter += XMLoadFloat3(&m_vPoints[i]);
+	}
+	return XMVectorSetW(vCenter / 3, 1.f);
 }
 
 HRESULT CCell::Initialize(const _float3* pPoints, _int iIndex)
@@ -28,6 +42,14 @@ HRESULT CCell::Initialize(const _float3* pPoints, _int iIndex)
 
 	vLines[ETOI(LINE::CA)] = XMVector3Normalize(XMLoadFloat3(&m_vPoints[ETOI(POINT::A)]) - XMLoadFloat3(&m_vPoints[ETOI(POINT::C)]));
 	m_vNormals[ETOI(LINE::CA)] = _float3(XMVectorGetZ(vLines[ETOI(LINE::CA)]) * -1.f, 0.f, XMVectorGetX(vLines[ETOI(LINE::CA)]));
+
+	XMStoreFloat4(&m_vPlane, XMPlaneFromPoints(
+		XMLoadFloat3(&m_vPoints[ETOI(POINT::A)]),
+		XMLoadFloat3(&m_vPoints[ETOI(POINT::B)]),
+		XMLoadFloat3(&m_vPoints[ETOI(POINT::C)])));
+
+
+
 
 #ifdef _DEBUG
 	m_pVIBuffer = CVIBuffer_Cell::Create(m_pDevice, m_pContext, pPoints);
@@ -85,6 +107,18 @@ _bool CCell::Compare_Points(_fvector vSour, _fvector vDest)
 	}
 
 	return false;
+}
+
+void CCell::Compute_Height(CTransform* pTransform)
+{
+	_vector			vPosition = pTransform->Get_State(STATE::POSITION);
+
+	_float			fHeight = (-m_vPlane.x * XMVectorGetX(vPosition) - m_vPlane.z * XMVectorGetZ(vPosition) - m_vPlane.w) / m_vPlane.y;
+
+	vPosition = XMVectorSetY(vPosition, fHeight);
+
+	pTransform->Set_State(STATE::POSITION, vPosition);
+
 }
 
 

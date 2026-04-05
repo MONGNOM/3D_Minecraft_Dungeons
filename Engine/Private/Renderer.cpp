@@ -42,6 +42,8 @@ void CRenderer::Draw()
 	Render_Blend();
 
 	Render_UI();
+
+	Render_CURSOR();
 }
 
 void CRenderer::Render_Priority()
@@ -94,6 +96,19 @@ void CRenderer::Render_UI()
 	}
 
 	m_RenderObjects[ETOI(RENDERGROUP::UI)].clear();
+}
+
+void CRenderer::Render_CURSOR()
+{
+	for (auto& pRenderObject : m_RenderObjects[ETOI(RENDERGROUP::CURSOR)])
+	{
+		if (nullptr != pRenderObject)
+			pRenderObject->Render();
+
+		Safe_Release(pRenderObject);
+	}
+
+	m_RenderObjects[ETOI(RENDERGROUP::CURSOR)].clear();
 }
 
 CRenderer* CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

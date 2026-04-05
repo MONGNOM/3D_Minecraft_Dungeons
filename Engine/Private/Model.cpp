@@ -47,6 +47,7 @@ CModel::CModel(const CModel& Prototype)
     
 }
 
+
 _int CModel::Get_BoneIndex(const _char* pBoneName)
 {
     _int    iBoneIndex = { -1 };
@@ -73,6 +74,32 @@ const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName)
 
     return (*iter)->Get_CombinedTransformationMatrixPtr();
 }
+
+
+void CModel::Set_Animation(_uint iIndex, _bool isLoop)
+{
+    m_iPrevAnimIndex = m_iCurrentAnimIndex;
+    m_iCurrentAnimIndex = iIndex;
+    m_isAnimLoop = isLoop;
+
+    if (m_iCurrentAnimIndex == m_iPrevAnimIndex) return;
+
+    for (auto& pBone : m_Bones)
+    {
+        pBone->Snapshot_For_Blending();
+    }
+
+    m_bIsBlending = true;
+    m_fBlendTime = 0.0f;
+
+    Reset_Animation();
+}
+
+void CModel::Reset_Animation()
+{
+    m_Animations[m_iCurrentAnimIndex]->Reset_TrackPosition();
+}
+
 
 HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreLocalTransformMatrix, const string& name)
 {
@@ -173,15 +200,32 @@ HRESULT CModel::Render(_uint iMeshIndex)
 
 _bool CModel::Play_Animation(_float fTimeDelta)
 {
+
+    _float fBlendRatio = 1.0f; // 기본값 1.0 (안 섞음)
+
+    //  섞는 중이라면 비율(0.0 ~ 1.0)을 계산합니다.
+    if (m_bIsBlending) {
+        m_fBlendTime += fTimeDelta;
+        fBlendRatio = m_fBlendTime / m_fBlendDuration;
+
+        if (fBlendRatio >= 1.0f) {
+            fBlendRatio = 1.0f;
+            m_bIsBlending = false; // 0.2초 끝! 섞기 종료
+        }
+    }
+   
+
     _bool       isFinish = { false };
     /* 현재 애니메이션에 맞는 상태대로 뼈의 Transformaion을 갱신해준다. */
-    isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TransformationMatrices(fTimeDelta, m_Bones, m_isAnimLoop); // ? bool로 한 의ㅏ도는?
+    isFinish = m_Animations[m_iCurrentAnimIndex]->Update_TransformationMatrices(fTimeDelta, m_Bones, m_isAnimLoop, fBlendRatio); // 현재 애니메이션 재생 이
+
 
     /* 모든 뼈를 순회하며 CombinedTransformaion를 셋팅해준다. */
     for (auto& pBone : m_Bones)
     {
         pBone->Update_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_PreLocalTransformMatrix));
     }
+
 
     return isFinish;
 }

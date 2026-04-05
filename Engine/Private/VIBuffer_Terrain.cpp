@@ -146,11 +146,26 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	if (FAILED(m_pDevice->CreateBuffer(&IndexBufferDesc, &IndexInitialData, &m_pIB)))
 		return E_FAIL;
 
+	CloseHandle(hFile);
+
+
+	/*hFile = CreateFile(TEXT("../Bin/DataFiles/Navigation.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+	if (0 == hFile)
+		return E_FAIL;
+
+	_uint		iIndex = { 0 };
+
+	for (size_t i = 0; i < iNumIndices; i++)
+	{
+		WriteFile(hFile, &pVertices[pIndices[iIndex++]].vPosition, sizeof(_float3), &dwByte, nullptr);
+	}
+
+	CloseHandle(hFile);*/
+
 	Safe_Delete_Array(pVertices);
 	Safe_Delete_Array(pIndices);
 	Safe_Delete_Array(pPixels);
 
-	CloseHandle(hFile);
 
 	return S_OK;
 }

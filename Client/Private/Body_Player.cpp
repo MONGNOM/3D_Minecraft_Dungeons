@@ -4,13 +4,15 @@
 #include "Player.h"
 
 CBody_Player::CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CPartObject{ pDevice, pContext }
+	: CPartObject{ pDevice, pContext }, m_pParentPlayerState {nullptr}
 {
+	
 }
 
 CBody_Player::CBody_Player(const CBody_Player& Prototype)
-	: CPartObject{ Prototype }
+	: CPartObject{ Prototype }, m_pParentPlayerState{ nullptr }
 {
+
 }
 
 const _float4x4* CBody_Player::Get_SocketBoneMatrixPtr(const _char* pBoneName)
@@ -27,7 +29,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 {
 	auto	pDesc = static_cast<BODY_PLAYER_DESC*>(pArg);
 
-	m_pParentState = pDesc->pParentState;
+	m_pParentPlayerState = pDesc->pParentState;
 
 
 	if (FAILED(__super::Initialize(pArg)))
@@ -43,8 +45,13 @@ HRESULT CBody_Player::Initialize(void* pArg)
 		1.f
 	));*/
 
-	m_pModelCom->Ready_Animations("Player_Master_Idle.Anim");
-	m_pModelCom->Ready_Animations("Player_Master_Run.Anim");
+	m_pModelCom->Ready_Animations("Player_Master_Idle.Anim");					//0 기본동작
+	m_pModelCom->Ready_Animations("Player_Master_Run.Anim");					//1 달리기 
+	m_pModelCom->Ready_Animations("Player_Master_Drink.Anim");					//2 마시기
+	m_pModelCom->Ready_Animations("Player_Master_DodgeRoll.Anim");				//3 구르기
+	m_pModelCom->Ready_Animations("Player_Master_BowAction.Anim");				//4 활
+	m_pModelCom->Ready_Animations("Player_Master_SwordCombo.001.Anim");			//5 칼
+
 
 	m_pModelCom->Set_Animation(0, true);
 
@@ -57,18 +64,49 @@ void CBody_Player::Priority_Update(_float fTimeDelta)
 
 void CBody_Player::Update(_float fTimeDelta)
 {
+	// 이렇게 하면 안될 것 같은데 아무리 봐도 
 
-	if (*m_pParentState & CPlayer::PLAYERSTATE::IDLE)
-		m_pModelCom->Set_Animation(0, true);
+	if (m_PrevPlayerState != *m_pParentPlayerState)
+	{
+		m_PrevPlayerState = *m_pParentPlayerState;
+		
+		m_bIsAnimFinished = false;
 
-	if (*m_pParentState & CPlayer::PLAYERSTATE::WALK)
-		m_pModelCom->Set_Animation(1, true);
+		switch (*m_pParentPlayerState)
+		{
+		case PLAYERSTATE::IDLE:
+			m_pModelCom->Set_Animation(0, true);
+			break;
+
+		case PLAYERSTATE::WALK:
+			m_pModelCom->Set_Animation(1, true);
+			break;
+
+		case PLAYERSTATE::HEAL:
+			m_pModelCom->Set_Animation(2, false);
+			break;
+
+		case PLAYERSTATE::FAILING:
+			m_pModelCom->Set_Animation(3, false);
+			break;
+
+		case PLAYERSTATE::BOW:
+			m_pModelCom->Set_Animation(4, false);
+			break;
+
+		case PLAYERSTATE::ATTACK:
+			m_pModelCom->Set_Animation(5, false);
+			break;
+		}
+	}
 
 	if (true == m_pModelCom->Play_Animation(fTimeDelta))
-		int a = 10;
+		m_bIsAnimFinished = true;
+
 
 	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
+	m_pColliderCom->Update(XMLoadFloat4x4(&m_CombinedWorldMatrix));
 }
 
 void CBody_Player::Late_Update(_float fTimeDelta)
@@ -95,12 +133,14 @@ HRESULT CBody_Player::Render()
 		m_pModelCom->Render(i);
 	}
 
+	m_pColliderCom->Render();
 
 	return S_OK;
 }
 
 HRESULT CBody_Player::Ready_Components()
 {
+	
 
 	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
@@ -108,6 +148,14 @@ HRESULT CBody_Player::Ready_Components()
 
 	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Player"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+		return E_FAIL;
+
+	CBounding_Sphere::BOUNDING_SPHERE_DESC		SphereDesc{};
+	SphereDesc.fRadius = 0.7f;
+	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
+
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -178,6 +226,7 @@ void CBody_Player::Free()
 {
 	__super::Free();
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pModelCom);
 
 }

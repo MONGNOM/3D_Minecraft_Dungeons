@@ -41,7 +41,7 @@ namespace Engine
 	typedef		CXMMATRIX					_cmatrix;
 
 
-
+	class CGameObject;
 	/*typedef	 struct tagMyVec3 : public D3DXVECTOR3
 	{
 		float	Get_Dot(const d3dxvector3& vTemp);

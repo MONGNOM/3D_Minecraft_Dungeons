@@ -5,6 +5,7 @@
 #include "GameInstance.h"
 #include "ImGui_Manager.h"
 #include "Monster.h"
+#include "Engine_Macro.h"
 
 IMPLEMENT_SINGLETON(CImGui_Manager)
 static bool bIsCreateMode = false;
@@ -46,7 +47,9 @@ HRESULT CImGui_Manager::Initialize_Manager(ID3D11Device* pDevice, ID3D11DeviceCo
 		return E_FAIL;
 
 	m_pGalleryTexture = CTexture::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4);
+	m_pThumnailsTexture = CTexture::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/Textures/SkyBox/Thum_%d.png"), 4);
 	images = m_pGalleryTexture->Get_Texture();
+	m_vThum = m_pThumnailsTexture->Get_Texture();
 
 	m_pPanels[ETOI(PanelType::INSPECTOR)] = CImGui_Panel_Inspector::Create();
 	m_pPanels[ETOI(PanelType::HIERARCHY)] = CImGui_Panel_Hierarchy::Create();
@@ -62,23 +65,106 @@ void CImGui_Manager::Update_Engine()
 	{
 		bIsCreateMode = !bIsCreateMode;
 	}
-	
+
+	if (CGameInstance::GetInstance()->Get_DIKeyDown(DIK_F))
+	{
+		m_bNaviEditMode = !m_bNaviEditMode;
+	}
+
+	if (CGameInstance::GetInstance()->Get_DIKeyState(DIK_LCONTROL) && CGameInstance::GetInstance()->Get_DIKeyDown(DIK_Z))
+	{
+		m_vPoint.pop_back();
+	}
+
+
 	if (m_pGameInstance->Get_DIMouseDown(DIMB::LBUTTON))
 	{	
+		if (bIsCreateMode)
+		{
+			CVIBuffer_Terrain* terrain = dynamic_cast<CVIBuffer_Terrain*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_VIBuffer")));
+			CTransform* transform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Transform")));
 
-		if (!bIsCreateMode)
-			return;
-		
-		CVIBuffer_Terrain* terrain = dynamic_cast<CVIBuffer_Terrain*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_VIBuffer")));
-		CTransform* transform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Transform")));
-		
-		_float3 hitpos{};
-		
-		if (!Picking_OnTerrain(g_hWnd, terrain, transform, m_iNumZ, m_iNumX, &hitpos))
-			return;
+			_float3 hitpos{};
 
-		m_bClone = true;
-		m_pickingPos = hitpos;
+			if (!Picking_OnTerrain(g_hWnd, terrain, transform, m_iNumZ, m_iNumX, &hitpos))
+				return;
+
+			m_bClone = true;
+			m_pickingPos = hitpos;
+		}
+
+
+		if (m_bNaviEditMode)
+		{
+			// 네비게이션 점(vPoints) 추가 로직 실행!
+
+			CVIBuffer_Terrain* terrain = dynamic_cast<CVIBuffer_Terrain*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_VIBuffer")));
+			CTransform* transform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Transform")));
+
+			_float3 hitpos{};
+
+			if (!Picking_OnTerrain(g_hWnd, terrain, transform, m_iNumZ, m_iNumX, &hitpos))
+				return;
+
+			m_bClone = true;
+			m_pickingPos = hitpos;
+
+			m_vAllPoint.push_back(hitpos);
+			if (m_vAllPoint.size() >= 3)
+			{
+				_int lastindex = m_vAllPoint.size() - 1;
+
+				// [수정 완료] m_vPoint의 사이즈가 아니라 lastindex를 기준으로 가져옵니다.
+				_float3 p1 = m_vAllPoint[lastindex - 2];
+				_float3 p2 = m_vAllPoint[lastindex - 1];
+				_float3 p3 = m_vAllPoint[lastindex]; // 방금 피킹한 점
+
+				// 만들어질 삼각형의 순번 (1번째, 2번째, 3번째...)
+				_int iTriangleIndex = m_vAllPoint.size() - 2;
+
+				// 홀수 번째 삼각형 (1, 3, 5...)은 정상 순서대로 묶습니다.
+				if (iTriangleIndex % 2 == 1)
+				{
+					m_vPoint.push_back(p1);
+					m_vPoint.push_back(p2);
+					m_vPoint.push_back(p3);
+				}
+				// 짝수 번째 삼각형 (2, 4, 6...)은 시계 방향 유지를 위해 p1, p2 순서를 뒤집습니다!
+				else
+				{
+					m_vPoint.push_back(p2); // p2가 먼저 들어감
+					m_vPoint.push_back(p1); // p1이 뒤에 들어감
+					m_vPoint.push_back(p3);
+				}
+			}
+
+
+			// 이걸 써서 마우스 로 클릭클릭 하는느낌?
+
+			 /*vPoints[0]	= _float3(0.f, 0.f, 10.f);
+			 vPoints[1]		= _float3(10.f, 0.f, 10.f);
+			 vPoints[2] = _float3(10.f, 0.f, 0.f);
+			 WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+
+			 vPoints[0] = _float3(0.f, 0.f, 20.f);
+			 vPoints[1] = _float3(10.f, 0.f, 10.f);
+			 vPoints[2] = _float3(0.f, 0.f, 10.f);
+			 WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
+
+			 vPoints[0] = _float3(10.f, 0.f, 10.f);
+			 vPoints[1] = _float3(20.f, 0.f, 0.f);
+			 vPoints[2] = _float3(10.f, 0.f, 0.f);
+			 WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);*/
+
+			
+		}
+		
+
+		
+
+		
+
+	
 		//XMStoreFloat3( Picking_OnTerrain(g_hWnd, terrain, transform, m_iNumZ, m_iNumX, ));
 	}
 	
@@ -108,7 +194,7 @@ void CImGui_Manager::Render()
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-
+	
 
 	
 }
@@ -121,6 +207,23 @@ void CImGui_Manager::Render_Panels()
 			pPanel->Render();
 
 	}
+	if (ImGui::Button("NaviGation_Save"))
+	{
+		_ulong			dwByte = { };
+
+		HANDLE			hFile = CreateFile(TEXT("../Bin/DataFiles/Navigation.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+		if (0 == hFile)
+			return;
+
+		WriteFile(hFile, m_vPoint.data(), sizeof(_float3) * m_vPoint.size(), &dwByte, nullptr);
+
+		MSG_BOX("네비게이션 저장 완료");
+		 
+		CloseHandle(hFile);
+	}
+
+
+	ImGui::Checkbox("Navigation_Cell Create", &m_bNaviEditMode);
 
 
 	ImGui::Begin("Texture Gallery");
@@ -148,7 +251,7 @@ void CImGui_Manager::Render_Panels()
 		// 2. 텍스트 대신 '이미지 버튼'을 그립니다! (크기 64x64 예시)
 		// m_vecTextures[i] 는 유저님의 텍스쳐 포인터 변수에 맞게 수정해주세요.
 		if (ImGui::ImageButton("##Image",
-			(void*)images[i],
+			(void*)m_vThum[i],
 			ImVec2(64.f, 64.f),
 			ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), // 기본 UV 좌표
 			ImVec4(0.0f, 0.0f, 0.0f, 0.0f),         // 배경색 (투명)
@@ -412,6 +515,7 @@ void CImGui_Manager::Free()
 	
 	Safe_Release(pSelectedObject);
 	Safe_Release(m_pGalleryTexture);
+	Safe_Release(m_pThumnailsTexture);
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pDeviceContext);
 	Safe_Release(m_pDevice);

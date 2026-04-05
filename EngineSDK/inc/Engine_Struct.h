@@ -135,6 +135,29 @@ namespace Engine
 	}VTXANIMMESH;
 
 
+	typedef struct RayHit
+	{
+		CGameObject* gameObject = nullptr;
+		XMFLOAT3 vPosition;
+		XMFLOAT3 Normal;
+
+	}RAYHIT;
+
+	typedef struct tagObjectInfo
+	{
+		//CGameObject::OBJECTTYPE eType;
+		_float3 Scale;
+		_float3 Rotation;
+		_float3 Translation;
+		string Name;
+		string PrototypeName;
+		_int type;
+		_int data;
+	
+
+	}OBJECTINFO;
+
+
 }
 
 

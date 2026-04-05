@@ -13,6 +13,7 @@
 #include "Body_Player.h"
 #include "Weapon.h"
 #include "Sky.h"
+#include "DefalutBlock.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice { pDevice }
@@ -123,6 +124,7 @@ HRESULT CLoader::Loading_For_LogoLevel()
 		MSG_BOX("Fail to Add_Prototype : Title Texture");
 		return E_FAIL;
 	}
+	
 
 
 	lstrcpy(m_szLoadingText, TEXT("셰이더를 로딩 중 입니다."));
@@ -199,6 +201,14 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCube.hlsl"), VTXCUBE::Elements, VTXCUBE::iNumElements))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Shader_VtxCube");
+		return E_FAIL;
+	}
+
+	/* Prototype_Component_Shader_VtxDefaultCube */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxDefaultCube"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxDefaultCube.hlsl"), VTXCUBE::Elements, VTXCUBE::iNumElements))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Shader_VtxDefaultCube");
 		return E_FAIL;
 	}
 
@@ -297,6 +307,16 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		return E_FAIL;
 	}
 
+	lstrcpy(m_szLoadingText, TEXT("네비게이션을 로딩 중 입니다."));
+	/* Prototype_Component_Navigation */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Navigation"),
+		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.dat"), TEXT("../Bin/DataFiles/Neighbors.dat")))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
+		return E_FAIL;
+	}
+
+
 
 	lstrcpy(m_szLoadingText, TEXT("객체원형를 로딩 중 입니다."));
 	/* Prototype_GameObject_Terrain */
@@ -354,7 +374,6 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	}
 
 
-	
 	/* Prototype_GameObject_Player*/
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Player"),
 		CPlayer::Create(m_pDevice, m_pContext))))
@@ -363,8 +382,6 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		return E_FAIL;
 	}
 
-
-	
 
 	/* Prototype_GameObject_Body_Player */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_Player"),
@@ -382,7 +399,6 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		return E_FAIL;
 	}
 	
-
 
 	/* Prototype_Component_VIBuffer_Cube */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Cube"),
@@ -402,15 +418,13 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	}
 
 
-
-	lstrcpy(m_szLoadingText, TEXT("네비게이션을 로딩 중 입니다."));
-	/* Prototype_Component_Navigation */
-	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Navigation"),
-		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.dat")))))
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_DefaultBlock"),
+		CDefalutBlock::Create(m_pDevice, m_pContext))))
 	{
-		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
+		MSG_BOX("Faild to Add_Prototype : GameObject_DefaultBlock");
 		return E_FAIL;
 	}
+	
 
 
 	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));

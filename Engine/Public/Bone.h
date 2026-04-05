@@ -23,6 +23,7 @@ public:
 		XMStoreFloat4x4(&m_TransformationMatrix, TransformMatrix);
 	}
 
+
 public:
 	HRESULT Initialize(const aiNode* pAINode, _int iParentBoneIndex);
 	HRESULT Binary_Initialize(const string& name, _int iParentBoneIndex, const _float4x4& localmatrix);
@@ -33,8 +34,35 @@ public:
 	_int Get_ParentIndex() { return m_iParentBoneIndex; }
 	_float4x4 Get_TransformMatrix() { return m_TransformationMatrix; }
 
+
+	void Set_CurrentSRT(_fvector vScale, _fvector vRot, _fvector vTrans) {
+		XMStoreFloat3(&m_vCurrentScale, vScale);
+		XMStoreFloat4(&m_vCurrentRot, vRot);
+		XMStoreFloat3(&m_vCurrentTrans, vTrans);
+	}
+
+	// 2.  애니메이션이 바뀔 때, 현재 상태를 사진첩(Blend)으로 통째로 복사!
+	void Snapshot_For_Blending() {
+		m_vBlendScale = m_vCurrentScale;
+		m_vBlendRotation = m_vCurrentRot;
+		m_vBlendTranslation = m_vCurrentTrans;
+	}
+
+	// 3. 사진첩 꺼내기 Getter (생략)
+	_vector Get_BlendScale() { return XMLoadFloat3(&m_vBlendScale); }
+	_vector Get_BlendRotation() { return XMLoadFloat4(&m_vBlendRotation); }
+	_vector Get_BlendTranslation() { return XMLoadFloat3(&m_vBlendTranslation); }
+
 	void Update_CombinedTransformationMatrix(const vector<CBone*>& Bones, _fmatrix PreTransformMatrix);
 
+	_float3 m_vBlendScale;
+	_float4 m_vBlendRotation;
+	_float3 m_vBlendTranslation;
+
+	// 매 프레임 계산되는 '현재' 벡터 (사진 찍기 용도)
+	_float3 m_vCurrentScale;
+	_float4 m_vCurrentRot;
+	_float3 m_vCurrentTrans;
 
 
 private:

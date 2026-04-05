@@ -81,7 +81,7 @@ public: /* For.Light_Manager */
 
 public: /* For.Picking_Manager */
 	_bool Picking_Pos(HWND hWnd, class CVIBuffer_Terrain* pTerrainBufferCom, class CTransform* pTerrainTransformCom, _uint numZ, _uint numX, _float3* pos);
-	class CGameObject* Picking_Object(HWND hWnd);
+	_bool Picking_Object(HWND hWnd, RayHit& hit);
 
 public: /* For.Font_Manager */
 	HRESULT Add_Font(const _wstring& strFontTag, const _tchar* pFontFilePath);
@@ -91,6 +91,10 @@ public: /* For.Font_Manager */
 public: /* For.ModelConverter */
 	HRESULT Ready_StaticBinary(_uint numMeshs, const aiScene* m_pAIScene, const string& name, _fmatrix PreTransformMatrix);
 	HRESULT Ready_DynamicBinary(_uint numMeshs, const aiScene* m_pAIScene, const string& name, class CModel* pModel, vector<class CBone*>& bones);
+
+public: /* For.CDataManaget */
+	HRESULT Save_Date(const vector<tagObjectInfo>& objectinfo);
+	HRESULT Load_Date(const _tchar* filePath, vector<tagObjectInfo>& objectinfo);
 
 private:
 	class CGraphic_Device* m_pGraphic_Device = { nullptr };
@@ -105,6 +109,7 @@ private:
 	class CPicking_Manager* m_pPicking_Manager = { nullptr };
 	class CFont_Manager* m_pFont_Manager = { nullptr };
 	class CModelConverter* m_pModelConverter = { nullptr };
+	class CDataManager* m_pDataManager = { nullptr };
 
 public:
 	void Release_Engine();

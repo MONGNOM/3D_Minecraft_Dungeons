@@ -4,20 +4,26 @@
 #include "ContainerObject.h"
 
 NS_BEGIN(Engine)
-class CShader;
-class CModel;
+class CCollider;
+class CNavigation;
 NS_END
 
 NS_BEGIN(Client)
 
+
+enum PLAYERSTATE {
+	IDLE = 0,
+	WALK,
+	ATTACK,
+	HEAL,
+	FAILING,
+	BOW,
+	DEATH,
+	END
+};
+
 class CPlayer final : public CContainerObject
 {
-public:
-	enum PLAYERSTATE {
-		IDLE = 0x00000001,
-		WALK = 0x00000002,
-		ATTACK = 0x00000004,
-	};
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CPlayer(const CPlayer& Prototype);
@@ -31,12 +37,23 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+
 protected:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
+	_bool attacking = { false };
 
 private:
-	_uint			m_iState = {};
+	_bool Intersect_ToMonster();
+
+private:
+	CCollider* m_pColliderCom = { nullptr };
+	CNavigation* m_pNavigationCom = { nullptr };
+	PLAYERSTATE state = {};
+	class CBody_Player* pBody; 
+
+	_float m_iMaxHp{};
+	_float m_iCurrentHp{};
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

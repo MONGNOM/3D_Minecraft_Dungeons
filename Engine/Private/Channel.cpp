@@ -77,7 +77,7 @@ HRESULT CChannel::Binary_Initialize(ifstream& fin)
 	return S_OK;
 }
 
-void CChannel::Update_TransformationMatrix(_uint* pCurrentKeyFrameIndex, _float fCurrentTrackPosition, const vector<class CBone*>& Bones)
+void CChannel::Update_TransformationMatrix(_uint* pCurrentKeyFrameIndex, _float fCurrentTrackPosition, const vector<class CBone*>& Bones, _float ratio)
 {
 	// 애니메이션 매쉬깨지는이유는 물어보자
 	if (0.f == fCurrentTrackPosition) // 애니메이션 반복 하려고 키프레임 위치 조절
@@ -86,7 +86,6 @@ void CChannel::Update_TransformationMatrix(_uint* pCurrentKeyFrameIndex, _float 
 	KEYFRAME		LastKeyFrame = m_KeyFrames.back();
 
 	_vector		vScale, vRotation, vTranslation;
-
 
 	if (fCurrentTrackPosition >= LastKeyFrame.fTrackPosition) /*  마지막 키프레임의 상태를 띈다. */
 	{
@@ -119,6 +118,28 @@ void CChannel::Update_TransformationMatrix(_uint* pCurrentKeyFrameIndex, _float 
 		vRightTranslation = XMVectorSetW(XMLoadFloat3(&m_KeyFrames[(*pCurrentKeyFrameIndex) + 1].vTranslation), 1.f);
 		vTranslation = XMVectorLerp(vLeftTranslation, vRightTranslation, fRatio);
 	}
+	
+
+	//if (ratio < 1.0f)
+	//{
+	//	// 1. 뼈대가 아까 찍어둔 과거 사진(Old)을 꺼내옵니다.
+	//	_vector vOldScale = Bones[m_iBoneIndex]->Get_BlendScale();
+	//	_vector vOldRot = Bones[m_iBoneIndex]->Get_BlendRotation();
+	//	_vector vOldTrans = Bones[m_iBoneIndex]->Get_BlendTranslation();
+
+	//	// 2. 과거 사진(Old)과 방금 계산된 현재(vScale 등)를 섞어버립니다!
+	//	vScale = XMVectorLerp(vOldScale, vScale, ratio);
+	//	vRotation = XMQuaternionSlerp(vOldRot, vRotation, ratio);
+	//	vTranslation = XMVectorLerp(vOldTrans, vTranslation, ratio);
+	//}
+	//// ==========================================================
+
+
+	// 다음 번 사진 찍기를 대비해서, "지금 적용된 최종 상태"를 뼈대에 계속 갱신해 줍니다.
+	//Bones[m_iBoneIndex]->Set_CurrentSRT(vScale, vRotation, vTranslation);
+
+
+
 
 	// _matrix		BoneTransformationMatrix = XMMatrixScaling(vScale) * XMMatrixRotationQuaternion(vRotation) * XMMatrixTranslation(vTranslation);
 	_matrix		BoneTransformationMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vTranslation);

@@ -53,6 +53,8 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
+	
+
 	return S_OK;
 }
 
@@ -82,9 +84,10 @@ HRESULT CMainApp::Render()
 
 HRESULT CMainApp::Ready_Fonts()
 {
-	_ulong			dwByte = { };
+	/*_ulong			dwByte = { };
+
 	HANDLE			hFile = CreateFile(TEXT("../Bin/DataFiles/Navigation.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-	if (0 == hFile)
+ 	if (INVALID_HANDLE_VALUE == hFile)
 		return E_FAIL;
 
 	_float3			vPoints[3] = {};
@@ -109,7 +112,7 @@ HRESULT CMainApp::Ready_Fonts()
 	vPoints[2] = _float3(10.f, 0.f, 0.f);
 	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
 
-	CloseHandle(hFile);
+	CloseHandle(hFile);*/
 
 	/*MakeSpriteFont "³Ø½¼lv1°íµñ Bold" /FontSize:16 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 158ex.spritefont */
 
@@ -147,6 +150,26 @@ HRESULT CMainApp::Ready_Prototype_For_Static_Level()
 		return E_FAIL;
 	}
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_AABB"),
+		CCollider::Create(m_pDevice, m_pContext, COLLIDER::AABB))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_Component_Collider_AABB");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_Sphere"),
+		CCollider::Create(m_pDevice, m_pContext, COLLIDER::SPHERE))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_Component_Collider_SPHERE");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_OBB"),
+		CCollider::Create(m_pDevice, m_pContext, COLLIDER::OBB))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_Component_Collider_OBB");
+		return E_FAIL;
+	}
 	return S_OK;
 }
 

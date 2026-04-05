@@ -21,11 +21,32 @@ public:
 		return m_Materials;
 	}
 
-	void Set_Animation(_uint iIndex, _bool isLoop)
-	{
-		m_iCurrentAnimIndex = iIndex;
-		m_isAnimLoop = isLoop;
-	}
+	_bool  m_bIsBlending = false;    // 섞는 중인가? 스위치
+	_float m_fBlendTime = 0.0f;      // 흘러간 시간
+	_float m_fBlendDuration = 0.2f;  // 총 섞을 시간 (0.2초)
+
+	void Set_Animation(_uint iIndex, _bool isLoop);
+
+	void Reset_Animation();
+	//{
+	//	m_iPrevAnimIndex = m_iCurrentAnimIndex;
+	//	m_iCurrentAnimIndex = iIndex;
+	//	m_isAnimLoop = isLoop;
+
+	//	if (m_iCurrentAnimIndex == iIndex) return;
+
+	//	for (auto& pBone : m_Bones)
+	//	{
+	//		pBone->Snapshot_For_Blending();
+	//	}
+
+	//	m_bIsBlending = true;
+	//	m_fBlendTime = 0.0f;
+
+	//	m_iCurrentAnimIndex = iIndex;
+	//	//m_Animations[m_iCurrentAnimIndex]->Reset_TrackPosition();
+	//}
+
 
 	_int Get_BoneIndex(const _char* pBoneName);
 
@@ -66,6 +87,7 @@ private:
 	_uint						m_iCurrentAnimIndex = {}; // 현재 애니메이션 인덱스 -> 뼈들을 컨트롤
 	_uint						m_iNumAnimations = {};
 	vector<class CAnimation*>	m_Animations;
+	_uint						m_iPrevAnimIndex = {0};
 
 private:
 	HRESULT Ready_Meshes();
