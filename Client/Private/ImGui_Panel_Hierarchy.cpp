@@ -247,6 +247,7 @@ void CImGui_Panel_Hierarchy::Render()
                 desc.name = cloneName + std::to_wstring(iSelectedProtoIndex);
                 desc.pos = hit.vPosition; // 법선백터 방향에 따라 크기 만큼 더해줘서 위치 설치
                 desc.m_sPrototype = WStringToString(cloneName);
+                desc.NumTexture = 0;
 				_float3 Normal = hit.Normal;
                 _float3 a = { 1.f, 1.f, 1.f };
 
@@ -290,6 +291,7 @@ void CImGui_Panel_Hierarchy::Render()
                 desc.name = cloneName + std::to_wstring(iSelectedProtoIndex);
                 desc.pos = CImGui_Manager::GetInstance()->Get_PickingPos();
                 desc.m_sPrototype = WStringToString(cloneName);
+                desc.NumTexture = 0;
                 if (FAILED(CGameInstance::GetInstance()->Add_GameObject(ETOI(LEVEL::GAMEPLAY), cloneName,
                     ETOI(LEVEL::GAMEPLAY), TEXT("Layer_Clone"), &desc)))
                 {
@@ -342,6 +344,7 @@ void CImGui_Panel_Hierarchy::Render()
                 XMStoreFloat3(&objectInfo.Translation,pTransform->Get_State(STATE::POSITION));
                 objectInfo.type  = object->Get_ObjectType();
                 objectInfo.PrototypeName = object->Get_PrototypeName();
+                objectInfo.data = object->Get_TextureNum();
                 objectInfoList.push_back(objectInfo);
             }
                
@@ -363,7 +366,7 @@ void CImGui_Panel_Hierarchy::Render()
             CGameObject::GAMEOBJECT_DESC Desc{};
             Desc.name = StringToWString(object.Name);
             Desc.pos = object.Translation;
-
+            Desc.NumTexture = object.data;
             if (FAILED(CGameInstance::GetInstance()->Add_GameObject(ETOI(LEVEL::GAMEPLAY), StringToWString(object.PrototypeName),
                 ETOI(LEVEL::GAMEPLAY), TEXT("Load_Layer"), &Desc)))
                 return;

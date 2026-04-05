@@ -16,6 +16,7 @@ public:
 		_wstring	name = {};
 		_float3     pos = {};
 		string		m_sPrototype = {};
+		_uint		NumTexture = {};
 
 	}GAMEOBJECT_DESC;
 protected:
@@ -29,6 +30,7 @@ public:
 	_wstring Get_ObjectName() { return m_Name; }
 	string Get_PrototypeName() { return m_sPrototype; }
 	void Set_m_iNumTexture(_uint numTex) { m_iNumTexture = numTex; }
+	_uint Get_TextureNum() { return m_iNumTexture; }
 
 
 public:

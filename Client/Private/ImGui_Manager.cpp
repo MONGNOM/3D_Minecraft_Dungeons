@@ -47,7 +47,9 @@ HRESULT CImGui_Manager::Initialize_Manager(ID3D11Device* pDevice, ID3D11DeviceCo
 		return E_FAIL;
 
 	m_pGalleryTexture = CTexture::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4);
+	m_pThumnailsTexture = CTexture::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/Textures/SkyBox/Thum_%d.png"), 4);
 	images = m_pGalleryTexture->Get_Texture();
+	m_vThum = m_pThumnailsTexture->Get_Texture();
 
 	m_pPanels[ETOI(PanelType::INSPECTOR)] = CImGui_Panel_Inspector::Create();
 	m_pPanels[ETOI(PanelType::HIERARCHY)] = CImGui_Panel_Hierarchy::Create();
@@ -249,7 +251,7 @@ void CImGui_Manager::Render_Panels()
 		// 2. 텍스트 대신 '이미지 버튼'을 그립니다! (크기 64x64 예시)
 		// m_vecTextures[i] 는 유저님의 텍스쳐 포인터 변수에 맞게 수정해주세요.
 		if (ImGui::ImageButton("##Image",
-			(void*)images[i],
+			(void*)m_vThum[i],
 			ImVec2(64.f, 64.f),
 			ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), // 기본 UV 좌표
 			ImVec4(0.0f, 0.0f, 0.0f, 0.0f),         // 배경색 (투명)
@@ -513,6 +515,7 @@ void CImGui_Manager::Free()
 	
 	Safe_Release(pSelectedObject);
 	Safe_Release(m_pGalleryTexture);
+	Safe_Release(m_pThumnailsTexture);
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pDeviceContext);
 	Safe_Release(m_pDevice);

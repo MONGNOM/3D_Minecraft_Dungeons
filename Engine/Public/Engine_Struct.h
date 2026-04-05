@@ -152,6 +152,8 @@ namespace Engine
 		string Name;
 		string PrototypeName;
 		_int type;
+		_int data;
+	
 
 	}OBJECTINFO;
 

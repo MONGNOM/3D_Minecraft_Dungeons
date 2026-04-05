@@ -25,6 +25,8 @@ HRESULT CDataManager::Save_Date(const vector<tagObjectInfo>& objectinfo) // ¿©±â
 		object["Scale"] = { iter.Scale.x, iter.Scale.y, iter.Scale.z };
 		object["Rotation"] = { iter.Rotation.x, iter.Rotation.y, iter.Rotation.z };
 		object["Translation"] = { iter.Translation.x, iter.Translation.y, iter.Translation.z };
+		object["data"] =  iter.data ;
+
 		myData["GameObject"].push_back(object);
 	}
 
@@ -62,6 +64,7 @@ HRESULT CDataManager::Load_Date(const _tchar* filePath, vector<tagObjectInfo>& o
 		object.Translation = { iter["Translation"][0], iter["Translation"][1], iter["Translation"][2] };
 		object.type = iter["type"];
 		object.PrototypeName = iter["PrototypeName"].get<string>();
+		object.data = iter["data"];
 
 		objectinfo.push_back(object);
 	}

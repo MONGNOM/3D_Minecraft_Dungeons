@@ -61,6 +61,7 @@ HRESULT CGameObject::Initialize(void* pArg)
             m_Name = pDesc->name;
             m_sPrototype = pDesc->m_sPrototype;
             m_fPos = pDesc->pos;
+            m_iNumTexture = pDesc->NumTexture;
         }
         else
         {

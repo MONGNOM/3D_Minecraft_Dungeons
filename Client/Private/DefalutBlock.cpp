@@ -21,7 +21,7 @@ HRESULT CDefalutBlock::Initialize(void* pArg)
 {
 	m_eObjectType = OBJECTTYPE::ENVIRONMENT;
 
-	GAMEOBJECT_DESC* Desc = static_cast<GAMEOBJECT_DESC*>(pArg);
+	BLOCK_DESC* Desc = static_cast<BLOCK_DESC*>(pArg);
 	/* 백그라운드의 멤버를 채워넣어야한다면 여기서 채운다. */
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -100,7 +100,7 @@ HRESULT CDefalutBlock::Bind_ShaderResources()
 	if (FAILED(m_pGameInstance->Bind_TransformMatrix(D3DTS::PROJ, m_pShaderCom, "g_ProjMatrix")))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, "g_Texture", 0)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, "g_Texture", m_iNumTexture)))
 		return E_FAIL;
 
 	return S_OK;

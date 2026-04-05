@@ -14,10 +14,9 @@ NS_BEGIN(Client)
 class CDefalutBlock final : public CGameObject
 {
 public:
-	typedef struct tagTerrainDesc final : public CGameObject::GAMEOBJECT_DESC
+	typedef struct tagCDefalutBlockDesc final : public CGameObject::GAMEOBJECT_DESC
 	{
-
-	}TERRAIN_DESC;
+	}BLOCK_DESC;
 private:
 	CDefalutBlock(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CDefalutBlock(const CDefalutBlock& Prototype);
