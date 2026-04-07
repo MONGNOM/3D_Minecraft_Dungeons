@@ -39,9 +39,9 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	if (Desc != nullptr)
 	{
-		m_fPos = Desc->pos;
+		/*m_fPos = Desc->pos;
 		
-		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
+		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));*/
 	}
 
 	
@@ -152,7 +152,7 @@ HRESULT CPlayer::Ready_Components()
 	NavigationDesc.iCurrentCellIndex = 1;
 	NavigationDesc.pTransform = m_pTransformCom;
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Navigation"),
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Navigation"),
 		TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom), &NavigationDesc)))
 		return E_FAIL;
 
@@ -165,7 +165,7 @@ HRESULT CPlayer::Ready_PartObjects()
 	BodyDesc.pParentState = &state;
 	BodyDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();
 
-	if (FAILED(__super::Add_PartObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_Player"),
+	if (FAILED(__super::Add_PartObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Body_Player"),
 		TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
 	pBody = dynamic_cast<CBody_Player*>(m_PartObjects[TEXT("Part_Body")]);
@@ -178,7 +178,7 @@ HRESULT CPlayer::Ready_PartObjects()
 	WeaponDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();
 	WeaponDesc.pSocketMatrix = pBody->Get_SocketBoneMatrixPtr("J_R_Weapon_Socket");
 
-	if (FAILED(__super::Add_PartObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
+	if (FAILED(__super::Add_PartObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Weapon"),
 		TEXT("Part_Weapon"), &WeaponDesc)))
 		return E_FAIL;
 
@@ -188,7 +188,7 @@ HRESULT CPlayer::Ready_PartObjects()
 _bool CPlayer::Intersect_ToMonster()
 {
 
-	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Skeleton"), TEXT("Layer_Monster"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Collider")));
+	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Skeleton"), TEXT("Layer_Monster"), ETOI(LEVEL::DUNGEON), TEXT("Com_Collider")));
 
 
 	return collider ? m_pColliderCom->Intersect(collider) : false;

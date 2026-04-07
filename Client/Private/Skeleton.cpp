@@ -135,7 +135,7 @@ HRESULT CSkeleton::Render()
 
 bool CSkeleton::Intersect_ToPlayer()
 {
-	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Collider")));
+	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(LEVEL::DUNGEON), TEXT("Com_Collider")));
 
 	return collider ? m_pColliderCom->Intersect(collider) : false;
 }
@@ -172,7 +172,7 @@ HRESULT CSkeleton::Ready_PartObjects()
 	BodyDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();
 
 
-	if (FAILED(__super::Add_PartObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_Skeleton"),
+	if (FAILED(__super::Add_PartObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Body_Skeleton"),
 		TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
 

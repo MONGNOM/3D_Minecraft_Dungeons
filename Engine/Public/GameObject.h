@@ -15,6 +15,7 @@ public:
 		_uint		iFlag = {};
 		_wstring	name = {};
 		_float3     pos = {};
+		_float3     rot = {};
 		string		m_sPrototype = {};
 		_uint		NumTexture = {};
 
@@ -49,6 +50,7 @@ protected:
 	OBJECTTYPE m_eObjectType = {};
 	_wstring m_Name = {};
 	_float3 m_fPos = {};
+	_float3 m_fRot = {};
 	_uint			m_iNumTexture { 0 };
 	string m_sPrototype{};
 	_bool	m_SetActive;

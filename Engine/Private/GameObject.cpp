@@ -62,11 +62,14 @@ HRESULT CGameObject::Initialize(void* pArg)
             m_sPrototype = pDesc->m_sPrototype;
             m_fPos = pDesc->pos;
             m_iNumTexture = pDesc->NumTexture;
+            m_fRot= pDesc->rot;
+
         }
         else
         {
             m_Name = TEXT("None");
             m_fPos = _float3(0, 0, 0);
+            m_fRot = _float3(0, 0, 0);
             m_iNumTexture = 0;
             m_sPrototype = "";
         }

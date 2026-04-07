@@ -108,11 +108,11 @@ HRESULT CBody_Skeleton::Render()
 HRESULT CBody_Skeleton::Ready_Components()
 {
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Skeleton"),
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Skeleton"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
@@ -163,7 +163,7 @@ HRESULT CBody_Skeleton::Bind_ShaderResources()
 _bool CBody_Skeleton::Intersect_ToPlayer()
 {
 
-	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Collider")));
+	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(LEVEL::DUNGEON), TEXT("Com_Collider")));
 
 	return collider ? m_pColliderCom->Intersect(collider) : false;
 }

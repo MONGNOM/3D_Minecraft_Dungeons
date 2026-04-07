@@ -100,6 +100,36 @@
     <Filter Include="02.GameObject\DefaultBlock">
       <UniqueIdentifier>{4b21a9c5-1736-4903-a007-12ba545cbd98}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Building">
+      <UniqueIdentifier>{4363c4f4-3d8c-44c8-8c18-1d2b4b5902c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Bridge">
+      <UniqueIdentifier>{ebb83edd-c3c1-4c23-8d57-cbd472af9ad3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Table">
+      <UniqueIdentifier>{0b4ade60-762f-4b96-b69f-04d468688679}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Tent">
+      <UniqueIdentifier>{cadafd0f-a242-4722-aa12-bc183614bb02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\LampPost">
+      <UniqueIdentifier>{8f167642-3322-43ae-ac60-e14616ef0806}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Bucket">
+      <UniqueIdentifier>{69f78e94-7bb2-4e6e-baaf-ac1bc485a241}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\WaterBucket">
+      <UniqueIdentifier>{d3089197-9d27-4e93-b425-c550367f4b36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Sack">
+      <UniqueIdentifier>{e16a3308-2431-44c9-a6eb-cf0e15772065}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Lantern">
+      <UniqueIdentifier>{4bc754dd-1892-46bd-8a1b-ae1b28143331}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Grass">
+      <UniqueIdentifier>{603f9a26-48c9-497a-a4cb-3aa789f74c15}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -216,6 +246,36 @@
     <ClInclude Include="..\public\DefalutBlock.h">
       <Filter>02.GameObject\DefaultBlock</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Building.h">
+      <Filter>02.GameObject\Building</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Bridge.h">
+      <Filter>02.GameObject\Bridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Table.h">
+      <Filter>02.GameObject\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tent.h">
+      <Filter>02.GameObject\Tent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LampPost.h">
+      <Filter>02.GameObject\LampPost</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Bucket.h">
+      <Filter>02.GameObject\Bucket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sack.h">
+      <Filter>02.GameObject\Sack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\WaterBucket.h">
+      <Filter>02.GameObject\WaterBucket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Lantern.h">
+      <Filter>02.GameObject\Lantern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Grass.h">
+      <Filter>02.GameObject\Grass</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -329,6 +389,36 @@
     </ClCompile>
     <ClCompile Include="..\private\DefalutBlock.cpp">
       <Filter>02.GameObject\DefaultBlock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Building.cpp">
+      <Filter>02.GameObject\Building</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bridge.cpp">
+      <Filter>02.GameObject\Bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Table.cpp">
+      <Filter>02.GameObject\Table</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tent.cpp">
+      <Filter>02.GameObject\Tent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sack.cpp">
+      <Filter>02.GameObject\Sack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\WaterBucket.cpp">
+      <Filter>02.GameObject\WaterBucket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bucket.cpp">
+      <Filter>02.GameObject\Bucket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LampPost.cpp">
+      <Filter>02.GameObject\LampPost</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lantern.cpp">
+      <Filter>02.GameObject\Lantern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Grass.cpp">
+      <Filter>02.GameObject\Grass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

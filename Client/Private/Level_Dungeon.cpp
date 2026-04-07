@@ -2,10 +2,41 @@
 #include "GameInstance.h"
 #include "FreeCamera.h"
 #include "HotBar.h"
+#include "ImGui_Manager.h"
 
 CLevel_Dungeon::CLevel_Dungeon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) 
 	: CLevel {pDevice, pContext}
 {
+}
+
+std::string WStringToString1(const std::wstring& wstr)
+{
+	if (wstr.empty()) return std::string();
+
+	// 1. 변환에 필요한 공간(바이트 수) 계산
+	int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), NULL, 0, NULL, NULL);
+
+	// 2. 공간 확보 후 실제 변환 진행
+	std::string strTo(size_needed, 0);
+	WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
+
+	return strTo;
+}
+
+std::wstring StringToWString1(const std::string& str)
+{
+	if (str.empty()) return std::wstring();
+
+	// 1. 변환 후 글자 길이가 얼마나 될지 미리 계산 (이번엔 MultiByteToWideChar 사용)
+	int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
+
+	// 2. 계산된 길이만큼 빈 wstring을 만듭니다.
+	std::wstring wstrTo(size_needed, 0);
+
+	// 3. 진짜로 변환해서 집어넣습니다.
+	MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
+
+	return wstrTo;
 }
 
 HRESULT CLevel_Dungeon::Initialize()
@@ -26,6 +57,10 @@ HRESULT CLevel_Dungeon::Initialize()
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
+	
+	if (FAILED(Ready_Layer_Load()))
+		return E_FAIL;
+	
 
 	return S_OK;
 }
@@ -212,9 +247,39 @@ HRESULT CLevel_Dungeon::Ready_Layer_UI(const _wstring& strLayerTag)
 {
 	Add_HotBar(strLayerTag);
 	
-
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Sky"),
+		ETOI(LEVEL::DUNGEON), strLayerTag)))
+		return E_FAIL;
 	
 
+	return S_OK;
+}
+
+HRESULT CLevel_Dungeon::Ready_Layer_Load()
+{
+
+
+
+	//m_pImGui_Manager->Set_Load(true);
+	vector<OBJECTINFO> objectInfoList;
+	m_pGameInstance->Load_Date(TEXT("../Bin/DataFiles/Test_Save.json"), objectInfoList);
+
+	for (auto& object : objectInfoList)
+	{
+		CGameObject::GAMEOBJECT_DESC Desc{};
+		Desc.m_sPrototype = object.PrototypeName;
+		Desc.name = StringToWString1(object.Name);
+		Desc.pos = object.Translation;
+		Desc.rot = object.Rotation;
+		Desc.NumTexture = object.data;
+		if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), StringToWString1(object.PrototypeName),
+			ETOI(LEVEL::DUNGEON), TEXT("Load_Layer"), &Desc)))
+			return E_FAIL;
+	}
+
+
+	MSG_BOX("불러오기 완료!");
+	//m_pImGui_Manager->Set_Load(false);
 	return S_OK;
 }
 
@@ -236,4 +301,8 @@ CLevel_Dungeon* CLevel_Dungeon::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 void CLevel_Dungeon::Free()
 {
 	__super::Free();
+
+	//Safe_Release(m_pImGui_Manager);
+
+
 }

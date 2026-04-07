@@ -3,6 +3,7 @@
 #include "Level.h"
 
 NS_BEGIN(Client)
+class CImGui_Manager;
 
 class CLevel_Dungeon : public CLevel
 {
@@ -21,6 +22,7 @@ private:
 	HRESULT Ready_Layer_BackGround(const _wstring& strLayerTag);
 	HRESULT Ready_Layer_Player(const _wstring& strLayerTag);
 
+	CImGui_Manager* m_pImGui_Manager = { nullptr };
 public:
 	static CLevel_Dungeon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

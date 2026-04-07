@@ -1,5 +1,6 @@
 #include "DefalutBlock.h"
 #include "GameInstance.h"
+#include "ImGui_Manager.h"
 
 CDefalutBlock::CDefalutBlock(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -29,12 +30,23 @@ HRESULT CDefalutBlock::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	if (Desc != nullptr)
+	
+	if (Desc != nullptr )//&& CImGui_Manager::GetInstance()->isLoad())
 	{
 		m_fPos = Desc->pos;
-		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y + 0.5f,  Desc->pos.z, 1.f));
+		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y, Desc->pos.z, 1.f));
 	}
+	else
+	{
+		m_fPos = Desc->pos;
+		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y + 0.5f ,  Desc->pos.z, 1.f));
+	}
+	
+	
+
+	//load할때 
 	// 설치 될 때 큐브의 크기 만큼 위로 올려줘야할텐데
+
 
 	return S_OK;
 }
@@ -74,15 +86,15 @@ HRESULT CDefalutBlock::Render()
 
 HRESULT CDefalutBlock::Ready_Components()
 {
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Sky"),
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Texture_Block"),
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxDefaultCube"),
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Shader_VtxDefaultCube"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Cube"),
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_VIBuffer_Cube"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 

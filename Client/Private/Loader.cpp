@@ -14,6 +14,18 @@
 #include "Weapon.h"
 #include "Sky.h"
 #include "DefalutBlock.h"
+#include "Building.h"
+#include "Bridge.h"
+#include "Table.h"
+#include "Tent.h"
+#include "WaterBucket.h"
+#include "Sack.h"
+#include "Bucket.h"
+#include "LampPost.h"
+#include "Grass.h"
+#include "Lantern.h"
+
+
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice { pDevice }
@@ -165,13 +177,6 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		return E_FAIL;
 	}
 
-	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Imgui"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
-	{
-		MSG_BOX("Faild to Add_Prototype : Imgui Texture");
-		return E_FAIL;
-	}
-
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Tool"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/white.png"), 1))))
 	{
@@ -187,12 +192,20 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	}
 	/* Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Sky"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/sky.dds"), 1))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Cube Texture");
 		return E_FAIL;
 	}
 
+	/* Prototype_Component_Texture_Sky */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Block"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/mincraft_%d.dds"), 16))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Cube Texture");
+		return E_FAIL;
+	}
+	
 	lstrcpy(m_szLoadingText, TEXT("셰이더를 로딩 중 입니다."));
 
 
@@ -243,7 +256,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 
 	/* Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Height.bmp")))))
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Height2.bmp")))))
 	{
 		MSG_BOX("Faild to Add_Prototype : VIBuffer_Terrain");
 		return E_FAIL;
@@ -281,6 +294,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	//	return E_FAIL;
 	//}
 
+	
 
 	PreLocalTransformMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Bunting"),
@@ -289,6 +303,91 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		MSG_BOX("Faild to Add_Prototype : Model_Bunting");
 		return E_FAIL;
 	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Building"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Building/Building.fbx", "Prototype_Component_Model_Building", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Building");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Bridge"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/BrownBridge/T_RetractibleBridge.fbx", "Prototype_Component_Model_Bridge", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Bridge");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_LampPost"), 
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/LampPost/LampPost.fbx", "Prototype_Component_Model_LampPost", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_LampPost");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(90.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Bucket"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/BucKet/Barrel.fbx", "Prototype_Component_Model_Bucket", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Barrel");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Sack"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Sack/Sack.fbx", "Prototype_Component_Model_Sack", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Sack");
+		return E_FAIL;
+	}
+
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(90.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_WaterBarrel"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/BucKet/WaterBarrel.fbx", "Prototype_Component_Model_WaterBarrel", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_WaterBarrel");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Tent"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Tent/Tent.fbx", "Prototype_Component_Model_Tent", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Tent");
+		return E_FAIL;
+	}
+
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_MapTable"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/MapTable/MapTable.fbx", "Prototype_Component_Model_MapTable", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_MapTable");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Lantern"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Lantern/Lantern.fbx", "Prototype_Component_Model_Lantern", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Lantern");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Grass"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Grass/Grass.fbx", "Prototype_Component_Model_Grass", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Grass");
+		return E_FAIL;
+	}
+
+
+
 
 	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Player"),
@@ -306,6 +405,9 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
 		return E_FAIL;
 	}
+
+	
+
 
 	lstrcpy(m_szLoadingText, TEXT("네비게이션을 로딩 중 입니다."));
 	/* Prototype_Component_Navigation */
@@ -358,18 +460,84 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	}
 
 
-	//if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Bunting"),
-	//	CBody_Skeleton::Create(m_pDevice, m_pContext))))
-	//{
-	//	MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Bunting");
-	//	return E_FAIL;
-	//}
-
 	//번팅
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Bunting"),
 		CBunting::Create(m_pDevice, m_pContext))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Bunting");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Building"), 
+		CBuilding::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Building");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Bridge"),
+		CBridge::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Bridge");
+		return E_FAIL;
+	}
+
+	
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Lantern"),
+		CLantern::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Lantern");
+		return E_FAIL;
+	}
+
+	
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LampPost"), // 추후 가로등 과 램프 각각 소환해서 부착 한다 
+		CLampPost::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_LampPost");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Bucket"),
+		CBucket::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Bucket");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Sack"),
+		CSack::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Sack");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_WaterBucket"),
+		CWaterBucket::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_WaterBucket");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Tent"),
+		CTent::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Tent");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Table"),
+		CTable::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Table");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Grass"),
+		CGrass::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Grass");
 		return E_FAIL;
 	}
 
@@ -454,6 +622,86 @@ HRESULT CLoader::Loading_For_Dungeon()
 		return E_FAIL;
 	}
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
+		CHotBar::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_HotBar");
+		return E_FAIL;
+	}
+
+	lstrcpy(m_szLoadingText, TEXT("텍스쳐를 로딩 중 입니다."));
+	/* Prototype_Component_Texture_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Texture_Terrain"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/white.png"), 1))))
+	{
+		MSG_BOX("Faild to Add_Prototype : BackGround Texture");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Texture_Tool"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/white.png"), 1))))
+	{
+		MSG_BOX("Faild to Add_Prototype : BackGround Texture");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Texture_Bunting"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/Mesh/Prefab/Bunting/T_Bunting.png"), 1))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Bunting Texture");
+		return E_FAIL;
+	}
+	/* Prototype_Component_Texture_Sky */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Texture_Sky"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/sky.dds"), 1))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Cube Texture");
+		return E_FAIL;
+	}
+
+	/* Prototype_Component_Texture_Sky */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Texture_Block"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/mincraft_%d.dds"), 16))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Cube Texture");
+		return E_FAIL;
+	}
+
+	lstrcpy(m_szLoadingText, TEXT("셰이더를 로딩 중 입니다."));
+
+
+	/* Prototype_Component_Shader_VtxCube */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Shader_VtxCube"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCube.hlsl"), VTXCUBE::Elements, VTXCUBE::iNumElements))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Shader_VtxCube");
+		return E_FAIL;
+	}
+
+	/* Prototype_Component_Shader_VtxDefaultCube */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Shader_VtxDefaultCube"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxDefaultCube.hlsl"), VTXCUBE::Elements, VTXCUBE::iNumElements))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Shader_VtxDefaultCube");
+		return E_FAIL;
+	}
+
+	/* Prototype_Component_Shader_VtxNorTex */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Shader_VtxNorTex"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX::Elements, VTXNORTEX::iNumElements))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Shader_VtxNorTex");
+		return E_FAIL;
+	}
+
+
+	/* Prototype_Component_Shader_VtxMesh */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Shader_VtxMesh"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Shader_VtxMeshTex");
+		return E_FAIL;
+	}
 
 	/* Prototype_Component_Shader_VtxAnimMesh */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
@@ -464,6 +712,173 @@ HRESULT CLoader::Loading_For_Dungeon()
 	}
 
 
+	lstrcpy(m_szLoadingText, TEXT("사운드를 로딩 중 입니다."));
+
+
+	/* Prototype_Component_VIBuffer_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_VIBuffer_Terrain"),
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Height2.bmp")))))
+	{
+		MSG_BOX("Faild to Add_Prototype : VIBuffer_Terrain");
+		return E_FAIL;
+	}
+
+	lstrcpy(m_szLoadingText, TEXT("모델를 로딩 중 입니다."));
+
+
+	_matrix			PreLocalTransformMatrix = { XMMatrixIdentity() };
+	/* Prototype_Component_Model_Fiona */
+	PreLocalTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Fiona"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/Models/Fiona/Fiona.fbx", ("Prototype_Component_Model_Fiona"), PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Skeleton"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/Skeleton.fbx", "Prototype_Component_Model_Skeleton", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Skeleton");
+		return E_FAIL;
+	}
+
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Bunting"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Bunting/Bunting.fbx", "Prototype_Component_Model_Bunting", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Bunting");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Building"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Building/Building.fbx", "Prototype_Component_Model_Building", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Building");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Bridge"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/BrownBridge/T_RetractibleBridge.fbx", "Prototype_Component_Model_Bridge", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Bridge");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_LampPost"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/LampPost/LampPost.fbx", "Prototype_Component_Model_LampPost", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_LampPost");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(90.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Bucket"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/BucKet/Barrel.fbx", "Prototype_Component_Model_Bucket", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Barrel");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Sack"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Sack/Sack.fbx", "Prototype_Component_Model_Sack", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Sack");
+		return E_FAIL;
+	}
+
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(90.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_WaterBarrel"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/BucKet/WaterBarrel.fbx", "Prototype_Component_Model_WaterBarrel", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_WaterBarrel");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Tent"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Tent/Tent.fbx", "Prototype_Component_Model_Tent", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Tent");
+		return E_FAIL;
+	}
+
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_MapTable"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/MapTable/MapTable.fbx", "Prototype_Component_Model_MapTable", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_MapTable");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Lantern"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Lantern/Lantern.fbx", "Prototype_Component_Model_Lantern", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Lantern");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Grass"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Grass/Grass.fbx", "Prototype_Component_Model_Grass", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Grass");
+		return E_FAIL;
+	}
+
+
+
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Player"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Player.fbx", "Prototype_Component_Model_Player", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Player");
+		return E_FAIL;
+	}
+
+	/* Prototype_Component_Model_ForkLift */
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Sword"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Sword/Sword.fbx", "Prototype_Component_Model_Sword", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
+		return E_FAIL;
+	}
+
+
+
+
+	lstrcpy(m_szLoadingText, TEXT("네비게이션을 로딩 중 입니다."));
+	/* Prototype_Component_Navigation */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Navigation"),
+		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.dat"), TEXT("../Bin/DataFiles/Neighbors.dat")))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
+		return E_FAIL;
+	}
+
+
+
+	lstrcpy(m_szLoadingText, TEXT("객체원형를 로딩 중 입니다."));
+	/* Prototype_GameObject_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Terrain"),
+		CTerrain::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Terrain");
+		return E_FAIL;
+	}
+
+	/* Prototype_GameObject_FreeCamera */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_FreeCamera"),
 		CFreeCamera::Create(m_pDevice, m_pContext))))
 	{
@@ -471,43 +886,11 @@ HRESULT CLoader::Loading_For_Dungeon()
 		return E_FAIL;
 	}
 
-
-	lstrcpy(m_szLoadingText, TEXT("모델를 로딩 중 입니다."));
-
-
-	// 테스트후 풀어주기
-	//_matrix			PreLocalTransformMatrix = { XMMatrixIdentity() };
-	///* Prototype_Component_Model_Fiona */
-	//PreLocalTransformMatrix =  XMMatrixRotationY(XMConvertToRadians(180.f))* XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	//if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Skeleton"),
-	//	CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/Skeleton.fbx", PreLocalTransformMatrix))))
-	//{
-	//	MSG_BOX("Faild to Add_Prototype : Model_Fiona");
-	//	return E_FAIL;
-	//}
-
-	//PreLocalTransformMatrix = { XMMatrixIdentity() };
-	//PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
-	//if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Player"),
-	//	CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Player.fbx", PreLocalTransformMatrix))))
-	//{
-	//	MSG_BOX("Faild to Add_Prototype : Model_Player");
-	//	return E_FAIL;
-	//}
-
 	/* Prototype_GameObject_Monster */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Monster"),
 		CMonster::Create(m_pDevice, m_pContext))))
 	{
 		MSG_BOX("Faild to Add_Prototype : GameObject_Monster");
-		return E_FAIL;
-	}
-
-
-	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
-		CHotBar::Create(m_pDevice, m_pContext))))
-	{
-		MSG_BOX("Faild to Add_Prototype : GameObject_HotBar");
 		return E_FAIL;
 	}
 
@@ -525,6 +908,89 @@ HRESULT CLoader::Loading_For_Dungeon()
 		return E_FAIL;
 	}
 
+
+	//번팅
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Bunting"),
+		CBunting::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Bunting");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Building"),
+		CBuilding::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Building");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Bridge"),
+		CBridge::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Bridge");
+		return E_FAIL;
+	}
+
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Lantern"),
+		CLantern::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Lantern");
+		return E_FAIL;
+	}
+
+
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_LampPost"),
+		CLampPost::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_LampPost");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Bucket"),
+		CBucket::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Bucket");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Sack"),
+		CSack::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Sack");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_WaterBucket"),
+		CWaterBucket::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_WaterBucket");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Tent"),
+		CTent::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Tent");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Table"),
+		CTable::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Table");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Grass"),
+		CGrass::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Grass");
+		return E_FAIL;
+	}
+
+
 	/* Prototype_GameObject_Player*/
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Player"),
 		CPlayer::Create(m_pDevice, m_pContext))))
@@ -532,6 +998,7 @@ HRESULT CLoader::Loading_For_Dungeon()
 		MSG_BOX("Faild to Add_Prototype : GameObject_Player");
 		return E_FAIL;
 	}
+
 
 	/* Prototype_GameObject_Body_Player */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Body_Player"),
@@ -548,7 +1015,34 @@ HRESULT CLoader::Loading_For_Dungeon()
 		MSG_BOX("Faild to Add_Prototype : GameObject_Weapon");
 		return E_FAIL;
 	}
-	
+
+
+	/* Prototype_Component_VIBuffer_Cube */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_VIBuffer_Cube"),
+		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : VIBuffer_Cube");
+		return E_FAIL;
+	}
+
+
+	/* Prototype_GameObject_Sky */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Sky"),
+		CSky::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Sky");
+		return E_FAIL;
+	}
+
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_DefaultBlock"),
+		CDefalutBlock::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_DefaultBlock");
+		return E_FAIL;
+	}
+
+
 	
 
 	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));

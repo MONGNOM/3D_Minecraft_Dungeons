@@ -30,6 +30,8 @@ public:
 	_float3 Get_PickingPos() { return m_pickingPos; }
 	_bool Get_isClone() { return m_bClone;  }
 	void Set_isClone(_bool isclone) { m_bClone = isclone; }
+	_bool isLoad() { return m_BisLoad; }
+	void Set_Load(_bool value) {m_BisLoad = value; }
 private:
 	void Render_Panels();
 private:
@@ -45,10 +47,10 @@ private:
 	
 	_float3 m_pickingPos{};
 	_bool m_bClone  = false;
-	int m_iNumX = 129;
-	int m_iNumZ = 129;
+	int m_iNumX = 256;
+	int m_iNumZ = 256;
 	_bool m_bNaviEditMode = false;
-
+	_bool m_BisLoad = false;
 	 CGameObject* pSelectedObject = nullptr;
 
 	 vector<_float3> m_vPoint;

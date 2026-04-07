@@ -46,8 +46,8 @@ HRESULT CImGui_Manager::Initialize_Manager(ID3D11Device* pDevice, ID3D11DeviceCo
 	if (!::ImGui_ImplDX11_Init(m_pDevice, m_pDeviceContext))
 		return E_FAIL;
 
-	m_pGalleryTexture = CTexture::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4);
-	m_pThumnailsTexture = CTexture::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/Textures/SkyBox/Thum_%d.png"), 4);
+	m_pGalleryTexture = CTexture::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/Textures/SkyBox/mincraft_%d.dds"), 16);
+	m_pThumnailsTexture = CTexture::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/Textures/SkyBox/Thum_%d.png"), 16);
 	images = m_pGalleryTexture->Get_Texture();
 	m_vThum = m_pThumnailsTexture->Get_Texture();
 
@@ -99,15 +99,22 @@ void CImGui_Manager::Update_Engine()
 			// 네비게이션 점(vPoints) 추가 로직 실행!
 
 			CVIBuffer_Terrain* terrain = dynamic_cast<CVIBuffer_Terrain*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_VIBuffer")));
-			CTransform* transform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Transform")));
+			CTransform* tertransform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Transform")));
 
+			_float3 y;
+			XMStoreFloat3(&y, tertransform->Get_State(STATE::POSITION));
 			_float3 hitpos{};
 
-			if (!Picking_OnTerrain(g_hWnd, terrain, transform, m_iNumZ, m_iNumX, &hitpos))
+			if (!Picking_OnTerrain(g_hWnd, terrain, tertransform, m_iNumZ, m_iNumX, &hitpos))
 				return;
 
 			m_bClone = true;
 			m_pickingPos = hitpos;
+			
+			
+
+			hitpos.y = y.y;
+			
 
 			m_vAllPoint.push_back(hitpos);
 			if (m_vAllPoint.size() >= 3)

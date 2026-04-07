@@ -287,9 +287,15 @@ void CImGui_Panel_Hierarchy::Render()
             }
             else
             {
+                CTransform* pTerTransform = dynamic_cast<CTransform*>(CGameInstance::GetInstance()->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Transform")));
+                _float3 objPos;
+                XMStoreFloat3(&objPos, pTerTransform->Get_State(STATE::POSITION));
+
                 CGameObject::GAMEOBJECT_DESC desc;
                 desc.name = cloneName + std::to_wstring(iSelectedProtoIndex);
-                desc.pos = CImGui_Manager::GetInstance()->Get_PickingPos();
+                desc.pos.x = CImGui_Manager::GetInstance()->Get_PickingPos().x;
+                desc.pos.y = objPos.y;
+                desc.pos.z = CImGui_Manager::GetInstance()->Get_PickingPos().z;
                 desc.m_sPrototype = WStringToString(cloneName);
                 desc.NumTexture = 0;
                 if (FAILED(CGameInstance::GetInstance()->Add_GameObject(ETOI(LEVEL::GAMEPLAY), cloneName,
@@ -321,7 +327,7 @@ void CImGui_Panel_Hierarchy::Render()
 
     // 1. 저장 버튼
     // 버튼을 클릭하는 바로 그 순간(프레임)에만 true가 반환됩니다.
-    if (ImGui::Button("Save"))
+    if (ImGui::Button("Save") || CGameInstance::GetInstance()->Get_DIKeyState(DIK_LCONTROL) && CGameInstance::GetInstance()->Get_DIKeyDown(DIK_S))
     {
         vector<OBJECTINFO> objectInfoList;
         const auto& player = CGameInstance::GetInstance()->Get_Layer(ETOI(LEVEL::GAMEPLAY));
@@ -333,7 +339,7 @@ void CImGui_Panel_Hierarchy::Render()
            
             for (auto& object : objects)    // 각각 레이어안에 존재하는 오브젝트
             {
-                if (object->Get_ObjectName() == TEXT("Camera") || object->Get_ObjectName() == TEXT("Terrain"))
+                if (object->Get_ObjectName() == TEXT("Camera") || object->Get_ObjectName() == TEXT("Terrain") || object->Get_ObjectName() == TEXT("Sky_Box"))
                     continue;
 
                 OBJECTINFO objectInfo{};
@@ -358,14 +364,17 @@ void CImGui_Panel_Hierarchy::Render()
     // 2. 불러오기 버튼
     if (ImGui::Button("Load"))
     {
+        CImGui_Manager::GetInstance()->Set_Load(true);
         vector<OBJECTINFO> objectInfoList;
         CGameInstance::GetInstance()->Load_Date(TEXT("../Bin/DataFiles/Test_Save.json"), objectInfoList);
 
         for (auto& object : objectInfoList)
         {
             CGameObject::GAMEOBJECT_DESC Desc{};
+            Desc.m_sPrototype = object.PrototypeName;
             Desc.name = StringToWString(object.Name);
             Desc.pos = object.Translation;
+            Desc.rot = object.Rotation;
             Desc.NumTexture = object.data;
             if (FAILED(CGameInstance::GetInstance()->Add_GameObject(ETOI(LEVEL::GAMEPLAY), StringToWString(object.PrototypeName),
                 ETOI(LEVEL::GAMEPLAY), TEXT("Load_Layer"), &Desc)))
@@ -392,6 +401,7 @@ void CImGui_Panel_Hierarchy::Render()
 
 
         MSG_BOX("불러오기 완료!");
+        CImGui_Manager::GetInstance()->Set_Load(false);
     }
 
     ImGui::End();
