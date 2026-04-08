@@ -30,8 +30,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	auto	pDesc = static_cast<BODY_PLAYER_DESC*>(pArg);
 
 	m_pParentPlayerState = pDesc->pParentState;
-
-
+	
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -142,11 +141,11 @@ HRESULT CBody_Player::Ready_Components()
 {
 	
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Player"),
+	if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Model_Player"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 

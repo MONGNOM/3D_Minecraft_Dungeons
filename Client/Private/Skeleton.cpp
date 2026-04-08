@@ -135,7 +135,7 @@ HRESULT CSkeleton::Render()
 
 bool CSkeleton::Intersect_ToPlayer()
 {
-	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(LEVEL::DUNGEON), TEXT("Com_Collider")));
+	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
 
 	return collider ? m_pColliderCom->Intersect(collider) : false;
 }
@@ -171,14 +171,14 @@ HRESULT CSkeleton::Ready_PartObjects()
 	BodyDesc.pParentState = &m_iState;
 	BodyDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();
 
-
-	if (FAILED(__super::Add_PartObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Body_Skeleton"),
+	if (FAILED(__super::Add_PartObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_Body_Skeleton"),
 		TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
 
 	CBody_Skeleton* pBody = dynamic_cast<CBody_Skeleton*>(m_PartObjects[TEXT("Part_Body")]);
 	if (nullptr == pBody)
 		return E_FAIL;
+
 
 	// 활 달아 줍시다 플레이어도 달아야함
 

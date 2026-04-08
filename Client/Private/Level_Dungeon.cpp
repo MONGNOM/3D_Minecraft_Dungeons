@@ -82,7 +82,7 @@ HRESULT CLevel_Dungeon::Ready_Lights()
 	LIGHT_DESC			LightDesc{};
 
 	LightDesc.eType = LIGHT::DIRECTIONAL;
-	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+	LightDesc.vDirection = _float4(-1.0f, -2.0f, 1.0f, 0.f);
 	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
@@ -102,10 +102,11 @@ HRESULT CLevel_Dungeon::Ready_Layer_Camera(const _wstring& strLayerTag)
 	cameraDesc.fDegreePerSec = 180.f;
 	cameraDesc.vEye = _float4(0.f, 10.f, -7.f, 1.f);
 	cameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
-	cameraDesc.fFovy = XMConvertToRadians(60.f);
+	cameraDesc.fFovy = XMConvertToRadians(30.f);
 	cameraDesc.fNear = 0.1f;
 	cameraDesc.fFar = 500.f;
 	cameraDesc.fMouseSensor = 0.05f;
+	cameraDesc.Scenetype = CGameObject::SCENETYPE::DUNGEON;
 
 	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_FreeCamera"),
 		ETOI(LEVEL::DUNGEON), strLayerTag, &cameraDesc)))
@@ -234,6 +235,7 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 	DescBackLeft.fX = g_iWinSizeX * 0.5f;
 	DescBackLeft.fY = g_iWinSizeY - DescBackLeft.fSizeY *0.48f;
 	DescBackLeft.iNumTexture = 0;
+	DescBackLeft.Scenetype = CGameObject::SCENETYPE::DUNGEON;
 
 	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
 		ETOI(LEVEL::DUNGEON), strLayerTag, &DescBackLeft)))
@@ -246,9 +248,12 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 HRESULT CLevel_Dungeon::Ready_Layer_UI(const _wstring& strLayerTag)
 {
 	Add_HotBar(strLayerTag);
-	
+
+	CGameObject::GAMEOBJECT_DESC desc;
+	desc.Scenetype = CGameObject::SCENETYPE::DUNGEON;
+
 	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Sky"),
-		ETOI(LEVEL::DUNGEON), strLayerTag)))
+		ETOI(LEVEL::DUNGEON), strLayerTag, &desc)))
 		return E_FAIL;
 	
 
@@ -272,6 +277,8 @@ HRESULT CLevel_Dungeon::Ready_Layer_Load()
 		Desc.pos = object.Translation;
 		Desc.rot = object.Rotation;
 		Desc.NumTexture = object.data;
+		Desc.Scenetype = CGameObject::SCENETYPE::DUNGEON;
+
 		if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), StringToWString1(object.PrototypeName),
 			ETOI(LEVEL::DUNGEON), TEXT("Load_Layer"), &Desc)))
 			return E_FAIL;

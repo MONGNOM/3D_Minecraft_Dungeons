@@ -89,6 +89,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 	CameraDesc.fMouseSensor = 0.05f;
 	CameraDesc.name = TEXT("Camera");
 	CameraDesc.m_sPrototype = "Prototype_GameObject_FreeCamera";
+	CameraDesc.Scenetype = CGameObject::SCENETYPE::GAMEPLAY;
 
 	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_FreeCamera"),
 		ETOI(LEVEL::GAMEPLAY), strLayerTag, &CameraDesc)))
@@ -114,7 +115,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 	desc.name = TEXT("Terrain");
 	desc.pos = _float3(0,0,0);
 	desc.m_sPrototype = "Prototype_GameObject_Terrain";
-	
+	desc.Scenetype = CGameObject::SCENETYPE::GAMEPLAY;
+
 	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Terrain"),
 		ETOI(LEVEL::GAMEPLAY), strLayerTag, &desc)))
 		return E_FAIL;

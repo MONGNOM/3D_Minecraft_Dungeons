@@ -25,6 +25,9 @@ HRESULT CTerrain::Initialize(void* pArg)
 	
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
+
+	m_eObjectType = OBJECTTYPE::ENVIRONMENT;
+
 	return S_OK;
 }
 
@@ -57,7 +60,7 @@ HRESULT CTerrain::Render()
 	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
 
-	m_eObjectType = OBJECTTYPE::ENVIRONMENT;
+	
 
 
 #ifdef _DEBUG

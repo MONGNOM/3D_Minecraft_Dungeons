@@ -8,6 +8,7 @@ class ENGINE_DLL CGameObject abstract : public CBase
 {
 public:
 	enum OBJECTTYPE { MONSTER, INTERACT, ENVIRONMENT, END};
+	enum SCENETYPE { STATIC, LOADING, LOGO, GAMEPLAY, DUNGEON, SCENETYPEEND };
 
 public:
 	typedef struct tagGameObjectDesc : public CTransform::TRANSFORM_DESC
@@ -18,6 +19,7 @@ public:
 		_float3     rot = {};
 		string		m_sPrototype = {};
 		_uint		NumTexture = {};
+		SCENETYPE   Scenetype;
 
 	}GAMEOBJECT_DESC;
 protected:
@@ -54,6 +56,7 @@ protected:
 	_uint			m_iNumTexture { 0 };
 	string m_sPrototype{};
 	_bool	m_SetActive;
+	SCENETYPE m_eSceneType = SCENETYPE::SCENETYPEEND;
 
 protected:
 	map<const _wstring, class CComponent*>		m_Components;

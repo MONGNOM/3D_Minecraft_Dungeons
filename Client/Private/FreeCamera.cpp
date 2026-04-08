@@ -20,7 +20,6 @@ HRESULT CFreeCamera::Initialize(void* pArg)
 {
 	auto		pDesc = static_cast<FREECAMERA_DESC*>(pArg);
 	m_fMouseSensor = pDesc->fMouseSensor;
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -29,54 +28,70 @@ HRESULT CFreeCamera::Initialize(void* pArg)
 
 void CFreeCamera::Priority_Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->Get_DIKeyState(DIK_LSHIFT))
-		m_fMoveSpeed = fTimeDelta * 2;
-	else
-		m_fMoveSpeed = fTimeDelta;
-	
-	if (m_pGameInstance->Get_DIKeyState(DIK_E) & 0x80)
+	switch (m_eSceneType)
 	{
-		m_pTransformCom->Go_Up(m_fMoveSpeed);
-	}
+	case SCENETYPE::DUNGEON:
+	{
+		CTransform* pTerTransform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Load_Layer"), ETOI(m_eSceneType), TEXT("Com_Transform")));
+		_float3 playerPos;
+		XMStoreFloat3(&playerPos, pTerTransform->Get_State(STATE::POSITION));
+		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(playerPos.x - 15.f, playerPos.y + 20.f, playerPos.z - 15.f, 1.f));
 
-	if (m_pGameInstance->Get_DIKeyState(DIK_Q) & 0x80)
-	{
-		m_pTransformCom->Go_Down(m_fMoveSpeed);
-	}
-
-	if (m_pGameInstance->Get_DIKeyState(DIK_W) & 0x80)
-	{
-		m_pTransformCom->Go_Straight(m_fMoveSpeed);
-	}
-
-	if (m_pGameInstance->Get_DIKeyState(DIK_S) & 0x80)
-	{
-		m_pTransformCom->Go_Backward(m_fMoveSpeed);
-	}
-
-	if (m_pGameInstance->Get_DIKeyState(DIK_A) & 0x80)
-	{
-		m_pTransformCom->Go_Left(m_fMoveSpeed);
-	}
-
-	if (m_pGameInstance->Get_DIKeyState(DIK_D) & 0x80)
-	{
-		m_pTransformCom->Go_Right(m_fMoveSpeed);
+		_vector vTargetPos = XMVectorSet(playerPos.x, playerPos.y + 1, playerPos.z, 1.f);
+		m_pTransformCom->LookAt(vTargetPos);
+		break;
 	}	
+	case SCENETYPE::GAMEPLAY :
+		if (m_pGameInstance->Get_DIKeyState(DIK_LSHIFT))
+			m_fMoveSpeed = fTimeDelta * 2;
+		else
+			m_fMoveSpeed = fTimeDelta;
 
-	_long		MouseMove = {};
-
-	if (m_pGameInstance->Get_DIMouseState(DIMB::RBUTTON))
-	{
-		if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::X))
+		if (m_pGameInstance->Get_DIKeyState(DIK_E) & 0x80)
 		{
-			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
+			m_pTransformCom->Go_Up(m_fMoveSpeed);
 		}
 
-		if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::Y))
+		if (m_pGameInstance->Get_DIKeyState(DIK_Q) & 0x80)
 		{
-			m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
+			m_pTransformCom->Go_Down(m_fMoveSpeed);
 		}
+
+		if (m_pGameInstance->Get_DIKeyState(DIK_W) & 0x80)
+		{
+			m_pTransformCom->Go_Straight(m_fMoveSpeed);
+		}
+
+		if (m_pGameInstance->Get_DIKeyState(DIK_S) & 0x80)
+		{
+			m_pTransformCom->Go_Backward(m_fMoveSpeed);
+		}
+
+		if (m_pGameInstance->Get_DIKeyState(DIK_A) & 0x80)
+		{
+			m_pTransformCom->Go_Left(m_fMoveSpeed);
+		}
+
+		if (m_pGameInstance->Get_DIKeyState(DIK_D) & 0x80)
+		{
+			m_pTransformCom->Go_Right(m_fMoveSpeed);
+		}
+
+		_long		MouseMove = {};
+
+		if (m_pGameInstance->Get_DIMouseState(DIMB::RBUTTON))
+		{
+			if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::X))
+			{
+				m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * m_fMouseSensor);
+			}
+
+			if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::Y))
+			{
+				m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
+			}
+		}
+		break;
 	}
 	__super::Update_TransformMatrices();
 	

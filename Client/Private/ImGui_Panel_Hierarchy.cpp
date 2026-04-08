@@ -248,6 +248,8 @@ void CImGui_Panel_Hierarchy::Render()
                 desc.pos = hit.vPosition; // 법선백터 방향에 따라 크기 만큼 더해줘서 위치 설치
                 desc.m_sPrototype = WStringToString(cloneName);
                 desc.NumTexture = 0;
+                desc.Scenetype = CGameObject::SCENETYPE::GAMEPLAY;
+
 				_float3 Normal = hit.Normal;
                 _float3 a = { 1.f, 1.f, 1.f };
 
@@ -298,6 +300,7 @@ void CImGui_Panel_Hierarchy::Render()
                 desc.pos.z = CImGui_Manager::GetInstance()->Get_PickingPos().z;
                 desc.m_sPrototype = WStringToString(cloneName);
                 desc.NumTexture = 0;
+                desc.Scenetype = CGameObject::SCENETYPE::GAMEPLAY;
                 if (FAILED(CGameInstance::GetInstance()->Add_GameObject(ETOI(LEVEL::GAMEPLAY), cloneName,
                     ETOI(LEVEL::GAMEPLAY), TEXT("Layer_Clone"), &desc)))
                 {
@@ -376,6 +379,7 @@ void CImGui_Panel_Hierarchy::Render()
             Desc.pos = object.Translation;
             Desc.rot = object.Rotation;
             Desc.NumTexture = object.data;
+            Desc.Scenetype = CGameObject::SCENETYPE::GAMEPLAY;
             if (FAILED(CGameInstance::GetInstance()->Add_GameObject(ETOI(LEVEL::GAMEPLAY), StringToWString(object.PrototypeName),
                 ETOI(LEVEL::GAMEPLAY), TEXT("Load_Layer"), &Desc)))
                 return;

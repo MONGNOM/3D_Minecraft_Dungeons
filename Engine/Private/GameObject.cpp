@@ -63,6 +63,7 @@ HRESULT CGameObject::Initialize(void* pArg)
             m_fPos = pDesc->pos;
             m_iNumTexture = pDesc->NumTexture;
             m_fRot= pDesc->rot;
+            m_eSceneType = pDesc->Scenetype;
 
         }
         else
@@ -72,6 +73,7 @@ HRESULT CGameObject::Initialize(void* pArg)
             m_fRot = _float3(0, 0, 0);
             m_iNumTexture = 0;
             m_sPrototype = "";
+            m_eSceneType = SCENETYPE::GAMEPLAY;
         }
         /* 게임오브젝트 멤버를 채워넣어야한다면 여기서 채운다. */
     } 
