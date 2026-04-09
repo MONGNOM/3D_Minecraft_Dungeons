@@ -53,24 +53,24 @@ void CBody_Skeleton::Priority_Update(_float fTimeDelta)
 
 void CBody_Skeleton::Update(_float fTimeDelta)
 {
-
-	if (*m_pParentState & CSkeleton::SKELETONSTATE::IDLE)
-		m_pModelCom->Set_Animation(0, true);
-
-	if (*m_pParentState & CSkeleton::SKELETONSTATE::ATTACK)
-		m_pModelCom->Set_Animation(1, true);
-
-	if (true == m_pModelCom->Play_Animation(fTimeDelta))
-		int a = 10;
-	
 	if (Intersect_ToPlayer())
 	{
-		//damage받음
+		//attack재생
+		//if (*m_pParentState & CSkeleton::SKELETONSTATE::ATTACK)
+
+		m_pModelCom->Set_Animation(1, true);
 	}
 	else
 	{
-		// ? 
+		//if (*m_pParentState & CSkeleton::SKELETONSTATE::IDLE)
+		m_pModelCom->Set_Animation(0, true);
+
+		//idle
 	}
+
+	if (true == m_pModelCom->Play_Animation(fTimeDelta))
+		int a = 10;
+
 
 	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	m_pColliderCom->Update(XMLoadFloat4x4(&m_CombinedWorldMatrix));
@@ -116,14 +116,16 @@ HRESULT CBody_Skeleton::Ready_Components()
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
-	CBounding_AABB::BOUNDING_AABB_DESC AABBDesc;
 
-	AABBDesc.vExtents = _float3(0.5f, 1.f, 0.5f);
-	AABBDesc.vCenter = _float3(0.f, AABBDesc.vExtents.y, 0.f);
+	CBounding_Sphere::BOUNDING_SPHERE_DESC Desc{};
+	Desc.vCenter = _float3(0.f, Desc.fRadius, 0.f);
+	Desc.fRadius = 10.0f;
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_AABB"),
-		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &Desc)))
 		return E_FAIL;
+
+	
 
 	return S_OK;
 }

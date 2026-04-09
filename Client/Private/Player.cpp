@@ -27,9 +27,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	Desc->fSpeedPerSec = 10.f;
 	Desc->fDegreePerSec = 180.f;
 
-	Desc->Scenetype;
-	m_eSceneType;
-	int a = 10;
+
 	/* 백그라운드의 멤버를 채워넣어야한다면 여기서 채운다. */
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -42,10 +40,14 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	if (Desc != nullptr)
 	{
-		/*m_fPos = Desc->pos;
+		m_fPos = Desc->pos;
 		
-		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));*/
+		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
 	}
+
+	m_eObjectType = OBJECTTYPE::PLAYER;
+
+	//네비게이션 잠깐 꺼둠
 
 	
 	return S_OK;
@@ -89,32 +91,35 @@ void CPlayer::Update(_float fTimeDelta)
 		{
 			state = PLAYERSTATE::HEAL;
 		}
-		else if (GetKeyState(VK_UP) & 0x8000)
-		{
-			m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);
-			state = PLAYERSTATE::WALK;
-		}
-		else if (GetKeyState(VK_DOWN) & 0x8000)
-		{
-			m_pTransformCom->Go_Backward(fTimeDelta);
-			state = PLAYERSTATE::WALK;
-		}
-		else if (GetKeyState(VK_LEFT) & 0x8000)
-		{
-			m_pTransformCom->Turn(XMVectorSet(0.f,1.f,0.f,0.f), fTimeDelta * -1.f);
-		}
-		else if (GetKeyState(VK_RIGHT) & 0x8000)
-		{
-			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta );
-		}
 		else
 		{
 			state = PLAYERSTATE::IDLE;
 		}
+
+		 if (GetKeyState(VK_UP) & 0x8000)
+		{
+			//m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);
+			m_pTransformCom->Go_Straight(fTimeDelta);
+			state = PLAYERSTATE::WALK;
+		}
+		 if (GetKeyState(VK_DOWN) & 0x8000)
+		{
+			m_pTransformCom->Go_Backward(fTimeDelta);
+			state = PLAYERSTATE::WALK;
+		}
+		 if (GetKeyState(VK_LEFT) & 0x8000)
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f,1.f,0.f,0.f), fTimeDelta * -1.f);
+		}
+		 if (GetKeyState(VK_RIGHT) & 0x8000)
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta );
+		}
+		
 	}
 
 
-	m_pNavigationCom->Compute_Height(m_pTransformCom);
+	//m_pNavigationCom->Compute_Height(m_pTransformCom);
 	
 	m_pColliderCom->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	
@@ -132,7 +137,7 @@ HRESULT CPlayer::Render()
 {
 #ifdef _DEBUG
 	m_pColliderCom->Render();
-	m_pNavigationCom->Render();
+	//m_pNavigationCom->Render();
 #endif // _DEBUG
 
 
@@ -151,13 +156,13 @@ HRESULT CPlayer::Ready_Components()
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
 		return E_FAIL;
 
-	CNavigation::NAVIGATION_DESC		NavigationDesc{};
-	NavigationDesc.iCurrentCellIndex = 1;
-	NavigationDesc.pTransform = m_pTransformCom;
-	
-	if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Navigation"),
-		TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom), &NavigationDesc)))
-		return E_FAIL;
+	//CNavigation::NAVIGATION_DESC		NavigationDesc{};
+	//NavigationDesc.iCurrentCellIndex = 1;
+	//NavigationDesc.pTransform = m_pTransformCom;
+	//
+	//if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Navigation"),
+	//	TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom), &NavigationDesc)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -193,7 +198,7 @@ HRESULT CPlayer::Ready_PartObjects()
 _bool CPlayer::Intersect_ToMonster()
 {
 
-	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Skeleton"), TEXT("Layer_Monster"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Skeleton1"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
 
 
 	return collider ? m_pColliderCom->Intersect(collider) : false;
@@ -230,5 +235,5 @@ void CPlayer::Free()
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);
-	Safe_Release(m_pNavigationCom);
+	//Safe_Release(m_pNavigationCom);
 }

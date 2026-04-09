@@ -7,7 +7,7 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CGameObject abstract : public CBase
 {
 public:
-	enum OBJECTTYPE { MONSTER, INTERACT, ENVIRONMENT, END};
+	enum OBJECTTYPE { PLAYER, MONSTER, INTERACT, ENVIRONMENT, END};
 	enum SCENETYPE { STATIC, LOADING, LOGO, GAMEPLAY, DUNGEON, SCENETYPEEND };
 
 public:
@@ -34,6 +34,7 @@ public:
 	string Get_PrototypeName() { return m_sPrototype; }
 	void Set_m_iNumTexture(_uint numTex) { m_iNumTexture = numTex; }
 	_uint Get_TextureNum() { return m_iNumTexture; }
+	virtual void TakeHit(_uint damage) { m_fCurrentHp -= damage; }
 
 
 public:
@@ -57,6 +58,9 @@ protected:
 	string m_sPrototype{};
 	_bool	m_SetActive;
 	SCENETYPE m_eSceneType = SCENETYPE::SCENETYPEEND;
+
+	_float m_fMaxHp{};
+	_float m_fCurrentHp{};
 
 protected:
 	map<const _wstring, class CComponent*>		m_Components;

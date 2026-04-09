@@ -43,6 +43,7 @@ HRESULT CWeapon::Initialize(void* pArg)
 		1.f
 	));*/
 
+	m_iSwordDamage = 10;
 
 	return S_OK;
 }
@@ -58,7 +59,17 @@ void CWeapon::Update(_float fTimeDelta)
 	for (size_t i = 0; i < 3; i++)
 		SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
 
+	if (Intersect_ToMonster())
+	{
+		// 몬스터 타입임? 
+		// 그러면 데미지 줘
+		// 몬스터 찾아서 데미지 주는거 구현  -> GetGameObject 먼저 해서 가져와야하나 -> 콜라이더의 주인을 꺼내올까?
+		// 꺼내올떄 콜라이더 클래스에서 주인의 이름을 받아오자
+		//몬스터 데미지 깎음 
+		//TakeHit(m_iSwordDamage);
 
+	}
+	
 
 	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix);
 
@@ -95,6 +106,17 @@ HRESULT CWeapon::Render()
 	return S_OK;
 }
 
+_bool CWeapon::Intersect_ToMonster()
+{
+	// 지금 콜라이더 주인을 가져와서 부딪혔나? 잖아 그게 아니라
+	// 일단 부딪힘?
+	// 부딪힌게 타입이 몬스터면 ture 반환 아니면 false 
+	// 이걸 어떻게 콜라이더끼리 부딪혓나 알수있게하지 ?
+	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Skeleton1"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+
+	return collider ? m_pColliderCom->Intersect(collider) : false;
+}
+
 HRESULT CWeapon::Ready_Components()
 {
 
@@ -108,9 +130,9 @@ HRESULT CWeapon::Ready_Components()
 
 
 	CBounding_OBB::BOUNDING_OBB_DESC Desc{};
-	Desc.vCenter = _float3(0.f, Desc.vExtents.y, 0.f);
-	Desc.vExtents = _float3(1.f,1.f,1.f);
-		Desc.vRadians = _float3(0.f, XMConvertToRadians(45.f), 0.f);
+	Desc.vCenter = _float3(0.f, Desc.vExtents.y, 1.f);
+	Desc.vExtents = _float3(0.5f,0.5f,1.f);
+	Desc.vRadians = _float3(0.f, XMConvertToRadians(0.f), 0.f);
 
 	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &Desc)))

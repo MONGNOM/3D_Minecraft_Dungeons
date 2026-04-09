@@ -79,6 +79,8 @@ void CTransform::Go_Straight(_float fTimeDelta, class CNavigation* pNavigation)
 		Set_State(STATE::POSITION, vPosition);
 }
 
+
+
 void CTransform::Go_Backward(_float fTimeDelta)
 {
 	_vector			vPosition = Get_State(STATE::POSITION);

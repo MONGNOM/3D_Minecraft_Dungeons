@@ -24,19 +24,7 @@ HRESULT CSkeleton::Initialize_Prototype()
 
 HRESULT CSkeleton::Initialize(void* pArg)
 {
-
-	
-
 	CContainerObject::CONTAINEROBJECT_DESC* Desc = static_cast<CONTAINEROBJECT_DESC*>(pArg);
-
-	if (Desc != nullptr)
-	{
-		//m_fPos = Desc->pos;
-		//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y, Desc->pos.z, 1.f));
-		Desc->fSpeedPerSec = 10.f;
-		Desc->fDegreePerSec = 180.f;
-	}
-
 
 	/* 백그라운드의 멤버를 채워넣어야한다면 여기서 채운다. */
 	if (FAILED(__super::Initialize(pArg)))
@@ -47,6 +35,14 @@ HRESULT CSkeleton::Initialize(void* pArg)
 
 	if (FAILED(Ready_PartObjects()))
 		return E_FAIL;
+
+	if (Desc != nullptr)
+	{
+		m_fPos = Desc->pos;
+		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y, Desc->pos.z, 1.f));
+		Desc->fSpeedPerSec = 10.f;
+		Desc->fDegreePerSec = 180.f;
+	}
 
 	m_eObjectType = OBJECTTYPE::MONSTER;
 
@@ -97,6 +93,8 @@ void CSkeleton::Update(_float fTimeDelta)
 
 	if (Intersect_ToPlayer())
 	{
+		// 데미지 받음
+		// STATE TakeHit; 
 		if (m_iState & SKELETONSTATE::IDLE)
 			m_iState ^= SKELETONSTATE::IDLE;
 
@@ -151,14 +149,13 @@ HRESULT CSkeleton::Ready_Components()
 		return E_FAIL;*/
 
 	
-	
-	CBounding_Sphere::BOUNDING_SPHERE_DESC Desc{};
-	Desc.vCenter = _float3(0.f, Desc.fRadius, 0.f);
-	Desc.fRadius = 10.0f;
+	CBounding_AABB::BOUNDING_AABB_DESC AABBDesc;
 
+	AABBDesc.vExtents = _float3(0.5f, 1.f, 0.5f);
+	AABBDesc.vCenter = _float3(0.f, AABBDesc.vExtents.y, 0.f);
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &Desc)))
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_AABB"),
+		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
 		return E_FAIL;
 
 
@@ -170,6 +167,7 @@ HRESULT CSkeleton::Ready_PartObjects()
 	CBody_Skeleton::CBODY_SKELETONDESC		BodyDesc{};
 	BodyDesc.pParentState = &m_iState;
 	BodyDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	BodyDesc.Scenetype = m_eSceneType;
 
 	if (FAILED(__super::Add_PartObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_Body_Skeleton"),
 		TEXT("Part_Body"), &BodyDesc)))

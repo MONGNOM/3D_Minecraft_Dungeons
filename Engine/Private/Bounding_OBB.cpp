@@ -1,5 +1,6 @@
+#include "Bounding_AABB.h"
 #include "Bounding_OBB.h"
-
+#include "Bounding_Sphere.h"
 #include "DebugDraw.h"
 
 CBounding_OBB::CBounding_OBB(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -31,9 +32,108 @@ void CBounding_OBB::Update(_fmatrix WorldMatrix)
 
 _bool CBounding_OBB::Intersect(CBounding* pTarget)
 {
-	return _bool();
+	_bool		isCollision = { false };
+
+	const _char* pName = typeid(*pTarget).name();
+
+	if (false == strcmp("class Engine::CBounding_AABB", pName))
+		isCollision = m_pDesc->Intersects(*dynamic_cast<CBounding_AABB*>(pTarget)->Get_Desc());
+
+	else if (false == strcmp("class Engine::CBounding_OBB", pName))
+		// isCollision = m_pDesc->Intersects(*dynamic_cast<CBounding_OBB*>(pTarget)->Get_Desc());
+		isCollision = Intersect_ToOBB(dynamic_cast<CBounding_OBB*>(pTarget));
+
+	else
+		//isCollision = m_pDesc->Intersects(*dynamic_cast<CBounding_Sphere*>(pTarget)->Get_Desc());
+
+
+	return isCollision;
 }
 
+bool CBounding_OBB::Intersect_ToOBB(CBounding_OBB* pTarget)
+{
+	OBB_DESC			OBBDesc[2] = {
+		Compute_OBBDesc(),
+		pTarget->Compute_OBBDesc()
+	};
+
+	_float			fDistance[3] = {};
+
+	for (size_t i = 0; i < 2; i++)
+	{
+		for (size_t j = 0; j < 3; j++)
+		{
+			fDistance[0] = fabs(XMVectorGetX(XMVector3Dot(
+				XMLoadFloat3(&OBBDesc[1].vCenter) - XMLoadFloat3(&OBBDesc[0].vCenter),
+				XMLoadFloat3(&OBBDesc[i].vAlignDir[j])
+			)));
+
+			fDistance[1] =
+				fabs(XMVectorGetX(XMVector3Dot(
+					XMLoadFloat3(&OBBDesc[0].vCenterDir[0]),
+					XMLoadFloat3(&OBBDesc[i].vAlignDir[j])
+				))) +
+				fabs(XMVectorGetX(XMVector3Dot(
+					XMLoadFloat3(&OBBDesc[0].vCenterDir[1]),
+					XMLoadFloat3(&OBBDesc[i].vAlignDir[j])
+				))) +
+				fabs(XMVectorGetX(XMVector3Dot(
+					XMLoadFloat3(&OBBDesc[0].vCenterDir[2]),
+					XMLoadFloat3(&OBBDesc[i].vAlignDir[j])
+				)));
+
+			fDistance[2] =
+				fabs(XMVectorGetX(XMVector3Dot(
+					XMLoadFloat3(&OBBDesc[1].vCenterDir[0]),
+					XMLoadFloat3(&OBBDesc[i].vAlignDir[j])
+				))) +
+				fabs(XMVectorGetX(XMVector3Dot(
+					XMLoadFloat3(&OBBDesc[1].vCenterDir[1]),
+					XMLoadFloat3(&OBBDesc[i].vAlignDir[j])
+				))) +
+				fabs(XMVectorGetX(XMVector3Dot(
+					XMLoadFloat3(&OBBDesc[1].vCenterDir[2]),
+					XMLoadFloat3(&OBBDesc[i].vAlignDir[j])
+				)));
+
+
+			if (fDistance[0] > fDistance[1] + fDistance[2])
+				return false;
+
+		}
+
+	}
+
+
+
+
+
+	return true;
+}
+
+CBounding_OBB::OBB_DESC CBounding_OBB::Compute_OBBDesc()
+{
+	OBB_DESC			OBBDesc{};
+
+	_float3		vPoints[8] = {};
+	m_pDesc->GetCorners(vPoints);
+
+	OBBDesc.vCenter = m_pDesc->Center;
+
+	_vector		vDir[3] = {
+		XMLoadFloat3(&vPoints[5]) - XMLoadFloat3(&vPoints[4]),
+		XMLoadFloat3(&vPoints[7]) - XMLoadFloat3(&vPoints[4]),
+		XMLoadFloat3(&vPoints[0]) - XMLoadFloat3(&vPoints[4])
+	};
+
+	for (size_t i = 0; i < 3; i++)
+	{
+		XMStoreFloat3(&OBBDesc.vAlignDir[i], XMVector3Normalize(vDir[i]));
+		XMStoreFloat3(&OBBDesc.vCenterDir[i], vDir[i] * 0.5f);
+	}
+
+	return OBBDesc;
+}
 
 #ifdef _DEBUG
 
