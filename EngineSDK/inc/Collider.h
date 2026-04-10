@@ -22,6 +22,7 @@ public:
 	_bool	m_isColl = { false };
 
 	_bool Intersect(CCollider* target);
+	class CGameObject* Get_Owner() { return m_pBounding->Get_Owner(); }
 
 public:
 	void Update(_fmatrix WorldMatrix);

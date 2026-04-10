@@ -15,6 +15,7 @@ HRESULT CBounding_AABB::Initialize(CBounding::BOUNDING_DESC* pDesc)
 
 	m_pOriginalDesc = new BoundingBox(pBoundingDesc->vCenter, pBoundingDesc->vExtents);
 	m_pDesc = new BoundingBox(*m_pOriginalDesc);
+	m_pOwner = pBoundingDesc->owner;
 
 	return S_OK;
 }

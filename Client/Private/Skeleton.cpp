@@ -90,17 +90,17 @@ void CSkeleton::Update(_float fTimeDelta)
 		m_iState |= SKELETONSTATE::IDLE;
 	}*/
 
+	Intersect_ToPlayer();
+	//if (Intersect_ToPlayer())
+	//{
+	//	// 데미지 받음
+	//	// STATE TakeHit; 
+	//	if (m_iState & SKELETONSTATE::IDLE)
+	//		m_iState ^= SKELETONSTATE::IDLE;
 
-	if (Intersect_ToPlayer())
-	{
-		// 데미지 받음
-		// STATE TakeHit; 
-		if (m_iState & SKELETONSTATE::IDLE)
-			m_iState ^= SKELETONSTATE::IDLE;
-
-		m_iState |= SKELETONSTATE::ATTACK;
-	}
-	else
+	//	m_iState |= SKELETONSTATE::ATTACK;
+	//}
+	//else
 	{
 		if (m_iState & SKELETONSTATE::ATTACK)
 			m_iState ^= SKELETONSTATE::ATTACK;
@@ -131,11 +131,22 @@ HRESULT CSkeleton::Render()
 	return S_OK;
 }
 
-bool CSkeleton::Intersect_ToPlayer()
+void CSkeleton::Intersect_ToPlayer()
 {
-	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+	const list<CGameObject*>& object = m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Layer_Clone"));
 
-	return collider ? m_pColliderCom->Intersect(collider) : false;
+	for (auto& iter : object)
+	{
+		CCollider* collider = dynamic_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")));
+
+		if (collider == nullptr) continue;
+
+		if (m_pColliderCom->Intersect(collider) && collider->Get_Owner()->Get_ObjectType() == OBJECTTYPE::PLAYER)
+		{
+			collider->Get_Owner()->TakeHit(10);
+			wcout << collider->Get_Owner()->Get_ObjectName() << "에게 피해를 입혔다" << endl;
+		}
+	}
 }
 
 HRESULT CSkeleton::Ready_Components()
@@ -153,6 +164,7 @@ HRESULT CSkeleton::Ready_Components()
 
 	AABBDesc.vExtents = _float3(0.5f, 1.f, 0.5f);
 	AABBDesc.vCenter = _float3(0.f, AABBDesc.vExtents.y, 0.f);
+	AABBDesc.owner = this;
 
 	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))

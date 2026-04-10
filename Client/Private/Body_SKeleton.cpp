@@ -120,6 +120,7 @@ HRESULT CBody_Skeleton::Ready_Components()
 	CBounding_Sphere::BOUNDING_SPHERE_DESC Desc{};
 	Desc.vCenter = _float3(0.f, Desc.fRadius, 0.f);
 	Desc.fRadius = 10.0f;
+	Desc.owner = this;
 
 	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &Desc)))

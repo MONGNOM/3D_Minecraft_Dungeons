@@ -31,7 +31,7 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	_bool Intersect_ToMonster();
+	void Intersect_ToMonster();
 
 
 private:
@@ -42,7 +42,8 @@ private:
 private:
 	const _uint* m_pParentState = { nullptr };
 	const _float4x4* m_pSocketMatrix = { nullptr };
-	_uint m_iSwordDamage;
+	_uint m_iSwordDamage = 0;
+	const list<CGameObject*>* object = {nullptr};
 
 private:
 	HRESULT Ready_Components();

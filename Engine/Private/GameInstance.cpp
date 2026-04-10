@@ -170,6 +170,11 @@ vector<class CGameObject*> CGameInstance::Get_GameObjects(_uint iLayerIndex)
 	return m_pObject_Manager->Get_GameObjects(iLayerIndex);
 }
 
+const list<class CGameObject*>& CGameInstance::Get_LayerObjects(_uint iLayerIndex, _wstring layName)
+{
+	return m_pObject_Manager->Get_LayerObjects(iLayerIndex, layName);
+}
+
 map<const _wstring, class CLayer*>& CGameInstance::Get_Layer(_uint iLayerIndex)
 {
 	return m_pObject_Manager->Get_Layer(iLayerIndex);

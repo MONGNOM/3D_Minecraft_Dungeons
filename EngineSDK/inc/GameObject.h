@@ -59,8 +59,8 @@ protected:
 	_bool	m_SetActive;
 	SCENETYPE m_eSceneType = SCENETYPE::SCENETYPEEND;
 
-	_float m_fMaxHp;
-	_float m_fCurrentHp;
+	_float m_fMaxHp{};
+	_float m_fCurrentHp{};
 
 protected:
 	map<const _wstring, class CComponent*>		m_Components;

@@ -20,7 +20,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_GaraGui()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
+	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Clone")))) // 이거 카메라로 다시 바꿔 나중에 
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))

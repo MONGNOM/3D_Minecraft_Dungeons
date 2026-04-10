@@ -24,6 +24,7 @@ public:
 	HRESULT Clear_Layers(_uint iLevelIndex);
 	class CComponent* Get_Component(_wstring objName, _wstring layName, _uint iLayerIndex, _wstring componentName);
 	vector<class CGameObject*> Get_GameObjects(_uint iLayerIndex);
+	const list<class CGameObject*>& Get_LayerObjects(_uint iLayerIndex, _wstring layName);
 
 	map<const _wstring, class CLayer*>& Get_Layer(_uint iLayerIndex);
 
@@ -32,7 +33,6 @@ private:
 	map<const _wstring, class CLayer*>*				m_pLayers = { nullptr };
 	typedef map<const _wstring, class CLayer*>		LAYERS;
 	class CGameInstance*							m_pGameInstance = { nullptr };
-
 private:
 	class CLayer* Find_Layer(_uint iLayerLevelIndex, const _wstring& strLayerTag);
 

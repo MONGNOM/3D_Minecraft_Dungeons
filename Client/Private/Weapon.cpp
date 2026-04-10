@@ -4,12 +4,12 @@
 #include "Player.h"
 
 CWeapon::CWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CPartObject{ pDevice, pContext }
+	: CPartObject{ pDevice, pContext }, m_iSwordDamage{ 0 }
 {
 }
 
 CWeapon::CWeapon(const CWeapon& Prototype)
-	: CPartObject{ Prototype }
+	: CPartObject{ Prototype }, m_iSwordDamage{ Prototype.m_iSwordDamage}
 {
 }
 
@@ -44,6 +44,8 @@ HRESULT CWeapon::Initialize(void* pArg)
 	));*/
 
 	m_iSwordDamage = 10;
+	
+	object = &m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Layer_Clone"));
 
 	return S_OK;
 }
@@ -59,16 +61,7 @@ void CWeapon::Update(_float fTimeDelta)
 	for (size_t i = 0; i < 3; i++)
 		SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
 
-	if (Intersect_ToMonster())
-	{
-		// 몬스터 타입임? 
-		// 그러면 데미지 줘
-		// 몬스터 찾아서 데미지 주는거 구현  -> GetGameObject 먼저 해서 가져와야하나 -> 콜라이더의 주인을 꺼내올까?
-		// 꺼내올떄 콜라이더 클래스에서 주인의 이름을 받아오자
-		//몬스터 데미지 깎음 
-		//TakeHit(m_iSwordDamage);
-
-	}
+	Intersect_ToMonster();
 	
 
 	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix);
@@ -106,15 +99,24 @@ HRESULT CWeapon::Render()
 	return S_OK;
 }
 
-_bool CWeapon::Intersect_ToMonster()
+void CWeapon::Intersect_ToMonster()
 {
-	// 지금 콜라이더 주인을 가져와서 부딪혔나? 잖아 그게 아니라
-	// 일단 부딪힘?
-	// 부딪힌게 타입이 몬스터면 ture 반환 아니면 false 
-	// 이걸 어떻게 콜라이더끼리 부딪혓나 알수있게하지 ?
-	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Skeleton1"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+	if (nullptr == object)
+		return;
+	// 콜라이더 색깔이 이상하ㅔㄱ 바뀜 이거 체크 해야할듯
+	for (auto& iter : *object)
+	{
+		CCollider* collider = dynamic_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")));
+		
+		if (collider == nullptr) continue;
 
-	return collider ? m_pColliderCom->Intersect(collider) : false;
+		if (m_pColliderCom->Intersect(collider) && collider->Get_Owner()->Get_ObjectType() == OBJECTTYPE::MONSTER)
+		{
+			collider->Get_Owner()->TakeHit(m_iSwordDamage);
+			wcout << collider->Get_Owner()->Get_ObjectName() << "에게 피해를 입혔다" << endl;
+		}
+	}
+
 }
 
 HRESULT CWeapon::Ready_Components()
@@ -133,6 +135,7 @@ HRESULT CWeapon::Ready_Components()
 	Desc.vCenter = _float3(0.f, Desc.vExtents.y, 1.f);
 	Desc.vExtents = _float3(0.5f,0.5f,1.f);
 	Desc.vRadians = _float3(0.f, XMConvertToRadians(0.f), 0.f);
+	Desc.owner = this;
 
 	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &Desc)))

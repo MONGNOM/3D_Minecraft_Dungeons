@@ -150,7 +150,7 @@ HRESULT CPlayer::Ready_Components()
 
 	AABBDesc.vExtents = _float3(0.5f, 1.f, 0.5f);
 	AABBDesc.vCenter = _float3(0.f, AABBDesc.vExtents.y, 0.f);
-
+	AABBDesc.owner = this;
 
 	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))

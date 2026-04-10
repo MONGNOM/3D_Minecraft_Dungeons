@@ -15,7 +15,7 @@ HRESULT CBounding_Sphere::Initialize(CBounding::BOUNDING_DESC* pDesc)
 
 	m_pOriginalDesc = new BoundingSphere(pBoundingDesc->vCenter, pBoundingDesc->fRadius);
 	m_pDesc = new BoundingSphere(*m_pOriginalDesc);
-
+	m_pOwner = pBoundingDesc->owner;
 	return S_OK;
 }
 

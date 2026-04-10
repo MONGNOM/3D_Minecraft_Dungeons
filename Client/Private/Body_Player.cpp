@@ -152,6 +152,7 @@ HRESULT CBody_Player::Ready_Components()
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		SphereDesc{};
 	SphereDesc.fRadius = 0.7f;
 	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
+	SphereDesc.owner = this;
 
 	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))

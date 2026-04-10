@@ -127,6 +127,18 @@ vector<class CGameObject*> CObject_Manager::Get_GameObjects(_uint iLayerIndex)
 	return allObjects;
 }
 
+const list<class CGameObject*>& CObject_Manager::Get_LayerObjects(_uint iLayerIndex, _wstring layName)
+{
+	CLayer* player = Find_Layer(iLayerIndex, layName);
+
+	if (player == nullptr)
+	{
+		MSG_BOX("오브젝트 매니저_Get_LayersObjects_레이어가 존재하지 않습니다");
+	}
+	
+	return player->Get_GameObjects();
+}
+
 map<const _wstring, class CLayer*>& CObject_Manager::Get_Layer(_uint iLayerIndex)
 {
 	return m_pLayers[iLayerIndex];
