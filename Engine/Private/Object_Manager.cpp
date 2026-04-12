@@ -71,7 +71,10 @@ void CObject_Manager::Update(_float fTimeDelta)
 		for (auto& Pair : m_pLayers[i])
 		{
 			if (nullptr != Pair.second)
+			{
 				Pair.second->Update(fTimeDelta);
+				Pair.second->DeleteObjects();
+			}
 		}
 	}
 }

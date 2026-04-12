@@ -38,7 +38,7 @@ public: /* For.Timer_Manager */
 
 public: /* For.Level_Manager */
 	HRESULT Change_Level(_uint iNewLevelIndex, class CLevel* pNewLevel);
-
+	_uint* Get_NowScene();
 public: /* For.Prototype_Manager */
 	HRESULT Add_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag, CBase* pPrototype);
 	CBase* Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "PartObject.h"
+#include "GameObject.h"
 
 NS_BEGIN(Engine)
 class CShader;
@@ -11,19 +11,18 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CWeapon final : public CPartObject
+class CArrow final : public CGameObject
 {
 public:
-	typedef struct tagWeaponDesc final : public CPartObject::PARTOBJECT_DESC
+	typedef struct tagArrowDesc : public CGameObject::GAMEOBJECT_DESC
 	{
-		//const _uint* pParentState = { nullptr };
-		const _float4x4* pSocketMatrix = { nullptr };
-		_bool* shot;
-	}WEAPON_DESC;
+		_vector look;
+	}ArrowDesc;
+
 private:
-	CWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CWeapon(const CWeapon& Prototype);
-	virtual ~CWeapon() = default;
+	CArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CArrow(const CArrow& Prototype);
+	virtual ~CArrow() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -41,16 +40,17 @@ private:
 	CCollider* m_pColliderCom = { nullptr };
 
 private:
-	const _float4x4* m_pSocketMatrix = { nullptr };
-	_uint m_iSwordDamage = 0;
+	_uint m_iArrowDamage = 0;
 	const list<CGameObject*>* object = {nullptr};
-	_bool* m_pShot;
+	_float m_fDeleteTime = { 0 };
+	_vector m_vLook;
+
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();
 
 public:
-	static CWeapon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CArrow* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 

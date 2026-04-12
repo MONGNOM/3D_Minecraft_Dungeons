@@ -262,12 +262,9 @@ HRESULT CLevel_Dungeon::Ready_Layer_UI(const _wstring& strLayerTag)
 
 HRESULT CLevel_Dungeon::Ready_Layer_Load()
 {
-
-
-
 	//m_pImGui_Manager->Set_Load(true);
 	vector<OBJECTINFO> objectInfoList;
-	m_pGameInstance->Load_Date(TEXT("../Bin/DataFiles/Test_Save.json"), objectInfoList);
+	m_pGameInstance->Load_Date(TEXT("../Test_Save.json"), objectInfoList);
 
 	for (auto& object : objectInfoList)
 	{

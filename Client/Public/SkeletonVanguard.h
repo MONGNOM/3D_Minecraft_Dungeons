@@ -4,30 +4,28 @@
 #include "ContainerObject.h"
 
 NS_BEGIN(Engine)
+class CShader;
 class CCollider;
+class CModel;
 class CNavigation;
 NS_END
 
 NS_BEGIN(Client)
 
 
-enum PLAYERSTATE {
-	IDLE = 0,
-	WALK,
-	ATTACK,
-	HEAL,
-	FAILING,
-	BOW,
-	DEATH,
-	END
+enum SkeletonVanguardSTATE {
+	SkeletonVanguardIDLE = 0,
+	SkeletonVanguardWALK,
+	SkeletonVanguardATTACK,
+	SkeletonVanguardEND
 };
 
-class CPlayer final : public CContainerObject
+class CSkeletonVanguard final : public CGameObject
 {
 private:
-	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CPlayer(const CPlayer& Prototype);
-	virtual ~CPlayer() = default;
+	CSkeletonVanguard(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CSkeletonVanguard(const CSkeletonVanguard& Prototype);
+	virtual ~CSkeletonVanguard() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -40,23 +38,21 @@ public:
 
 protected:
 	HRESULT Ready_Components();
-	HRESULT Ready_PartObjects();
-	_bool attacking = { false };
+	HRESULT Bind_ShaderResources();
+private:
+	_bool Intersect_ToPlayer();
 
 private:
-	void Intersect_ToMonster();
-
-private:
-	CCollider* m_pColliderCom = { nullptr };
+	CCollider* m_pColliderCom = {nullptr};
 	CNavigation* m_pNavigationCom = { nullptr };
-	PLAYERSTATE state = {};
-	class CBody_Player* pBody;
-	const list<CGameObject*>* object = { nullptr };
+	CModel* m_pModelCom = { nullptr };
+	CShader* m_pShaderCom = { nullptr };
+	SkeletonVanguardSTATE state = {};
 	_float m_iMaxHp{};
 	_float m_iCurrentHp{};
 
 public:
-	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CSkeletonVanguard* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

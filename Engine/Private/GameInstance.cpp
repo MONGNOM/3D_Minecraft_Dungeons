@@ -145,6 +145,11 @@ HRESULT CGameInstance::Change_Level(_uint iNewLevelIndex, CLevel* pNewLevel)
 	return m_pLevel_Manager->Change_Level(iNewLevelIndex, pNewLevel);
 }
 
+_uint* CGameInstance::Get_NowScene()
+{
+	return m_pLevel_Manager->Get_NowScene();
+}
+
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag, CBase* pPrototype)
 {
 	return m_pPrototype_Manager->Add_Prototype(iLevelIndex, strPrototypeTag, pPrototype);

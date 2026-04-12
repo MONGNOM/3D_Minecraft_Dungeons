@@ -32,7 +32,7 @@ HRESULT CDataManager::Save_Date(const vector<tagObjectInfo>& objectinfo) // ¿©±â
 
 	
 
-	std::ofstream out("../Bin/DataFiles/Test_Save.json");
+	std::ofstream out("../Test_Save.json");
 
 	out << myData.dump(4);
 

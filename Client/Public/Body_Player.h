@@ -36,6 +36,7 @@ public:
 	virtual HRESULT Render() override;
 
 	_bool IsAnimationFinished() const { return m_bIsAnimFinished; }
+	_bool* IsShot() { return &m_bshot; }
 
 private:
 	CShader* m_pShaderCom = { nullptr };
@@ -47,7 +48,7 @@ private:
 	const PLAYERSTATE* m_pParentPlayerState = { nullptr };
 	PLAYERSTATE  m_PrevPlayerState = { PLAYERSTATE::END };
 	_bool m_bIsAnimFinished = { false };
-
+	_bool m_bshot = false;
 
 
 private:

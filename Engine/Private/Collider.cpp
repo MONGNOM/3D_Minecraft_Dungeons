@@ -68,11 +68,10 @@ HRESULT CCollider::Initialize(void* pArg)
 
 _bool CCollider::Intersect(CCollider* target)
 {
-    m_isColl = { false };
-
-    m_isColl = m_pBounding->Intersect(target->m_pBounding);
-
-    return m_isColl;
+    if (m_bSetActive)
+        return m_pBounding->Intersect(target->m_pBounding);
+    else
+        return false;
 }
 
 void CCollider::Update(_fmatrix WorldMatrix)
@@ -84,19 +83,23 @@ void CCollider::Update(_fmatrix WorldMatrix)
 
 HRESULT CCollider::Render()
 {
-    m_pEffect->SetWorld(XMMatrixIdentity());
-    m_pEffect->SetView(XMLoadFloat4x4(m_pGameInstance->Get_Transform(D3DTS::VIEW)));
-    m_pEffect->SetProjection(XMLoadFloat4x4(m_pGameInstance->Get_Transform(D3DTS::PROJ)));
+    if (m_bSetActive)
+    {
 
-    m_pContext->IASetInputLayout(m_pInputLayout);
+        m_pEffect->SetWorld(XMMatrixIdentity());
+        m_pEffect->SetView(XMLoadFloat4x4(m_pGameInstance->Get_Transform(D3DTS::VIEW)));
+        m_pEffect->SetProjection(XMLoadFloat4x4(m_pGameInstance->Get_Transform(D3DTS::PROJ)));
 
-    m_pEffect->Apply(m_pContext);
+        m_pContext->IASetInputLayout(m_pInputLayout);
 
-    m_pBatch->Begin();
+        m_pEffect->Apply(m_pContext);
 
-    m_pBounding->Render(m_pBatch, false == m_isColl ? XMVectorSet(0.f, 1.f, 0.f, 1.f) : XMVectorSet(1.f, 0.f, 0.f, 1.f));
+        m_pBatch->Begin();
 
-    m_pBatch->End();
+        m_pBounding->Render(m_pBatch, false == m_isColl ? XMVectorSet(0.f, 1.f, 0.f, 1.f) : XMVectorSet(1.f, 0.f, 0.f, 1.f));
+
+        m_pBatch->End();
+    }
 
     return S_OK;
 }

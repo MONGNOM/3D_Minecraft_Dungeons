@@ -1,85 +1,82 @@
-#include "Weapon.h"
+#include "Arrow.h"
 #include "GameInstance.h"
 
 #include "Player.h"
 
-CWeapon::CWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CPartObject{ pDevice, pContext }, m_iSwordDamage{ 0 }
+CArrow::CArrow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CGameObject{ pDevice, pContext }, m_iArrowDamage{ 0 }
 {
 }
 
-CWeapon::CWeapon(const CWeapon& Prototype)
-	: CPartObject{ Prototype }, m_iSwordDamage{ Prototype.m_iSwordDamage}
+CArrow::CArrow(const CArrow& Prototype)
+	: CGameObject{ Prototype }, m_iArrowDamage{ Prototype.m_iArrowDamage}
 {
 }
 
-HRESULT CWeapon::Initialize_Prototype()
+HRESULT CArrow::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CWeapon::Initialize(void* pArg)
+HRESULT CArrow::Initialize(void* pArg)
 {
-	auto	pDesc = static_cast<WEAPON_DESC*>(pArg);
+	CArrow::ArrowDesc* desc = reinterpret_cast<ArrowDesc*>(pArg);
 
-	m_pSocketMatrix = pDesc->pSocketMatrix;
+	desc->fSpeedPerSec = 40.f;
 
-	m_pShot = pDesc->shot;
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	/*m_pTransformCom->SetUp_Scale(0.1f, 0.1f, 0.1f);
-	m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), 90.f);
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.8f, 0.f, 0.f, 1.f));
+	m_iArrowDamage = m_pGameInstance->Random(10, 30);
 
-	/*m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(
-		m_pGameInstance->Random(0.f, 10.f),
-		2.f,
-		m_pGameInstance->Random(0.f, 10.f),
-		1.f
-	));*/
 
-	m_iSwordDamage = m_pGameInstance->Random(10, 40);
-	
+	if (desc != nullptr)
+	{
+		m_fRot = desc->rot;
+		m_fPos = desc->pos;
+		m_eSceneType = desc->Scenetype;
+		
+	}
+	m_Name = TEXT("Arrow");
+
+
+	m_pTransformCom->Set_Rotation(m_fRot);
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
+	m_pTransformCom->Set_State(STATE::LOOK, desc->look);
 	object = m_eSceneType == GAMEPLAY ? &m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Layer_Clone")) : &m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Load_Layer"));
 
 	return S_OK;
 }
 
-void CWeapon::Priority_Update(_float fTimeDelta)
+void CArrow::Priority_Update(_float fTimeDelta)
 {
 }
 
-void CWeapon::Update(_float fTimeDelta)
+void CArrow::Update(_float fTimeDelta)
 {
-	_matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
-
-	for (size_t i = 0; i < 3; i++)
-		SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
+	m_fDeleteTime += fTimeDelta;
 
 	Intersect_ToMonster();
+
+	m_pTransformCom->Go_Straight(fTimeDelta);
 	
 
-	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix);
-
-	m_pColliderCom->Update(XMLoadFloat4x4(&m_CombinedWorldMatrix));
+	m_pColliderCom->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 }
 
-void CWeapon::Late_Update(_float fTimeDelta)
+void CArrow::Late_Update(_float fTimeDelta)
 {
-	if (!*m_pShot)
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::NONBLEND, this);
 }
 
-HRESULT CWeapon::Render()
+HRESULT CArrow::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
-
 
 
 	size_t iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -99,11 +96,10 @@ HRESULT CWeapon::Render()
 	return S_OK;
 }
 
-void CWeapon::Intersect_ToMonster()
+void CArrow::Intersect_ToMonster()
 {
 	if (nullptr == object)
 		return;
-	
 
 	// 콜라이더 색깔이 이상하ㅔㄱ 바뀜 이거 체크 해야할듯
 	m_pColliderCom->Set_isColl(false);
@@ -111,58 +107,60 @@ void CWeapon::Intersect_ToMonster()
 	for (auto& iter : *object)
 	{
 		CCollider* collider = dynamic_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")));
-		
+
 		if (collider == nullptr || collider->Get_Owner() == this) continue;
 
 		if (m_pColliderCom->Intersect(collider) && collider->Get_Owner()->Get_ObjectType() == OBJECTTYPE::MONSTER)
 		{
-			collider->Get_Owner()->TakeHit(m_iSwordDamage);
+			collider->Get_Owner()->TakeHit(m_iArrowDamage);
 			m_pColliderCom->Set_isColl(true);
 			collider->Set_isColl(true);
-			wcout << collider->Get_Owner()->Get_ObjectName() << m_iSwordDamage <<" 에게 피해를 입혔다" << endl;
-			m_pColliderCom->SetActive_Collider(false);
-			// 애니메이션 때릴떄 콜라이더 떄리는거 3번만 켜야하는데 이걸 어떻게 3번만 켜주냐 그것도 타이밍 맞춰서 시간으로 노가다 해야하나?
-			// 특정 프레임에만 콜라이더 키게 할 수 있나
-			// 
+			wcout << collider->Get_Owner()->Get_ObjectName() << "에게 피해를 입혔다" << endl;
+			Set_Dead();
+		}
+		else
+		{
+			if (m_fDeleteTime >= 1.5f)
+			{
+				// 삭제?
+				Set_Dead();
+				m_fDeleteTime = 0;
+			}
 		}
 	}
 
 }
 
-HRESULT CWeapon::Ready_Components()
+HRESULT CArrow::Ready_Components()
 {
 
 	if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Model_Sword"),
+	if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Model_Arrow"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
 
-	CBounding_OBB::BOUNDING_OBB_DESC Desc{};
-	Desc.vCenter = _float3(0.f, Desc.vExtents.y, 1.f);
-	Desc.vExtents = _float3(0.5f,0.5f,1.f);
-	Desc.vRadians = _float3(0.f, XMConvertToRadians(0.f), 0.f);
+	CBounding_AABB::BOUNDING_AABB_DESC Desc{};
+	Desc.vCenter = _float3(0.f, Desc.vExtents.y, 0.f);
+	Desc.vExtents = _float3(0.5f,0.5f,0.5f);
 	Desc.owner = this;
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_OBB"),
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &Desc)))
 		return E_FAIL;
 
-	m_pColliderCom->SetActive_Collider(false);
 
 	return S_OK;
 }
 
-HRESULT CWeapon::Bind_ShaderResources()
+HRESULT CArrow::Bind_ShaderResources()
 {
-	/*if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;*/
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
-
+	
 	if (FAILED(m_pGameInstance->Bind_TransformMatrix(D3DTS::VIEW, m_pShaderCom, "g_ViewMatrix")))
 		return E_FAIL;
 
@@ -190,33 +188,33 @@ HRESULT CWeapon::Bind_ShaderResources()
 	return S_OK;
 }
 
-CWeapon* CWeapon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CArrow* CArrow::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CWeapon* pInstance = new CWeapon(pDevice, pContext);
+	CArrow* pInstance = new CArrow(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : CBody_Player");
+		MSG_BOX("Failed to Created : CArrow");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
 
-CGameObject* CWeapon::Clone(void* pArg)
+CGameObject* CArrow::Clone(void* pArg)
 {
-	CWeapon* pInstance = new CWeapon(*this);
+	CArrow* pInstance = new CArrow(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CBody_Player");
+		MSG_BOX("Failed to Cloned : CArrow");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
 
-void CWeapon::Free()
+void CArrow::Free()
 {
 	__super::Free();
 	Safe_Release(m_pShaderCom);

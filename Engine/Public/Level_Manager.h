@@ -19,6 +19,7 @@ public:
 	HRESULT Change_Level(_uint iNewLevelIndex, class CLevel* pNewLevel);
 	void Update(_float fTimeDelta);
 	HRESULT Render();
+	_uint* Get_NowScene() { return &m_iCurrentLevelIndex; }
 
 private:
 	class CLevel*			m_pCurrentLevel = { nullptr };

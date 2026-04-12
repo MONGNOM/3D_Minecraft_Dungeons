@@ -5,25 +5,24 @@
 
 NS_BEGIN(Engine)
 class CShader;
-class CModel;
+class CTexture;
+class CVIBuffer_Cube;
 class CCollider;
 NS_END
 
 NS_BEGIN(Client)
 
-class CWeapon final : public CPartObject
+class CJusinBox final : public CPartObject
 {
 public:
-	typedef struct tagWeaponDesc final : public CPartObject::PARTOBJECT_DESC
+	typedef struct tagBowDesc final : public CPartObject::PARTOBJECT_DESC
 	{
-		//const _uint* pParentState = { nullptr };
 		const _float4x4* pSocketMatrix = { nullptr };
-		_bool* shot;
-	}WEAPON_DESC;
+	}JUSINBOX_DESC;
 private:
-	CWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CWeapon(const CWeapon& Prototype);
-	virtual ~CWeapon() = default;
+	CJusinBox(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CJusinBox(const CJusinBox& Prototype);
+	virtual ~CJusinBox() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -32,28 +31,28 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	void Intersect_ToMonster();
 
-
-private:
+protected:
 	CShader* m_pShaderCom = { nullptr };
-	CModel* m_pModelCom = { nullptr };
+	CVIBuffer_Cube* m_pVIBufferCom = { nullptr };
+	CTexture* m_pTextureCom = { nullptr };
 	CCollider* m_pColliderCom = { nullptr };
 
 private:
 	const _float4x4* m_pSocketMatrix = { nullptr };
-	_uint m_iSwordDamage = 0;
-	const list<CGameObject*>* object = {nullptr};
-	_bool* m_pShot;
-private:
+	_uint m_iBoXDamage = 0;
+	_bool Intersect_ToPlayer();
+
+
+protected:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();
 
+
 public:
-	static CWeapon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CJusinBox* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
-
 };
 
 NS_END

@@ -23,6 +23,8 @@ public:
 
 	_bool Intersect(CCollider* target);
 	class CGameObject* Get_Owner() { return m_pBounding->Get_Owner(); }
+	void Set_isColl(_bool value) { m_isColl = value; }
+	void SetActive_Collider(_bool value) { m_bSetActive = value; }
 
 public:
 	void Update(_fmatrix WorldMatrix);
@@ -34,7 +36,7 @@ public:
 private:
 	COLLIDER				m_eType = { COLLIDER::END };
 	class CBounding* m_pBounding = { nullptr };
-
+	_bool m_bSetActive{ true };
 #ifdef _DEBUG
 private:
 	PrimitiveBatch<VertexPositionColor>* m_pBatch = { nullptr };

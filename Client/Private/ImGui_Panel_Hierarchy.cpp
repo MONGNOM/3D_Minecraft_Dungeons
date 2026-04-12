@@ -369,7 +369,7 @@ void CImGui_Panel_Hierarchy::Render()
     {
         CImGui_Manager::GetInstance()->Set_Load(true);
         vector<OBJECTINFO> objectInfoList;
-        CGameInstance::GetInstance()->Load_Date(TEXT("../Bin/DataFiles/Test_Save.json"), objectInfoList);
+        CGameInstance::GetInstance()->Load_Date(TEXT("../Test_Save.json"), objectInfoList);
 
         for (auto& object : objectInfoList)
         {

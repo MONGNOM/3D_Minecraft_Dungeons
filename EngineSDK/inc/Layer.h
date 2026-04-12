@@ -22,6 +22,7 @@ private:
 public:
 	class CComponent* Get_Component(_wstring objName, _wstring componentName);
 	list<class CGameObject*>& Get_GameObjects();
+	void DeleteObjects();
 
 public:
 	static CLayer* Create();

@@ -24,6 +24,13 @@
 #include "LampPost.h"
 #include "Grass.h"
 #include "Lantern.h"
+#include "Creeper.h"
+#include "Bow.h"
+#include "Zombie.h"
+#include "SkeletonVanguard.h"
+#include "NameLessKing.h"
+#include "JusinBox.h"
+#include "Arrow.h"
 
 
 
@@ -200,7 +207,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 
 	/* Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Block"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/mincraft_%d.dds"), 16))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/mincraft_%d.dds"), 17))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Cube Texture");
 		return E_FAIL;
@@ -386,7 +393,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		return E_FAIL;
 	}
 
-
+	
 
 
 	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
@@ -398,14 +405,66 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	}
 
 	/* Prototype_Component_Model_ForkLift */
-	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);// * XMMatrixRotationY(XMConvertToRadians(180.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Sword"),
 		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Sword/Sword.fbx", "Prototype_Component_Model_Sword", PreLocalTransformMatrix))))
 	{
-		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
+		MSG_BOX("Faild to Add_Prototype : Model_Sword");
 		return E_FAIL;
 	}
 
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Creeper"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/Creeper.fbx", "Prototype_Component_Model_Creeper", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Creeper");
+		return E_FAIL;
+	}
+
+	/* Prototype_Component_Model_ForkLift */
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(90.f))* XMMatrixRotationZ(XMConvertToRadians(90.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Bow"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Bow/Bow.fbx", "Prototype_Component_Model_Bow", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Bow");
+		return E_FAIL;
+	}
+
+
+	/* Prototype_Component_Model_ForkLift */
+	PreLocalTransformMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f) * XMMatrixRotationY(XMConvertToRadians(-90.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Arrow"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Arrow/Arrow.fbx", "Prototype_Component_Model_Arrow", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Arrow");
+		return E_FAIL;
+	}
+
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Zombie"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/Zombie.fbx", "Prototype_Component_Model_Zombie", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Zombie");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_SkeletonVanguard"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/SkeletonVanguard.fbx", "Prototype_Component_Model_SkeletonVanguard", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_SkeletonVanguard");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_NameLessKing"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/Boss/NameLessKing.fbx", "Prototype_Component_Model_NameLessKing", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_NameLessKing");
+		return E_FAIL;
+	}
+	
 	
 
 
@@ -414,7 +473,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Navigation"),
 		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.dat"), TEXT("../Bin/DataFiles/Neighbors.dat")))))
 	{
-		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
+		MSG_BOX("Faild to Add_Prototype : Component_Navigation");
 		return E_FAIL;
 	}
 
@@ -592,8 +651,60 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		MSG_BOX("Faild to Add_Prototype : GameObject_DefaultBlock");
 		return E_FAIL;
 	}
-	
 
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Creeper"),
+		CCreeper::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Creeper");
+		return E_FAIL;
+	}
+	
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Bow"),
+		CBow::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Bow");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Zombie"),
+		CZombie::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Zombie");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_SkeletonVanguard"),
+		CSkeletonVanguard::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_SkeletonVanguard");
+		return E_FAIL;
+	}
+
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_NameLessKing"),
+		CNameLessKing::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_NameLessKing");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_JusinBox"),
+		CJusinBox::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_JusinBox");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Arrow"),
+		CArrow::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Arrow");
+		return E_FAIL;
+	}
+
+	
+	
 
 	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
 
@@ -614,20 +725,6 @@ HRESULT CLoader::Loading_For_Dungeon()
 		MSG_BOX("Faild to Add_Prototype : Texture_HotBar");
 		return E_FAIL;
 	}*/
-
-	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Texture_HotBar"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/UI/HotBar/Rhotbar.png"), 1))))
-	{
-		MSG_BOX("Faild to Add_Prototype : Texture_HotBar");
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
-		CHotBar::Create(m_pDevice, m_pContext))))
-	{
-		MSG_BOX("Faild to Add_Prototype : GameObject_HotBar");
-		return E_FAIL;
-	}
 
 	lstrcpy(m_szLoadingText, TEXT("텍스쳐를 로딩 중 입니다."));
 	/* Prototype_Component_Texture_Terrain */
@@ -661,7 +758,7 @@ HRESULT CLoader::Loading_For_Dungeon()
 
 	/* Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Texture_Block"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/mincraft_%d.dds"), 16))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/mincraft_%d.dds"), 17))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Cube Texture");
 		return E_FAIL;
@@ -743,6 +840,18 @@ HRESULT CLoader::Loading_For_Dungeon()
 		MSG_BOX("Faild to Add_Prototype : Model_Skeleton");
 		return E_FAIL;
 	}
+
+
+	///* Prototype_Component_Model_ForkLift */
+	//PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f); //* XMMatrixRotationY(XMConvertToRadians(180.f));
+
+	//if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_ForkLift"),
+	//	CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/Models/ForkLift/ForkLift.fbx", "", PreLocalTransformMatrix))))
+	//{
+	//	MSG_BOX("Faild to Add_Prototype : Model_Fiona");
+	//	return E_FAIL;
+	//}
+
 
 
 	PreLocalTransformMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
@@ -847,11 +956,63 @@ HRESULT CLoader::Loading_For_Dungeon()
 	}
 
 	/* Prototype_Component_Model_ForkLift */
-	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);// * XMMatrixRotationY(XMConvertToRadians(180.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Sword"),
 		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Sword/Sword.fbx", "Prototype_Component_Model_Sword", PreLocalTransformMatrix))))
 	{
-		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
+		MSG_BOX("Faild to Add_Prototype : Model_Sword");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Creeper"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/Creeper.fbx", "Prototype_Component_Model_Creeper", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Creeper");
+		return E_FAIL;
+	}
+
+	/* Prototype_Component_Model_ForkLift */
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(90.f)) * XMMatrixRotationZ(XMConvertToRadians(90.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Bow"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Bow/Bow.fbx", "Prototype_Component_Model_Bow", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Bow");
+		return E_FAIL;
+	}
+
+
+	/* Prototype_Component_Model_ForkLift */
+	PreLocalTransformMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f) * XMMatrixRotationY(XMConvertToRadians(-90.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Arrow"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Arrow/Arrow.fbx", "Prototype_Component_Model_Arrow", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Arrow");
+		return E_FAIL;
+	}
+
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Zombie"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/Zombie.fbx", "Prototype_Component_Model_Zombie", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Zombie");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_SkeletonVanguard"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/SkeletonVanguard.fbx", "Prototype_Component_Model_SkeletonVanguard", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_SkeletonVanguard");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_NameLessKing"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/Boss/NameLessKing.fbx", "Prototype_Component_Model_NameLessKing", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_NameLessKing");
 		return E_FAIL;
 	}
 
@@ -863,7 +1024,7 @@ HRESULT CLoader::Loading_For_Dungeon()
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Navigation"),
 		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.dat"), TEXT("../Bin/DataFiles/Neighbors.dat")))))
 	{
-		MSG_BOX("Faild to Add_Prototype : Model_Fiona");
+		MSG_BOX("Faild to Add_Prototype : Component_Navigation");
 		return E_FAIL;
 	}
 
@@ -941,7 +1102,7 @@ HRESULT CLoader::Loading_For_Dungeon()
 
 
 
-	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_LampPost"),
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_LampPost"), // 추후 가로등 과 램프 각각 소환해서 부착 한다 
 		CLampPost::Create(m_pDevice, m_pContext))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_LampPost");
@@ -1041,6 +1202,58 @@ HRESULT CLoader::Loading_For_Dungeon()
 		MSG_BOX("Faild to Add_Prototype : GameObject_DefaultBlock");
 		return E_FAIL;
 	}
+
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Creeper"),
+		CCreeper::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Creeper");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Bow"),
+		CBow::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Bow");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Zombie"),
+		CZombie::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Zombie");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_SkeletonVanguard"),
+		CSkeletonVanguard::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_SkeletonVanguard");
+		return E_FAIL;
+	}
+
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_NameLessKing"),
+		CNameLessKing::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_NameLessKing");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_JusinBox"),
+		CJusinBox::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_JusinBox");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Arrow"),
+		CArrow::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Arrow");
+		return E_FAIL;
+	}
+
 
 
 	

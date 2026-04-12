@@ -45,6 +45,7 @@ HRESULT CSkeleton::Initialize(void* pArg)
 	}
 
 	m_eObjectType = OBJECTTYPE::MONSTER;
+	m_fCurrentHp = 100;
 
 	return S_OK;
 }
@@ -56,6 +57,9 @@ void CSkeleton::Priority_Update(_float fTimeDelta)
 
 void CSkeleton::Update(_float fTimeDelta)
 {
+
+	if (m_fCurrentHp <= 0)
+		Set_Dead();
 
 	/*if (GetKeyState(VK_DOWN) & 0x8000)
 	{
@@ -91,6 +95,8 @@ void CSkeleton::Update(_float fTimeDelta)
 	}*/
 
 	Intersect_ToPlayer();
+
+
 	//if (Intersect_ToPlayer())
 	//{
 	//	// 데미지 받음
@@ -134,16 +140,18 @@ HRESULT CSkeleton::Render()
 void CSkeleton::Intersect_ToPlayer()
 {
 	const list<CGameObject*>& object = m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Layer_Clone"));
+	m_pColliderCom->Set_isColl(false);
 
 	for (auto& iter : object)
 	{
 		CCollider* collider = dynamic_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")));
-
-		if (collider == nullptr) continue;
-
+		
+		if (collider == nullptr || collider->Get_Owner() == this) continue;
+		
 		if (m_pColliderCom->Intersect(collider) && collider->Get_Owner()->Get_ObjectType() == OBJECTTYPE::PLAYER)
 		{
 			collider->Get_Owner()->TakeHit(10);
+			m_pColliderCom->Set_isColl(true);
 			wcout << collider->Get_Owner()->Get_ObjectName() << "에게 피해를 입혔다" << endl;
 		}
 	}

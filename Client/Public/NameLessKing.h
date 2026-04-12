@@ -5,24 +5,30 @@
 
 NS_BEGIN(Engine)
 class CCollider;
+class CModel;
 class CNavigation;
+class CShader;
 NS_END
 
 NS_BEGIN(Client)
 
-class CSkeleton final : public CContainerObject
+
+enum BOSSSTATE {
+	BOSSSAWAKE = 0,
+	BOSSSWALK,
+	BOSSSATTACK,
+	BOSSSTP,
+	BOSSSSPAWN,
+	BOSSSDEATH,
+	BOSSSEND
+};
+
+class CNameLessKing final : public CContainerObject
 {
-public:
-	enum SKELETONSTATE {
-		IDLE = 0x00000001,
-		WALK = 0x00000002,
-		ATTACK = 0x00000004,
-		DEATH = 0x00000008,
-	};
 private:
-	CSkeleton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CSkeleton(const CSkeleton& Prototype);
-	virtual ~CSkeleton() = default;
+	CNameLessKing(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CNameLessKing(const CNameLessKing& Prototype);
+	virtual ~CNameLessKing() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -32,22 +38,30 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+
 protected:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
+	HRESULT Bind_ShaderResources();
 
 private:
-	_uint			m_iState = {};
+	_bool Intersect_ToPlayer();
 
+private:
 	CCollider* m_pColliderCom = { nullptr };
 	CNavigation* m_pNavigationCom = { nullptr };
-	void Intersect_ToPlayer();
+	CModel* m_pModelCom = { nullptr };
+	CShader* m_pShaderCom = { nullptr };
 
-	
 
+	BOSSSTATE state = {};
+	class CJusinBox* pBox = nullptr;
+
+	_float m_iMaxHp{};
+	_float m_iCurrentHp{};
 
 public:
-	static CSkeleton* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CNameLessKing* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

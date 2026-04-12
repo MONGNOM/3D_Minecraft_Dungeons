@@ -2,6 +2,8 @@
 #include "GameInstance.h"
 
 #include "Player.h"
+#include "Bow.h"
+#include "Arrow.h"
 
 CBody_Player::CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }, m_pParentPlayerState {nullptr}
@@ -64,6 +66,7 @@ void CBody_Player::Priority_Update(_float fTimeDelta)
 void CBody_Player::Update(_float fTimeDelta)
 {
 	// 이렇게 하면 안될 것 같은데 아무리 봐도 
+	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 	if (m_PrevPlayerState != *m_pParentPlayerState)
 	{
@@ -90,20 +93,43 @@ void CBody_Player::Update(_float fTimeDelta)
 			break;
 
 		case PLAYERSTATE::BOW:
+		{
+			m_bshot = true;
 			m_pModelCom->Set_Animation(4, false);
 			break;
-
+		}		
 		case PLAYERSTATE::ATTACK:
 			m_pModelCom->Set_Animation(5, false);
 			break;
 		}
 	}
 
-	if (true == m_pModelCom->Play_Animation(fTimeDelta))
+	_bool aniEnd = m_pModelCom->Play_Animation(fTimeDelta);
+
+	if (aniEnd)
+	{
 		m_bIsAnimFinished = true;
 
+		if (*m_pParentPlayerState == PLAYERSTATE::BOW)
+		{
+			m_bshot = false;
+			CArrow::ArrowDesc desc{};
+			desc.Scenetype = m_eSceneType;
+			desc.rot = m_pTransformCom->Get_Rotation();
+			XMStoreFloat3(&desc.pos, XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3][0])));
+			desc.pos.y += 1.5f;
+			desc.look = XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[2][0]));
 
-	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+			if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_Arrow"), m_eObjectType, TEXT("Clone_Layer"), &desc)))
+			{
+				MSG_BOX("화살안만들어졌어");
+				return;
+			}
+
+		}
+	}
+
+	
 
 	m_pColliderCom->Update(XMLoadFloat4x4(&m_CombinedWorldMatrix));
 }

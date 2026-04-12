@@ -46,8 +46,8 @@ HRESULT CImGui_Manager::Initialize_Manager(ID3D11Device* pDevice, ID3D11DeviceCo
 	if (!::ImGui_ImplDX11_Init(m_pDevice, m_pDeviceContext))
 		return E_FAIL;
 
-	m_pGalleryTexture = CTexture::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/Textures/SkyBox/mincraft_%d.dds"), 16);
-	m_pThumnailsTexture = CTexture::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/Textures/SkyBox/Thum_%d.png"), 16);
+	m_pGalleryTexture = CTexture::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/Textures/SkyBox/mincraft_%d.dds"), 17);
+	m_pThumnailsTexture = CTexture::Create(m_pDevice, m_pDeviceContext, TEXT("../Bin/Resources/Textures/SkyBox/Thum_%d.png"), 17);
 	images = m_pGalleryTexture->Get_Texture();
 	m_vThum = m_pThumnailsTexture->Get_Texture();
 

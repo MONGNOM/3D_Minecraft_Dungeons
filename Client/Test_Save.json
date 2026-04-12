@@ -1,0 +1,27 @@
+{
+    "Count": 1,
+    "GameObject": [
+        {
+            "PrototypeName": "Prototype_GameObject_Player",
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.9999999403953552,
+                1.0,
+                0.9999999403953552
+            ],
+            "Translation": [
+                9.929807662963867,
+                0.0,
+                5.371328830718994
+            ],
+            "data": 0,
+            "name": "Prototype_GameObject_Player0",
+            "type": 0
+        }
+    ],
+    "Level": "Tool_Scene"
+}

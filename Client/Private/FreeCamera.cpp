@@ -23,6 +23,8 @@ HRESULT CFreeCamera::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	m_eObjectType = ENVIRONMENT;
+
 	return S_OK;
 }
 
@@ -33,6 +35,7 @@ void CFreeCamera::Priority_Update(_float fTimeDelta)
 	case SCENETYPE::DUNGEON:
 	{
 		CTransform* pTerTransform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Load_Layer"), ETOI(m_eSceneType), TEXT("Com_Transform")));
+		if (nullptr == pTerTransform) break;
 		_float3 playerPos;
 		XMStoreFloat3(&playerPos, pTerTransform->Get_State(STATE::POSITION));
 		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(playerPos.x - 15.f, playerPos.y + 20.f, playerPos.z - 15.f, 1.f));

@@ -32,7 +32,7 @@ HRESULT CSky::Initialize(void* pArg)
 	m_Name = TEXT("Sky_Box");
 	//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y, Desc->pos.z, 1.f));
 		
-
+	m_eObjectType = ENVIRONMENT;
 	return S_OK;
 }
 

@@ -130,6 +130,27 @@
     <Filter Include="02.GameObject\Grass">
       <UniqueIdentifier>{603f9a26-48c9-497a-a4cb-3aa789f74c15}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Zombie">
+      <UniqueIdentifier>{60c6a1ce-00d8-4a2e-bc68-dde0817ea720}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\SkeletonVanguard">
+      <UniqueIdentifier>{26bd612a-abaf-42b8-9343-390e27de125f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Creeper">
+      <UniqueIdentifier>{d3b859e2-eba4-4edf-9f74-76e22da82137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\NameLessKing">
+      <UniqueIdentifier>{7a5ca9ec-a865-4f39-ab04-7141488fafa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Arrow">
+      <UniqueIdentifier>{be45da45-1c9e-46d1-916b-826f1ec247b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\NameLessKing\JusinBox">
+      <UniqueIdentifier>{12e5bb0a-279e-4b61-adfb-85ac40b54818}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Player\Bow">
+      <UniqueIdentifier>{d8beab5a-51b6-485c-8add-8dcbd5b03ec7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -276,6 +297,27 @@
     <ClInclude Include="..\Public\Grass.h">
       <Filter>02.GameObject\Grass</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\NameLessKing.h">
+      <Filter>02.GameObject\NameLessKing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Creeper.h">
+      <Filter>02.GameObject\Creeper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SkeletonVanguard.h">
+      <Filter>02.GameObject\SkeletonVanguard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Zombie.h">
+      <Filter>02.GameObject\Zombie</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Arrow.h">
+      <Filter>02.GameObject\Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Bow.h">
+      <Filter>02.GameObject\Player\Bow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\JusinBox.h">
+      <Filter>02.GameObject\NameLessKing\JusinBox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -419,6 +461,27 @@
     </ClCompile>
     <ClCompile Include="..\Private\Grass.cpp">
       <Filter>02.GameObject\Grass</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\NameLessKing.cpp">
+      <Filter>02.GameObject\NameLessKing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Creeper.cpp">
+      <Filter>02.GameObject\Creeper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SkeletonVanguard.cpp">
+      <Filter>02.GameObject\SkeletonVanguard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Zombie.cpp">
+      <Filter>02.GameObject\Zombie</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bow.cpp">
+      <Filter>02.GameObject\Player\Bow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Arrow.cpp">
+      <Filter>02.GameObject\Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\JusinBox.cpp">
+      <Filter>02.GameObject\NameLessKing\JusinBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

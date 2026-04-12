@@ -2,6 +2,8 @@
 
 #include "Transform.h"
 
+#define DEAD_OBEJCT 1
+
 NS_BEGIN(Engine)
 
 class ENGINE_DLL CGameObject abstract : public CBase
@@ -44,6 +46,8 @@ public:
 	virtual void Update(_float fTimeDelta);
 	virtual void Late_Update(_float fTimeDelta);
 	virtual HRESULT Render();
+	virtual void Set_Dead() { m_IsDead = DEAD_OBEJCT; }
+	virtual _bool Get_Dead() { return m_IsDead; }
 
 protected:
 	ID3D11Device*			m_pDevice = { nullptr };
@@ -57,6 +61,7 @@ protected:
 	_uint			m_iNumTexture { 0 };
 	string m_sPrototype{};
 	_bool	m_SetActive;
+	_bool	m_IsDead = false;
 	SCENETYPE m_eSceneType = SCENETYPE::SCENETYPEEND;
 
 	_float m_fMaxHp{};

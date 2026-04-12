@@ -1,58 +1,68 @@
-#include "Body_Skeleton.h"
+#include "Creeper.h"
+
+#include "Weapon.h"
+#include "Body_Player.h"
 #include "GameInstance.h"
 
-#include "Skeleton.h"
-
-CBody_Skeleton::CBody_Skeleton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CPartObject{ pDevice, pContext }
+CCreeper::CCreeper(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CGameObject{ pDevice, pContext }
 {
 }
 
-CBody_Skeleton::CBody_Skeleton(const CBody_Skeleton& Prototype)
-	: CPartObject{ Prototype }
+CCreeper::CCreeper(const CCreeper& Prototype)
+	: CGameObject{ Prototype }
+
 {
 }
 
-const _float4x4* CBody_Skeleton::Get_SocketBoneMatrixPtr(const _char* pBoneName)
-{
-	return m_pModelCom->Get_BoneMatrixPtr(pBoneName);
-}
-
-HRESULT CBody_Skeleton::Initialize_Prototype()
+HRESULT CCreeper::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CBody_Skeleton::Initialize(void* pArg)
+HRESULT CCreeper::Initialize(void* pArg)
 {
-	auto	pDesc = static_cast<CBODY_SKELETONDESC*>(pArg);
+	
+	CGameObject::GAMEOBJECT_DESC* desc = reinterpret_cast<GAMEOBJECT_DESC*>(pArg);
 
-	m_pParentState = pDesc->pParentState;
+	desc->fSpeedPerSec = 10.f;
+	desc->fDegreePerSec = 180.f;
 
 
+	/* 백그라운드의 멤버를 채워넣어야한다면 여기서 채운다. */
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
-
 	
-	m_pModelCom->Ready_Animations("Skeleton_Idle.Anim");
-	m_pModelCom->Ready_Animations("Skeleton_BowAction.Anim");
+
+	if (desc != nullptr)
+	{
+		m_fPos = desc->pos;
+		
+		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
+	}
+
+	m_eObjectType = OBJECTTYPE::MONSTER;
+
+	m_pModelCom->Ready_Animations("Creeper_Idle.Anim");
+	m_pModelCom->Ready_Animations("Creeper_Ignition.Anim");
+	m_pModelCom->Ready_Animations("Creeper_GetHitFront.Anim");
 
 	m_pModelCom->Set_Animation(0, true);
-	
 
 
 	return S_OK;
 }
 
-void CBody_Skeleton::Priority_Update(_float fTimeDelta)
+void CCreeper::Priority_Update(_float fTimeDelta)
 {
 }
 
-void CBody_Skeleton::Update(_float fTimeDelta)
+void CCreeper::Update(_float fTimeDelta)
 {
+
 	if (Intersect_ToPlayer())
 	{
 		//attack재생
@@ -71,20 +81,20 @@ void CBody_Skeleton::Update(_float fTimeDelta)
 	if (true == m_pModelCom->Play_Animation(fTimeDelta))
 		int a = 10;
 
-
-	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
-	m_pColliderCom->Update(XMLoadFloat4x4(&m_CombinedWorldMatrix));
+	m_pColliderCom->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
-void CBody_Skeleton::Late_Update(_float fTimeDelta)
+void CCreeper::Late_Update(_float fTimeDelta)
 {
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::NONBLEND, this);
 }
 
-HRESULT CBody_Skeleton::Render()
+HRESULT CCreeper::Render()
 {
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
+
 
 
 	size_t iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -101,41 +111,50 @@ HRESULT CBody_Skeleton::Render()
 	}
 
 
+#ifdef _DEBUG
 	m_pColliderCom->Render();
+	//m_pNavigationCom->Render();
+#endif // _DEBUG
+
+
 	return S_OK;
 }
 
-HRESULT CBody_Skeleton::Ready_Components()
+HRESULT CCreeper::Ready_Components()
 {
+	CBounding_AABB::BOUNDING_AABB_DESC AABBDesc;
+
+	AABBDesc.vExtents = _float3(0.5f, 1.f, 0.5f);
+	AABBDesc.vCenter = _float3(0.f, AABBDesc.vExtents.y, 0.f);
+	AABBDesc.owner = this;
+
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_AABB"),
+		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
+		return E_FAIL;
 
 	if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Model_Skeleton"),
+	if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Model_Creeper"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
 
-	CBounding_Sphere::BOUNDING_SPHERE_DESC Desc{};
-	Desc.vCenter = _float3(0.f, Desc.fRadius, 0.f);
-	Desc.fRadius = 10.0f;
-	Desc.owner = this;
-
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &Desc)))
-		return E_FAIL;
-
-	
+	//CNavigation::NAVIGATION_DESC		NavigationDesc{};
+	//NavigationDesc.iCurrentCellIndex = 1;
+	//NavigationDesc.pTransform = m_pTransformCom;
+	//
+	//if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Navigation"),
+	//	TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom), &NavigationDesc)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CBody_Skeleton::Bind_ShaderResources()
+HRESULT CCreeper::Bind_ShaderResources()
 {
-	/*if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;*/
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Bind_TransformMatrix(D3DTS::VIEW, m_pShaderCom, "g_ViewMatrix")))
@@ -143,6 +162,8 @@ HRESULT CBody_Skeleton::Bind_ShaderResources()
 
 	if (FAILED(m_pGameInstance->Bind_TransformMatrix(D3DTS::PROJ, m_pShaderCom, "g_ProjMatrix")))
 		return E_FAIL;
+
+
 
 	if (FAILED(m_pGameInstance->Bind_CamPosition(m_pShaderCom, "g_vCamPosition")))
 		return E_FAIL;
@@ -163,7 +184,8 @@ HRESULT CBody_Skeleton::Bind_ShaderResources()
 	return S_OK;
 }
 
-_bool CBody_Skeleton::Intersect_ToPlayer()
+
+_bool CCreeper::Intersect_ToPlayer()
 {
 	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
 
@@ -181,38 +203,39 @@ _bool CBody_Skeleton::Intersect_ToPlayer()
 	}
 }
 
-CBody_Skeleton* CBody_Skeleton::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+
+
+CCreeper* CCreeper::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CBody_Skeleton* pInstance = new CBody_Skeleton(pDevice, pContext);
+	CCreeper* pInstance = new CCreeper(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : CBody_Skeleton");
+		MSG_BOX("Failed to Created : CCreeper");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
 
-CGameObject* CBody_Skeleton::Clone(void* pArg)
+CGameObject* CCreeper::Clone(void* pArg)
 {
-	CBody_Skeleton* pInstance = new CBody_Skeleton(*this);
+	CCreeper* pInstance = new CCreeper(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CBody_Skeleton");
+		MSG_BOX("Failed to Cloned : CCreeper");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-
-void CBody_Skeleton::Free()
+void CCreeper::Free()
 {
 	__super::Free();
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pColliderCom);
-	Safe_Release(m_pModelCom);
 
-	
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pModelCom);
+	Safe_Release(m_pColliderCom);
+	//Safe_Release(m_pNavigationCom);
 }

@@ -151,14 +151,17 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Public\Arrow.h" />
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\public\Body_Player.h" />
     <ClInclude Include="..\public\Body_Skeleton.h" />
+    <ClInclude Include="..\Public\Bow.h" />
     <ClInclude Include="..\public\Bridge.h" />
     <ClInclude Include="..\Public\Bucket.h" />
     <ClInclude Include="..\public\Building.h" />
     <ClInclude Include="..\public\Bunting.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
+    <ClInclude Include="..\Public\Creeper.h" />
     <ClInclude Include="..\public\Cursor.h" />
     <ClInclude Include="..\public\DefalutBlock.h" />
     <ClInclude Include="..\public\FreeCamera.h" />
@@ -177,6 +180,7 @@
     <ClInclude Include="..\Public\imstb_rectpack.h" />
     <ClInclude Include="..\Public\imstb_textedit.h" />
     <ClInclude Include="..\Public\imstb_truetype.h" />
+    <ClInclude Include="..\Public\JusinBox.h" />
     <ClInclude Include="..\Public\LampPost.h" />
     <ClInclude Include="..\Public\Lantern.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
@@ -185,15 +189,18 @@
     <ClInclude Include="..\public\Loader.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\Monster.h" />
+    <ClInclude Include="..\Public\NameLessKing.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\Public\Sack.h" />
     <ClInclude Include="..\public\Skeleton.h" />
+    <ClInclude Include="..\Public\SkeletonVanguard.h" />
     <ClInclude Include="..\public\Sky.h" />
     <ClInclude Include="..\public\Table.h" />
     <ClInclude Include="..\Public\Tent.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\Public\WaterBucket.h" />
     <ClInclude Include="..\public\Weapon.h" />
+    <ClInclude Include="..\Public\Zombie.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Level_Dungeon.h" />
@@ -201,13 +208,16 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Private\Arrow.cpp" />
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\private\Body_Player.cpp" />
     <ClCompile Include="..\private\Body_Skeleton.cpp" />
+    <ClCompile Include="..\Private\Bow.cpp" />
     <ClCompile Include="..\private\Bridge.cpp" />
     <ClCompile Include="..\Private\Bucket.cpp" />
     <ClCompile Include="..\private\Building.cpp" />
     <ClCompile Include="..\private\Bunting.cpp" />
+    <ClCompile Include="..\Private\Creeper.cpp" />
     <ClCompile Include="..\private\DefalutBlock.cpp" />
     <ClCompile Include="..\private\FreeCamera.cpp" />
     <ClCompile Include="..\Private\Grass.cpp" />
@@ -224,6 +234,7 @@
     <ClCompile Include="..\Private\ImGui_Panel_Inspector.cpp" />
     <ClCompile Include="..\Private\imgui_tables.cpp" />
     <ClCompile Include="..\Private\imgui_widgets.cpp" />
+    <ClCompile Include="..\Private\JusinBox.cpp" />
     <ClCompile Include="..\Private\LampPost.cpp" />
     <ClCompile Include="..\Private\Lantern.cpp" />
     <ClCompile Include="..\Private\Level_Dungeon.cpp" />
@@ -233,15 +244,18 @@
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\Private\Monster.cpp" />
+    <ClCompile Include="..\Private\NameLessKing.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\Private\Sack.cpp" />
     <ClCompile Include="..\private\Skeleton.cpp" />
+    <ClCompile Include="..\Private\SkeletonVanguard.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
     <ClCompile Include="..\private\Table.cpp" />
     <ClCompile Include="..\Private\Tent.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\Private\WaterBucket.cpp" />
     <ClCompile Include="..\private\Weapon.cpp" />
+    <ClCompile Include="..\Private\Zombie.cpp" />
     <ClCompile Include="..\Public\Cursor.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>

@@ -3,6 +3,7 @@
 #include "Weapon.h"
 #include "Body_Player.h"
 #include "GameInstance.h"
+#include "Bow.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CContainerObject{ pDevice, pContext }
@@ -50,6 +51,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	//네비게이션 잠깐 꺼둠
 
 	
+	
 	return S_OK;
 }
 
@@ -61,7 +63,7 @@ void CPlayer::Priority_Update(_float fTimeDelta)
 void CPlayer::Update(_float fTimeDelta)
 {
 
-	Intersect_ToMonster();
+	//Intersect_ToMonster();
 
 	bool bIsActionState = (state == PLAYERSTATE::HEAL || state == PLAYERSTATE::FAILING || state == PLAYERSTATE::BOW || state == PLAYERSTATE::ATTACK);
 
@@ -90,6 +92,7 @@ void CPlayer::Update(_float fTimeDelta)
 		else if (m_pGameInstance->Get_DIKeyDown(DIK_R)) // 힐
 		{
 			state = PLAYERSTATE::HEAL;
+			Set_Dead();
 		}
 		else
 		{
@@ -177,31 +180,53 @@ HRESULT CPlayer::Ready_PartObjects()
 	if (FAILED(__super::Add_PartObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_Body_Player"),
 		TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
+
 	pBody = dynamic_cast<CBody_Player*>(m_PartObjects[TEXT("Part_Body")]);
 	if (nullptr == pBody)
 		return E_FAIL;
-
 	
-
 	CWeapon::WEAPON_DESC				WeaponDesc{};
 	WeaponDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();
 	WeaponDesc.pSocketMatrix = pBody->Get_SocketBoneMatrixPtr("J_R_Weapon_Socket");
 	WeaponDesc.Scenetype = m_eSceneType;
+	WeaponDesc.shot = pBody->IsShot();
 
 	if (FAILED(__super::Add_PartObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_Weapon"),
 		TEXT("Part_Weapon"), &WeaponDesc)))
 		return E_FAIL;
 
+	CBow::BOW_DESC				BowDesc{};
+	BowDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	BowDesc.pSocketMatrix = pBody->Get_SocketBoneMatrixPtr("J_L_Weapon_Socket");
+	BowDesc.Scenetype = m_eSceneType;
+	BowDesc.shot = pBody->IsShot();
+
+	if (FAILED(__super::Add_PartObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_Bow"),
+		TEXT("Part_Bow"), &BowDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
-_bool CPlayer::Intersect_ToMonster()
+void CPlayer::Intersect_ToMonster()
 {
+	//if (nullptr == object)
+	//	return;
 
-	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Skeleton1"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+	//// 콜라이더 색깔이 이상하ㅔㄱ 바뀜 이거 체크 해야할듯
 
+	//for (auto& iter : *object)
+	//{
+	//	CCollider* collider = dynamic_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")));
 
-	return collider ? m_pColliderCom->Intersect(collider) : false;
+	//	if (collider == nullptr || collider->Get_Owner() == this) continue;
+
+	//	if (m_pColliderCom->Intersect(collider) && collider->Get_Owner()->Get_ObjectType() == OBJECTTYPE::MONSTER)
+	//	{
+	//		collider->Get_Owner()->TakeHit();
+	//		wcout << collider->Get_Owner()->Get_ObjectName() << "에게 피해를 입혔다" << endl;
+	//	}
+	//}
 }
 
 

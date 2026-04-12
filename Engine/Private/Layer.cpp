@@ -64,6 +64,24 @@ list<CGameObject*>& CLayer::Get_GameObjects()
 	return m_GameObjects;
 }
 
+void CLayer::DeleteObjects()
+{
+	for (auto iter = m_GameObjects.begin(); iter != m_GameObjects.end();)
+	{
+		if ((*iter)->Get_ObjectType() != CGameObject::OBJECTTYPE::ENVIRONMENT && true == (*iter)->Get_Dead())
+		{
+			Safe_Release(*iter);
+			
+			iter = m_GameObjects.erase(iter);
+
+		}
+		else
+		{
+			++iter;
+		}
+	}
+}
+
 CLayer* CLayer::Create()
 {
 	return new CLayer();

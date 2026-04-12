@@ -4,25 +4,28 @@
 #include "ContainerObject.h"
 
 NS_BEGIN(Engine)
+class CShader;
 class CCollider;
+class CModel;
 class CNavigation;
 NS_END
 
 NS_BEGIN(Client)
 
-class CSkeleton final : public CContainerObject
+
+enum ZOMBIESTATE {
+	ZOMBIEIDLE = 0,
+	ZOMBIEWALK,
+	ZOMBIEATTACK,
+	ZOMBIEEND
+};
+
+class CZombie final : public CGameObject
 {
-public:
-	enum SKELETONSTATE {
-		IDLE = 0x00000001,
-		WALK = 0x00000002,
-		ATTACK = 0x00000004,
-		DEATH = 0x00000008,
-	};
 private:
-	CSkeleton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CSkeleton(const CSkeleton& Prototype);
-	virtual ~CSkeleton() = default;
+	CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CZombie(const CZombie& Prototype);
+	virtual ~CZombie() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -32,22 +35,25 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+
 protected:
 	HRESULT Ready_Components();
-	HRESULT Ready_PartObjects();
+	HRESULT Bind_ShaderResources();
+private:
+	_bool Intersect_ToPlayer();
 
 private:
-	_uint			m_iState = {};
-
-	CCollider* m_pColliderCom = { nullptr };
+	CCollider* m_pColliderCom = {nullptr};
 	CNavigation* m_pNavigationCom = { nullptr };
-	void Intersect_ToPlayer();
+	CModel* m_pModelCom = { nullptr };
+	CShader* m_pShaderCom = { nullptr };
+	ZOMBIESTATE state = {};
 
-	
-
+	_float m_iMaxHp{};
+	_float m_iCurrentHp{};
 
 public:
-	static CSkeleton* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CZombie* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
