@@ -59,68 +59,19 @@ void CSkeleton::Priority_Update(_float fTimeDelta)
 
 void CSkeleton::Update(_float fTimeDelta)
 {
-
 	if (m_fCurrentHp <= 0)
 		Set_Dead();
 
-	/*if (GetKeyState(VK_DOWN) & 0x8000)
-	{
-		m_pTransformCom->Go_Backward(fTimeDelta);
-	}
-
-	if (GetKeyState(VK_LEFT) & 0x8000)
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
-	}
-
-	if (GetKeyState(VK_RIGHT) & 0x8000)
-	{
-
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
-	}
-
-	if (GetKeyState(VK_UP) & 0x8000)
-	{
-		m_pTransformCom->Go_Straight(fTimeDelta);
-
-		if (m_iState & SKELETONSTATE::IDLE)
-			m_iState ^= SKELETONSTATE::IDLE;
-
-		m_iState |= SKELETONSTATE::WALK;
-	}
-	else
-	{
-		if (m_iState & SKELETONSTATE::WALK)
-			m_iState ^= SKELETONSTATE::WALK;
-
-		m_iState |= SKELETONSTATE::IDLE;
-	}*/
-
 	Intersect_ToPlayer();
+	
+	if (m_iState & SKELETONSTATE::ATTACK)
+		m_iState ^= SKELETONSTATE::ATTACK;
 
-
-	//if (Intersect_ToPlayer())
-	//{
-	//	// 데미지 받음
-	//	// STATE TakeHit; 
-	//	if (m_iState & SKELETONSTATE::IDLE)
-	//		m_iState ^= SKELETONSTATE::IDLE;
-
-	//	m_iState |= SKELETONSTATE::ATTACK;
-	//}
-	//else
-	{
-		if (m_iState & SKELETONSTATE::ATTACK)
-			m_iState ^= SKELETONSTATE::ATTACK;
-
-		m_iState |= SKELETONSTATE::IDLE;
-	}
+	m_iState |= SKELETONSTATE::IDLE;
 
 	m_pColliderCom->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
-
 	__super::Update(fTimeDelta);
-
 }
 
 void CSkeleton::Late_Update(_float fTimeDelta)
@@ -141,7 +92,8 @@ HRESULT CSkeleton::Render()
 
 void CSkeleton::Intersect_ToPlayer()
 {
-	CTransform* pPlayerTransform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Transform")));
+
+	/*CTransform* pPlayerTransform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Transform")));
 	m_pTransformCom->LookAt(pPlayerTransform->Get_State(STATE::POSITION));
 
 	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
@@ -157,7 +109,7 @@ void CSkeleton::Intersect_ToPlayer()
 	else
 	{
 		m_pColliderCom->Set_isColl(false);
-	}
+	}*/
 
 
 	/*const list<CGameObject*>& object = m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Layer_Clone"));

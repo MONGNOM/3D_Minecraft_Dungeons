@@ -25,7 +25,7 @@ HRESULT CZombie::Initialize(void* pArg)
 	
 	CGameObject::GAMEOBJECT_DESC* desc = reinterpret_cast<GAMEOBJECT_DESC*>(pArg);
 
-	desc->fSpeedPerSec = 10.f;
+	desc->fSpeedPerSec = 3.f;
 	desc->fDegreePerSec = 180.f;
 
 
@@ -52,7 +52,8 @@ HRESULT CZombie::Initialize(void* pArg)
 	m_pModelCom->Ready_Animations("Zombie_Walk.Anim");
 	
 	m_pModelCom->Set_Animation(0, true);
-
+	
+	damage = 10;
 
 	return S_OK;
 }
@@ -66,23 +67,35 @@ void CZombie::Update(_float fTimeDelta)
 
 	if (Intersect_ToPlayer())
 	{
-		//attack재생
-		//if (*m_pParentState & CSkeleton::SKELETONSTATE::ATTACK)
+		m_pModelCom->Set_Animation(0, true);
 
-		m_pModelCom->Set_Animation(1, true);
+		if (m_pModelCom->Get_CurrentTrackPos() >= 14.f && m_pModelCom->Get_CurrentTrackPos() <= 14.4f)
+		{
+			Intersect_ToPlayerAttack();
+		}
+		else
+		{
+			m_pColliderCom[ETOI(COLLIDER::AABB)]->SetActive_Collider(false);
+		}
+	}
+	else if (Intersect_ToPlayerSphere())
+	{
+		m_pModelCom->Set_Animation(3, true);
+		m_pTransformCom->Go_Straight(fTimeDelta);
 	}
 	else
 	{
-		//if (*m_pParentState & CSkeleton::SKELETONSTATE::IDLE)
-		m_pModelCom->Set_Animation(0, true);
-
-		//idle
+		m_pModelCom->Set_Animation(2, true);
 	}
+
+	
 
 	if (true == m_pModelCom->Play_Animation(fTimeDelta))
 		int a = 10;
 
-	m_pColliderCom->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	for (auto& iter : m_pColliderCom)
+		iter->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	
 }
 
 void CZombie::Late_Update(_float fTimeDelta)
@@ -113,7 +126,9 @@ HRESULT CZombie::Render()
 
 
 #ifdef _DEBUG
-	m_pColliderCom->Render();
+	
+	for (auto& iter : m_pColliderCom)
+		iter->Render();
 	//m_pNavigationCom->Render();
 #endif // _DEBUG
 
@@ -125,12 +140,29 @@ HRESULT CZombie::Ready_Components()
 {
 	CBounding_AABB::BOUNDING_AABB_DESC AABBDesc;
 
-	AABBDesc.vExtents = _float3(0.5f, 1.f, 0.5f);
+	AABBDesc.vExtents = _float3(1.f, 1.f, 1.f);
 	AABBDesc.vCenter = _float3(0.f, AABBDesc.vExtents.y, 0.f);
 	AABBDesc.owner = this;
 
 	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_AABB"),
-		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
+		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom[ETOI(COLLIDER::AABB)]), &AABBDesc)))
+		return E_FAIL;
+
+	AABBDesc.vExtents = _float3(1.f, 1.f, 1.f);
+	AABBDesc.vCenter = _float3(0.f, AABBDesc.vExtents.y, 0.f);
+	AABBDesc.owner = this;
+
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_AABB"),
+		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom[1]), &AABBDesc)))
+		return E_FAIL;
+
+	CBounding_Sphere::BOUNDING_SPHERE_DESC SphereDesc{};
+	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
+	SphereDesc.fRadius = 10.0f;
+	SphereDesc.owner = this;
+
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom[ETOI(COLLIDER::SPHERE)]), &SphereDesc)))
 		return E_FAIL;
 
 	if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
@@ -192,14 +224,62 @@ _bool CZombie::Intersect_ToPlayer()
 
 	if (collider == nullptr) return false;
 
-	if (m_pColliderCom->Intersect(collider))
+
+	if (m_pColliderCom[1]->Intersect(collider))
 	{
-		m_pColliderCom->Set_isColl(true);
+		
+		m_pColliderCom[1]->Set_isColl(true);
 		return true;
 	}
 	else
 	{
-		m_pColliderCom->Set_isColl(false);
+		m_pColliderCom[1]->Set_isColl(false);
+		return false;
+	}
+
+}
+
+_bool CZombie::Intersect_ToPlayerAttack()
+{
+	m_pColliderCom[ETOI(COLLIDER::AABB)]->SetActive_Collider(true);
+
+	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+
+	if (collider == nullptr) return false;
+
+
+	if (m_pColliderCom[ETOI(COLLIDER::AABB)]->Intersect(collider))
+	{
+
+		m_pColliderCom[ETOI(COLLIDER::AABB)]->Set_isColl(true);
+		collider->Get_Owner()->TakeHit(damage);
+		wcout << collider->Get_Owner()->Get_ObjectName() << "에게 피해를 입혔다" << endl;
+		return true;
+	}
+	else
+	{
+		m_pColliderCom[ETOI(COLLIDER::AABB)]->Set_isColl(false);
+		return false;
+	}
+}
+
+_bool CZombie::Intersect_ToPlayerSphere()
+{
+	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+
+	if (collider == nullptr) return false;
+
+	if (m_pColliderCom[ETOI(COLLIDER::SPHERE)]->Intersect(collider))
+	{
+
+		m_pTransformCom->LookAt(dynamic_cast<CTransform*>(collider->Get_Owner()->Get_Component(TEXT("Com_Transform")))->Get_State(STATE::POSITION));
+
+		m_pColliderCom[ETOI(COLLIDER::SPHERE)]->Set_isColl(true);
+		return true;
+	}
+	else
+	{
+		m_pColliderCom[ETOI(COLLIDER::SPHERE)]->Set_isColl(false);
 		return false;
 	}
 }
@@ -237,6 +317,9 @@ void CZombie::Free()
 
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
-	Safe_Release(m_pColliderCom);
+
+	for (auto& iter : m_pColliderCom)
+		Safe_Release(iter);
+	
 	//Safe_Release(m_pNavigationCom);
 }

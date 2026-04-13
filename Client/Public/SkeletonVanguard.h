@@ -41,15 +41,18 @@ protected:
 	HRESULT Bind_ShaderResources();
 private:
 	_bool Intersect_ToPlayer();
+	_bool Intersect_ToPlayerAttack();
+	_bool Intersect_ToPlayerSphere();
 
 private:
-	CCollider* m_pColliderCom = {nullptr};
+	CCollider* m_pColliderCom[ETOI(COLLIDER::END)] = { nullptr };
 	CNavigation* m_pNavigationCom = { nullptr };
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	SkeletonVanguardSTATE state = {};
 	_float m_iMaxHp{};
 	_float m_iCurrentHp{};
+	_uint damage;
 
 public:
 	static CSkeletonVanguard* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
