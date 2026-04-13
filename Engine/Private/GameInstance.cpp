@@ -180,6 +180,11 @@ const list<class CGameObject*>& CGameInstance::Get_LayerObjects(_uint iLayerInde
 	return m_pObject_Manager->Get_LayerObjects(iLayerIndex, layName);
 }
 
+CGameObject* CGameInstance::Get_GameObject(_wstring objName, _wstring layName, _uint iLayerIndex)
+{
+	return m_pObject_Manager->Get_GameObject(objName, layName, iLayerIndex);
+}
+
 map<const _wstring, class CLayer*>& CGameInstance::Get_Layer(_uint iLayerIndex)
 {
 	return m_pObject_Manager->Get_Layer(iLayerIndex);

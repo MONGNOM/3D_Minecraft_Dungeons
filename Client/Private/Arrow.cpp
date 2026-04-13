@@ -23,7 +23,7 @@ HRESULT CArrow::Initialize(void* pArg)
 	CArrow::ArrowDesc* desc = reinterpret_cast<ArrowDesc*>(pArg);
 
 	desc->fSpeedPerSec = 40.f;
-
+	
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -38,7 +38,7 @@ HRESULT CArrow::Initialize(void* pArg)
 		m_fRot = desc->rot;
 		m_fPos = desc->pos;
 		m_eSceneType = desc->Scenetype;
-		
+		m_etype = desc->type;
 	}
 	m_Name = TEXT("Arrow");
 
@@ -98,11 +98,34 @@ HRESULT CArrow::Render()
 
 void CArrow::Intersect_ToMonster()
 {
+	m_pColliderCom->Set_isColl(false);
+
+	CCollider* colliderplayer = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+
+	if (colliderplayer == nullptr) return;
+
+	if (m_pColliderCom->Intersect(colliderplayer) && m_etype == OBJECTTYPE::MONSTER)
+	{
+		colliderplayer->Get_Owner()->TakeHit(m_iArrowDamage);
+		m_pColliderCom->Set_isColl(true);
+		colliderplayer->Set_isColl(true);
+		wcout << colliderplayer->Get_Owner()->Get_ObjectName() << "에게 피해를 입혔다" << endl;
+		Set_Dead();
+		return;
+	}
+	else
+	{
+		if (m_fDeleteTime >= 1.5f)
+		{
+			// 삭제?
+			Set_Dead();
+			m_fDeleteTime = 0;
+			return;
+		}
+	}
+
 	if (nullptr == object)
 		return;
-
-	// 콜라이더 색깔이 이상하ㅔㄱ 바뀜 이거 체크 해야할듯
-	m_pColliderCom->Set_isColl(false);
 
 	for (auto& iter : *object)
 	{
@@ -110,7 +133,7 @@ void CArrow::Intersect_ToMonster()
 
 		if (collider == nullptr || collider->Get_Owner() == this) continue;
 
-		if (m_pColliderCom->Intersect(collider) && collider->Get_Owner()->Get_ObjectType() == OBJECTTYPE::MONSTER)
+		if (m_pColliderCom->Intersect(collider) && collider->Get_Owner()->Get_ObjectType() == OBJECTTYPE::MONSTER && m_etype == OBJECTTYPE::PLAYER)
 		{
 			collider->Get_Owner()->TakeHit(m_iArrowDamage);
 			m_pColliderCom->Set_isColl(true);

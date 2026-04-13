@@ -49,7 +49,7 @@ public: /* For.Object_Manager */
 	class CComponent* Get_Component(_wstring objName, _wstring layName, _uint iLayerIndex, _wstring componentName);
 	vector<class CGameObject*> Get_GameObjects(_uint iLayerIndex);
 	const list<class CGameObject*>& Get_LayerObjects(_uint iLayerIndex, _wstring layName);
-
+	class CGameObject* Get_GameObject(_wstring objName, _wstring layName, _uint iLayerIndex);
 	map<const _wstring, class CLayer*>& Get_Layer(_uint iLayerIndex);
 
 

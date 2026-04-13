@@ -36,12 +36,11 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-
+	void Set_Roll(_bool value) { m_bRoll = value; }
 
 protected:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
-	_bool attacking = { false };
 
 private:
 	void Intersect_ToMonster();
@@ -54,6 +53,7 @@ private:
 	const list<CGameObject*>* object = { nullptr };
 	_float m_iMaxHp{};
 	_float m_iCurrentHp{};
+	_bool m_bRoll = false;
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

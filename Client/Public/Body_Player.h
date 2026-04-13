@@ -18,6 +18,7 @@ public:
 	typedef struct tagBodyPlayerDesc final : public CPartObject::PARTOBJECT_DESC
 	{
 		 const PLAYERSTATE* pParentState = { nullptr };
+		 CGameObject* pPlayer = nullptr;
 		//const _uint* pParentState = { nullptr };
 	}BODY_PLAYER_DESC;
 private:
@@ -37,11 +38,14 @@ public:
 
 	_bool IsAnimationFinished() const { return m_bIsAnimFinished; }
 	_bool* IsShot() { return &m_bshot; }
+	_bool* IsAttack() { return &m_WeaponColiider; }
 
 private:
 	CShader* m_pShaderCom = { nullptr };
 	CModel* m_pModelCom = { nullptr };
 	CCollider* m_pColliderCom = { nullptr };
+	CGameObject* m_pPlayer = nullptr;
+	class CWeapon* m_pWeapon = nullptr;
 
 private:
 	//const _uint* m_pParentState = { nullptr };
@@ -49,7 +53,9 @@ private:
 	PLAYERSTATE  m_PrevPlayerState = { PLAYERSTATE::END };
 	_bool m_bIsAnimFinished = { false };
 	_bool m_bshot = false;
-
+	_bool Attacking = false;
+	_uint AttackAniNum = 5;
+	_bool m_WeaponColiider = false;
 
 private:
 	HRESULT Ready_Components();

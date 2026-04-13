@@ -79,6 +79,16 @@ void CTransform::Go_Straight(_float fTimeDelta, class CNavigation* pNavigation)
 		Set_State(STATE::POSITION, vPosition);
 }
 
+void CTransform::Go_Roll(_float fTimeDelta, _float fSpeed)
+{
+	_vector			vPosition = Get_State(STATE::POSITION);
+	_vector			vLook = Get_State(STATE::LOOK);
+
+	vPosition += XMVector3Normalize(vLook) * fSpeed * (fTimeDelta * 1.5f);
+
+	Set_State(STATE::POSITION, vPosition);
+}
+
 
 
 void CTransform::Go_Backward(_float fTimeDelta)

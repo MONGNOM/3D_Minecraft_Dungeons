@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Bow.h"
 #include "Arrow.h"
+#include "Weapon.h"
 
 CBody_Player::CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }, m_pParentPlayerState {nullptr}
@@ -32,7 +33,8 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	auto	pDesc = static_cast<BODY_PLAYER_DESC*>(pArg);
 
 	m_pParentPlayerState = pDesc->pParentState;
-	
+	m_pPlayer = pDesc->pPlayer;
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -51,7 +53,11 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Ready_Animations("Player_Master_Drink.Anim");					//2 마시기
 	m_pModelCom->Ready_Animations("Player_Master_DodgeRoll.Anim");				//3 구르기
 	m_pModelCom->Ready_Animations("Player_Master_BowAction.Anim");				//4 활
-	m_pModelCom->Ready_Animations("Player_Master_SwordCombo.001.Anim");			//5 칼
+	m_pModelCom->Ready_Animations("Player_Master_SwordCombo.Anim");				//5 칼
+	//m_pModelCom->Ready_Animations("Player_Master_SwordCombo1.Anim");			//5 칼
+	//m_pModelCom->Ready_Animations("Player_Master_SwordCombo2.Anim");			//6 칼
+	//m_pModelCom->Ready_Animations("Player_Master_SwordCombo3.Anim");			//7 칼
+	//m_pModelCom->Ready_Animations("Player_Master_SwordCombo4.Anim");			//8 칼
 
 
 	m_pModelCom->Set_Animation(0, true);
@@ -71,7 +77,7 @@ void CBody_Player::Update(_float fTimeDelta)
 	if (m_PrevPlayerState != *m_pParentPlayerState)
 	{
 		m_PrevPlayerState = *m_pParentPlayerState;
-		
+
 		m_bIsAnimFinished = false;
 
 		switch (*m_pParentPlayerState)
@@ -89,47 +95,75 @@ void CBody_Player::Update(_float fTimeDelta)
 			break;
 
 		case PLAYERSTATE::FAILING:
+		{
+			CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));  // 레이어이름을 저렇게 할까그냥
+			collider->SetActive_Collider(false);
 			m_pModelCom->Set_Animation(3, false);
 			break;
-
+		}
 		case PLAYERSTATE::BOW:
 		{
 			m_bshot = true;
 			m_pModelCom->Set_Animation(4, false);
 			break;
-		}		
+		}
 		case PLAYERSTATE::ATTACK:
+		{
 			m_pModelCom->Set_Animation(5, false);
+			m_WeaponColiider = false;
 			break;
+		}
 		}
 	}
 
+	
+
+	_float a = m_pModelCom->Get_CurrentTrackPos();
 	_bool aniEnd = m_pModelCom->Play_Animation(fTimeDelta);
+	if (PLAYERSTATE::ATTACK == *m_pParentPlayerState && m_pModelCom->Get_CurrentTrackPos() >= _float(3.6f) && m_pModelCom->Get_CurrentTrackPos() <= 4.f ||
+		PLAYERSTATE::ATTACK == *m_pParentPlayerState && m_pModelCom->Get_CurrentTrackPos() >= _float(14.6f) && m_pModelCom->Get_CurrentTrackPos() <= 15.f ||
+		PLAYERSTATE::ATTACK == *m_pParentPlayerState && m_pModelCom->Get_CurrentTrackPos() >= _float(31.6f) && m_pModelCom->Get_CurrentTrackPos() <= 32.f)
+	{
+		m_WeaponColiider = true;
+	}
+	else
+		m_WeaponColiider = false;
+
 
 	if (aniEnd)
 	{
 		m_bIsAnimFinished = true;
 
-		if (*m_pParentPlayerState == PLAYERSTATE::BOW)
+		switch (*m_pParentPlayerState)
 		{
-			m_bshot = false;
-			CArrow::ArrowDesc desc{};
-			desc.Scenetype = m_eSceneType;
-			desc.rot = m_pTransformCom->Get_Rotation();
-			XMStoreFloat3(&desc.pos, XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3][0])));
-			desc.pos.y += 1.5f;
-			desc.look = XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[2][0]));
-
-			if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_Arrow"), m_eObjectType, TEXT("Clone_Layer"), &desc)))
+		case PLAYERSTATE::BOW:
 			{
-				MSG_BOX("화살안만들어졌어");
-				return;
+				m_bshot = false;
+				CArrow::ArrowDesc desc{};
+				desc.Scenetype = m_eSceneType;
+				desc.rot = m_pTransformCom->Get_Rotation();
+				XMStoreFloat3(&desc.pos, XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3][0])));
+				desc.pos.y += 1.5f;
+				desc.look = XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[2][0]));
+				desc.type = OBJECTTYPE::PLAYER;
+				if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_Arrow"), m_eObjectType, TEXT("Clone_Layer"), &desc)))
+				{
+					MSG_BOX("화살안만들어졌어");
+					return;
+				}
+
+				break;
 			}
-
+		case PLAYERSTATE::FAILING:
+			{
+				CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+				collider->SetActive_Collider(true);
+				dynamic_cast<CPlayer*>(m_pPlayer)->Set_Roll(false);
+				break;
+			}
 		}
-	}
-
 	
+	}
 
 	m_pColliderCom->Update(XMLoadFloat4x4(&m_CombinedWorldMatrix));
 }

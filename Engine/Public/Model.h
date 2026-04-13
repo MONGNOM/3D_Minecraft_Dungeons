@@ -21,6 +21,8 @@ public:
 		return m_Materials;
 	}
 
+	_float Get_CurrentTrackPos();
+
 	_bool  m_bIsBlending = false;    // 섞는 중인가? 스위치
 	_float m_fBlendTime = 0.0f;      // 흘러간 시간
 	_float m_fBlendDuration = 0.2f;  // 총 섞을 시간 (0.2초)

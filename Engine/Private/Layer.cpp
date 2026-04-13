@@ -64,6 +64,19 @@ list<CGameObject*>& CLayer::Get_GameObjects()
 	return m_GameObjects;
 }
 
+CGameObject* CLayer::Get_GameObject(_wstring objName)
+{
+	auto iter = find_if(m_GameObjects.begin(), m_GameObjects.end(), [&](CGameObject* gameObejct)
+		{
+			return (lstrcmp(objName.c_str(), gameObejct->Get_ObjectName().c_str()) == 0);
+		});
+
+	if (iter == m_GameObjects.end())
+		return nullptr;
+
+	return *iter;
+}
+
 void CLayer::DeleteObjects()
 {
 	for (auto iter = m_GameObjects.begin(); iter != m_GameObjects.end();)

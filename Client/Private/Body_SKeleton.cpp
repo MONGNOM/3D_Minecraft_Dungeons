@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 
 #include "Skeleton.h"
+#include "Arrow.h"
 
 CBody_Skeleton::CBody_Skeleton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
@@ -29,7 +30,8 @@ HRESULT CBody_Skeleton::Initialize(void* pArg)
 
 	m_pParentState = pDesc->pParentState;
 
-
+	m_pState = *m_pParentState;
+	
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -55,21 +57,35 @@ void CBody_Skeleton::Update(_float fTimeDelta)
 {
 	if (Intersect_ToPlayer())
 	{
-		//attack재생
-		//if (*m_pParentState & CSkeleton::SKELETONSTATE::ATTACK)
-
+		
 		m_pModelCom->Set_Animation(1, true);
+		if (m_pModelCom->Get_CurrentTrackPos() >= _float(27.0f) && m_pModelCom->Get_CurrentTrackPos() <= 27.4f)
+		{
+
+			CArrow::ArrowDesc desc{};
+			desc.Scenetype = m_eSceneType;
+			desc.rot = m_pTransformCom->Get_Rotation();
+			XMStoreFloat3(&desc.pos, XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3][0])));
+			desc.pos.y += 1.5f;
+			desc.look = XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[2][0]));
+			desc.type = OBJECTTYPE::MONSTER;
+			if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_Arrow"), m_eObjectType, TEXT("Clone_Layer"), &desc)))
+			{
+				MSG_BOX("화살안만들어졌어");
+				return;
+			}
+		}
 	}
 	else
 	{
 		//if (*m_pParentState & CSkeleton::SKELETONSTATE::IDLE)
 		m_pModelCom->Set_Animation(0, true);
-
+		m_pState = CSkeleton::SKELETONSTATE::ATTACK;
 		//idle
 	}
 
-	if (true == m_pModelCom->Play_Animation(fTimeDelta))
-		int a = 10;
+	m_pModelCom->Play_Animation(fTimeDelta);
+	
 
 
 	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));

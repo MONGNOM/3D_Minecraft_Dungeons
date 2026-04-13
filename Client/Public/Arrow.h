@@ -17,6 +17,7 @@ public:
 	typedef struct tagArrowDesc : public CGameObject::GAMEOBJECT_DESC
 	{
 		_vector look;
+		OBJECTTYPE type;
 	}ArrowDesc;
 
 private:
@@ -44,6 +45,7 @@ private:
 	const list<CGameObject*>* object = {nullptr};
 	_float m_fDeleteTime = { 0 };
 	_vector m_vLook;
+	OBJECTTYPE m_etype;
 
 private:
 	HRESULT Ready_Components();

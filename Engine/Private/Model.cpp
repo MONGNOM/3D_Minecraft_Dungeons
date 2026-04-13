@@ -47,6 +47,11 @@ CModel::CModel(const CModel& Prototype)
     
 }
 
+_float CModel::Get_CurrentTrackPos()
+{
+     return m_Animations[m_iCurrentAnimIndex]->Get_CurrentTrackPostion(); 
+}
+
 
 _int CModel::Get_BoneIndex(const _char* pBoneName)
 {

@@ -64,6 +64,7 @@ void CPlayer::Update(_float fTimeDelta)
 {
 
 	//Intersect_ToMonster();
+	if(m_bRoll)	m_pTransformCom->Go_Roll(fTimeDelta, 20.f);
 
 	bool bIsActionState = (state == PLAYERSTATE::HEAL || state == PLAYERSTATE::FAILING || state == PLAYERSTATE::BOW || state == PLAYERSTATE::ATTACK);
 
@@ -87,7 +88,11 @@ void CPlayer::Update(_float fTimeDelta)
 		
 		else if (m_pGameInstance->Get_DIKeyDown(DIK_SPACE)) // ±¸¸£±â
 		{
-			state = PLAYERSTATE::FAILING;
+			if (!m_bRoll)
+			{
+				m_bRoll = true;
+				state = PLAYERSTATE::FAILING;
+			}
 		}
 		else if (m_pGameInstance->Get_DIKeyDown(DIK_R)) // Èú
 		{
@@ -176,6 +181,9 @@ HRESULT CPlayer::Ready_PartObjects()
 	BodyDesc.pParentState = &state;
 	BodyDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();
 	BodyDesc.Scenetype = m_eSceneType;
+	BodyDesc.pPlayer = this;
+	//BodyDesc.pWeapon = 
+
 
 	if (FAILED(__super::Add_PartObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_Body_Player"),
 		TEXT("Part_Body"), &BodyDesc)))
@@ -190,6 +198,7 @@ HRESULT CPlayer::Ready_PartObjects()
 	WeaponDesc.pSocketMatrix = pBody->Get_SocketBoneMatrixPtr("J_R_Weapon_Socket");
 	WeaponDesc.Scenetype = m_eSceneType;
 	WeaponDesc.shot = pBody->IsShot();
+	WeaponDesc.onColiider = pBody->IsAttack();
 
 	if (FAILED(__super::Add_PartObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_Weapon"),
 		TEXT("Part_Weapon"), &WeaponDesc)))

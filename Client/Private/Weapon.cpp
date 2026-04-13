@@ -25,12 +25,16 @@ HRESULT CWeapon::Initialize(void* pArg)
 	m_pSocketMatrix = pDesc->pSocketMatrix;
 
 	m_pShot = pDesc->shot;
+
+	m_pOnColiider = pDesc->onColiider;
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	m_Name = TEXT("Weapon");
 	/*m_pTransformCom->SetUp_Scale(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), 90.f);
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.8f, 0.f, 0.f, 1.f));
@@ -41,6 +45,7 @@ HRESULT CWeapon::Initialize(void* pArg)
 		m_pGameInstance->Random(0.f, 10.f),
 		1.f
 	));*/
+	m_pColliderCom->Set_isColl(false);
 
 	m_iSwordDamage = m_pGameInstance->Random(10, 40);
 	
@@ -55,12 +60,21 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 
 void CWeapon::Update(_float fTimeDelta)
 {
+	
 	_matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
 
 	for (size_t i = 0; i < 3; i++)
 		SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
 
 	Intersect_ToMonster();
+
+	if (*m_pOnColiider)
+	{
+		m_pColliderCom->SetActive_Collider(true);
+	}
+	else
+		m_pColliderCom->SetActive_Collider(false);
+
 	
 
 	Update_CombinedWorldMatrix(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix);
@@ -106,7 +120,7 @@ void CWeapon::Intersect_ToMonster()
 	
 
 	// 콜라이더 색깔이 이상하ㅔㄱ 바뀜 이거 체크 해야할듯
-	m_pColliderCom->Set_isColl(false);
+	
 
 	for (auto& iter : *object)
 	{
@@ -120,7 +134,7 @@ void CWeapon::Intersect_ToMonster()
 			m_pColliderCom->Set_isColl(true);
 			collider->Set_isColl(true);
 			wcout << collider->Get_Owner()->Get_ObjectName() << m_iSwordDamage <<" 에게 피해를 입혔다" << endl;
-			m_pColliderCom->SetActive_Collider(false);
+			// m_pColliderCom->SetActive_Collider(false);
 			// 애니메이션 때릴떄 콜라이더 떄리는거 3번만 켜야하는데 이걸 어떻게 3번만 켜주냐 그것도 타이밍 맞춰서 시간으로 노가다 해야하나?
 			// 특정 프레임에만 콜라이더 키게 할 수 있나
 			// 
@@ -142,8 +156,8 @@ HRESULT CWeapon::Ready_Components()
 
 
 	CBounding_OBB::BOUNDING_OBB_DESC Desc{};
-	Desc.vCenter = _float3(0.f, Desc.vExtents.y, 1.f);
-	Desc.vExtents = _float3(0.5f,0.5f,1.f);
+	Desc.vCenter = _float3(0.f, Desc.vExtents.y, 1.5f);
+	Desc.vExtents = _float3(0.5f,1.5f,1.5f);
 	Desc.vRadians = _float3(0.f, XMConvertToRadians(0.f), 0.f);
 	Desc.owner = this;
 

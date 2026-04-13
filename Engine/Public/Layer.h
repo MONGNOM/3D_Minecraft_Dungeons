@@ -22,6 +22,7 @@ private:
 public:
 	class CComponent* Get_Component(_wstring objName, _wstring componentName);
 	list<class CGameObject*>& Get_GameObjects();
+	CGameObject* Get_GameObject(_wstring objName);
 	void DeleteObjects();
 
 public:

@@ -3,6 +3,7 @@
 //#include "Weapon.h"
 #include "Body_Skeleton.h"
 #include "GameInstance.h"
+#include "Bow.h"
 
 CSkeleton::CSkeleton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CContainerObject{ pDevice, pContext }
@@ -43,6 +44,7 @@ HRESULT CSkeleton::Initialize(void* pArg)
 		Desc->fSpeedPerSec = 10.f;
 		Desc->fDegreePerSec = 180.f;
 	}
+
 
 	m_eObjectType = OBJECTTYPE::MONSTER;
 	m_fCurrentHp = 100;
@@ -139,7 +141,26 @@ HRESULT CSkeleton::Render()
 
 void CSkeleton::Intersect_ToPlayer()
 {
-	const list<CGameObject*>& object = m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Layer_Clone"));
+	CTransform* pPlayerTransform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Transform")));
+	m_pTransformCom->LookAt(pPlayerTransform->Get_State(STATE::POSITION));
+
+	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+
+	if (collider == nullptr) return;
+
+	if (m_pColliderCom->Intersect(collider))
+	{
+		collider->Get_Owner()->TakeHit(10);
+		m_pColliderCom->Set_isColl(true);
+		wcout << collider->Get_Owner()->Get_ObjectName() << "에게 피해를 입혔다" << endl;
+	}
+	else
+	{
+		m_pColliderCom->Set_isColl(false);
+	}
+
+
+	/*const list<CGameObject*>& object = m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Layer_Clone"));
 	m_pColliderCom->Set_isColl(false);
 
 	for (auto& iter : object)
@@ -154,7 +175,7 @@ void CSkeleton::Intersect_ToPlayer()
 			m_pColliderCom->Set_isColl(true);
 			wcout << collider->Get_Owner()->Get_ObjectName() << "에게 피해를 입혔다" << endl;
 		}
-	}
+	}*/
 }
 
 HRESULT CSkeleton::Ready_Components()
@@ -193,10 +214,20 @@ HRESULT CSkeleton::Ready_PartObjects()
 		TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
 
-	CBody_Skeleton* pBody = dynamic_cast<CBody_Skeleton*>(m_PartObjects[TEXT("Part_Body")]);
+	pBody = dynamic_cast<CBody_Skeleton*>(m_PartObjects[TEXT("Part_Body")]);
 	if (nullptr == pBody)
 		return E_FAIL;
 
+
+	CBow::BOW_DESC				BowDesc{};
+	BowDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	BowDesc.pSocketMatrix = pBody->Get_SocketBoneMatrixPtr("J_L_WeaponSocket");
+	BowDesc.Scenetype = m_eSceneType;
+	BowDesc.shot = Get_FakeBool();
+
+	if (FAILED(__super::Add_PartObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_Bow"),
+		TEXT("Part_Bow"), &BowDesc)))
+		return E_FAIL;
 
 	// 활 달아 줍시다 플레이어도 달아야함
 

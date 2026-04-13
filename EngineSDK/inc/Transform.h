@@ -60,6 +60,7 @@ public:
 	void SetUp_Scale(_float fScaleX, _float fScaleY, _float fScaleZ);
 	void Scaling(_float fScaleX, _float fScaleY, _float fScaleZ);
 	void Go_Straight(_float fTimeDelta, class CNavigation* pNavigation = nullptr);
+	void Go_Roll(_float fTimeDelta, _float fSpeed);
 	void Go_Backward(_float fTimeDelta);
 	void Go_Right(_float fTimeDelta);
 	void Go_Left(_float fTimeDelta);

@@ -25,7 +25,7 @@ public:
 	class CGameObject* Get_Owner() { return m_pBounding->Get_Owner(); }
 	void Set_isColl(_bool value) { m_isColl = value; }
 	void SetActive_Collider(_bool value) { m_bSetActive = value; }
-
+	_bool Get_SetActive_Collider() { return m_bSetActive; }
 public:
 	void Update(_fmatrix WorldMatrix);
 

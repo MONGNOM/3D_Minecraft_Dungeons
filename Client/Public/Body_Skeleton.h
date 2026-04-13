@@ -32,14 +32,13 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-
 private:
 	CShader* m_pShaderCom = { nullptr };
 	CModel* m_pModelCom = { nullptr };
 	CCollider* m_pColliderCom = { nullptr };
-
 private:
 	const _uint* m_pParentState = { nullptr };
+	_uint m_pState = { 0 };
 
 
 

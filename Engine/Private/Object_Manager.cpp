@@ -114,6 +114,15 @@ CComponent* CObject_Manager::Get_Component(_wstring objName, _wstring layName, _
 
 }
 
+CGameObject* CObject_Manager::Get_GameObject(_wstring objName, _wstring layName, _uint iLayerIndex)
+{
+	CLayer* pLayer = Find_Layer(iLayerIndex, layName);
+	if (nullptr == pLayer)
+		return nullptr;
+
+	return pLayer->Get_GameObject(objName);
+}
+
 vector<class CGameObject*> CObject_Manager::Get_GameObjects(_uint iLayerIndex)
 {
 	vector<class CGameObject*> allObjects;

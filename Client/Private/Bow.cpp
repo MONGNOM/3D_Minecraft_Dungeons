@@ -22,8 +22,12 @@ HRESULT CBow::Initialize(void* pArg)
 {
 	auto	pDesc = static_cast<BOW_DESC*>(pArg);
 
-	m_pSocketMatrix = pDesc->pSocketMatrix;
-	m_pShot = pDesc->shot;
+	if (pDesc != nullptr)
+	{
+		m_pSocketMatrix = pDesc->pSocketMatrix;
+		m_pShot = pDesc->shot;
+	}
+	
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;

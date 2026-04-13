@@ -23,6 +23,7 @@ public:
 	void Late_Update(_float fTimeDelta);
 	HRESULT Clear_Layers(_uint iLevelIndex);
 	class CComponent* Get_Component(_wstring objName, _wstring layName, _uint iLayerIndex, _wstring componentName);
+	class CGameObject* Get_GameObject(_wstring objName, _wstring layName, _uint iLayerIndex);
 	vector<class CGameObject*> Get_GameObjects(_uint iLayerIndex);
 	const list<class CGameObject*>& Get_LayerObjects(_uint iLayerIndex, _wstring layName);
 
