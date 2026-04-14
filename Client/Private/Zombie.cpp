@@ -55,6 +55,9 @@ HRESULT CZombie::Initialize(void* pArg)
 	
 	damage = 10;
 
+	m_fMaxHp = 50;
+	m_fCurrentHp = m_fMaxHp;
+
 	return S_OK;
 }
 
@@ -64,6 +67,8 @@ void CZombie::Priority_Update(_float fTimeDelta)
 
 void CZombie::Update(_float fTimeDelta)
 {
+	if (m_fCurrentHp <= 0)
+		Set_Dead();
 
 	if (Intersect_ToPlayer())
 	{

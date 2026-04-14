@@ -22,6 +22,11 @@ enum SkeletonVanguardSTATE {
 
 class CSkeletonVanguard final : public CGameObject
 {
+public:
+	typedef struct tagVanguardDesc : public CGameObject::GAMEOBJECT_DESC
+	{
+		_vector look;
+	}VANGUARD_Desc;
 private:
 	CSkeletonVanguard(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CSkeletonVanguard(const CSkeletonVanguard& Prototype);
@@ -53,6 +58,7 @@ private:
 	_float m_iMaxHp{};
 	_float m_iCurrentHp{};
 	_uint damage;
+	_vector m_vLook;
 
 public:
 	static CSkeletonVanguard* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

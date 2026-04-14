@@ -54,6 +54,9 @@ HRESULT CCreeper::Initialize(void* pArg)
 
 	damage = 40;
 
+	m_fMaxHp = 40;
+	m_fCurrentHp = m_fMaxHp;
+
 	return S_OK;
 }
 
@@ -63,6 +66,8 @@ void CCreeper::Priority_Update(_float fTimeDelta)
 
 void CCreeper::Update(_float fTimeDelta)
 {
+	if (m_fCurrentHp <= 0)
+		Set_Dead();
 
 	if (Intersect_ToPlayer())
 	{

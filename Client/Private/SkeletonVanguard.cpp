@@ -23,7 +23,7 @@ HRESULT CSkeletonVanguard::Initialize_Prototype()
 HRESULT CSkeletonVanguard::Initialize(void* pArg)
 {
 	
-	CGameObject::GAMEOBJECT_DESC* desc = reinterpret_cast<GAMEOBJECT_DESC*>(pArg);
+	VANGUARD_Desc* desc = reinterpret_cast<VANGUARD_Desc*>(pArg);
 
 	desc->fSpeedPerSec = 5.f;
 	desc->fDegreePerSec = 180.f;
@@ -44,6 +44,7 @@ HRESULT CSkeletonVanguard::Initialize(void* pArg)
 		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
 	}
 
+
 	m_eObjectType = OBJECTTYPE::MONSTER;
 
 	m_pModelCom->Ready_Animations("Skeleton_Vanguard_Idle.Anim");
@@ -52,7 +53,15 @@ HRESULT CSkeletonVanguard::Initialize(void* pArg)
 
 	m_pModelCom->Set_Animation(0, true);
 
-	damage = 20;
+	damage = 10;
+
+	m_fMaxHp = 30;
+	m_fCurrentHp = m_fMaxHp;
+
+	_vector vLookDir = desc->look;
+	_vector vTargetPos = m_pTransformCom->Get_State(STATE::POSITION) + vLookDir;
+
+	m_pTransformCom->LookAt(vTargetPos);
 
 	return S_OK;
 }
@@ -63,6 +72,8 @@ void CSkeletonVanguard::Priority_Update(_float fTimeDelta)
 
 void CSkeletonVanguard::Update(_float fTimeDelta)
 {
+	if (m_fCurrentHp <= 0)
+		Set_Dead();
 
 	if (Intersect_ToPlayer())
 	{
@@ -260,7 +271,7 @@ _bool CSkeletonVanguard::Intersect_ToPlayerAttack()
 _bool CSkeletonVanguard::Intersect_ToPlayerSphere()
 {
 	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
-
+	
 	if (collider == nullptr) return false;
 
 	if (m_pColliderCom[ETOI(COLLIDER::SPHERE)]->Intersect(collider))

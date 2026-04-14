@@ -51,8 +51,7 @@ private:
 	PLAYERSTATE state = {};
 	class CBody_Player* pBody;
 	const list<CGameObject*>* object = { nullptr };
-	_float m_iMaxHp{};
-	_float m_iCurrentHp{};
+	
 	_bool m_bRoll = false;
 
 public:

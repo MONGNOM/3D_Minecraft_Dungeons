@@ -292,7 +292,7 @@ void CImGui_Panel_Hierarchy::Render()
                 CTransform* pTerTransform = dynamic_cast<CTransform*>(CGameInstance::GetInstance()->Get_Component(TEXT("Terrain"), TEXT("Layer_BackGround"), ETOI(LEVEL::GAMEPLAY), TEXT("Com_Transform")));
                 _float3 objPos;
                 XMStoreFloat3(&objPos, pTerTransform->Get_State(STATE::POSITION));
-
+                
                 CGameObject::GAMEOBJECT_DESC desc;
                 desc.name = cloneName + std::to_wstring(iSelectedProtoIndex);
                 desc.pos.x = CImGui_Manager::GetInstance()->Get_PickingPos().x;
@@ -301,6 +301,10 @@ void CImGui_Panel_Hierarchy::Render()
                 desc.m_sPrototype = WStringToString(cloneName);
                 desc.NumTexture = 0;
                 desc.Scenetype = CGameObject::SCENETYPE::GAMEPLAY;
+
+                if (cloneName.data() == TEXT("Prototype_Component_Model_NameLessKing"))
+                    int a = 10;
+
                 if (FAILED(CGameInstance::GetInstance()->Add_GameObject(ETOI(LEVEL::GAMEPLAY), cloneName,
                     ETOI(LEVEL::GAMEPLAY), TEXT("Layer_Clone"), &desc)))
                 {

@@ -1,8 +1,9 @@
 #include "NameLessKing.h"
 
-#include "Weapon.h"
+#include "JusinBox.h"
 #include "Body_Player.h"
 #include "GameInstance.h"
+#include "SkeletonVanguard.h"
 
 CNameLessKing::CNameLessKing(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CContainerObject{ pDevice, pContext }
@@ -22,21 +23,24 @@ HRESULT CNameLessKing::Initialize_Prototype()
 
 HRESULT CNameLessKing::Initialize(void* pArg)
 {
-	CContainerObject::CONTAINEROBJECT_DESC* Desc = static_cast<CONTAINEROBJECT_DESC*>(pArg);
+	NAMELESSKING_DESC* Desc = static_cast<NAMELESSKING_DESC*>(pArg);
 	
 	Desc->fSpeedPerSec = 10.f;
 	Desc->fDegreePerSec = 180.f;
 
-
+	m_bShadow = Desc->Shadow;
+	
 	/* 백그라운드의 멤버를 채워넣어야한다면 여기서 채운다. */
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
+
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
 	if (FAILED(Ready_PartObjects()))
 		return E_FAIL;
+	
 
 	if (Desc != nullptr)
 	{
@@ -50,52 +54,228 @@ HRESULT CNameLessKing::Initialize(void* pArg)
 	m_eObjectType = OBJECTTYPE::MONSTER;
 
 	m_pModelCom->Ready_Animations("NamelessKing_Awake.Anim");
-	m_pModelCom->Ready_Animations("NamelessKing_Walk.Anim");
 	m_pModelCom->Ready_Animations("NamelessKing_BasicAttack.Anim");
 	m_pModelCom->Ready_Animations("NamelessKing_StrongAttack_Composite.Anim");
-	m_pModelCom->Ready_Animations("NamelessKing_TeleportIn.Anim");
+	m_pModelCom->Ready_Animations("NamelessKing_TeleportIn.Anim");// 소환이랑 tp랑 clone 애니메이션이 똑같음
 	m_pModelCom->Ready_Animations("NamelessKing_TeleportOut.Anim");
 
-	m_pModelCom->Set_Animation(0, true);
+	//m_pModelCom->Set_Animation(0, false);
 
-	//네비게이션 잠깐 꺼둠
-
+	m_fMaxHp = 100;
+	m_fCurrentHp = m_fMaxHp;
 	
 	return S_OK;
 }
 
 void CNameLessKing::Priority_Update(_float fTimeDelta)
 {
+	__super::Priority_Update(fTimeDelta);
 }
 
 void CNameLessKing::Update(_float fTimeDelta)
 {
-
-	if (Intersect_ToPlayer())
-	{
-		//attack재생
-		//if (*m_pParentState & CSkeleton::SKELETONSTATE::ATTACK)
-
-		m_pModelCom->Set_Animation(1, true);
-	}
-	else
-	{
-		//if (*m_pParentState & CSkeleton::SKELETONSTATE::IDLE)
-		m_pModelCom->Set_Animation(0, true);
-
-		//idle
-	}
-
-	if (true == m_pModelCom->Play_Animation(fTimeDelta))
-		int a = 10;
-
-	m_pColliderCom->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	__super::Update(fTimeDelta);
 	
+	if (m_bShadow == 0)
+	{
+		CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+		if (collider == nullptr) return;
+		m_pTransformCom->LookAt(dynamic_cast<CTransform*>(collider->Get_Owner()->Get_Component(TEXT("Com_Transform")))->Get_State(STATE::POSITION));
+
+		m_pModelCom->Set_Animation(2, false);
+		if (m_pModelCom->Get_CurrentTrackPos() >= 14.f && m_pModelCom->Get_CurrentTrackPos() <= 14.4f)
+		{
+			// 큐브 생성
+			CJusinBox::JUSINBOX_DESC JusinBoxDesc{};
+			JusinBoxDesc.Scenetype = m_eSceneType;
+			JusinBoxDesc.NumTexture = 16;
+			JusinBoxDesc.state = JUSINSTATE::MISSILE;
+			XMStoreFloat3(&JusinBoxDesc.pos, m_pTransformCom->Get_State(STATE::POSITION));
+			JusinBoxDesc.pos.y += 1;
+			JusinBoxDesc.Scenetype = m_eSceneType;
+			JusinBoxDesc.look = XMVector3Normalize(m_pTransformCom->Get_State(STATE::LOOK));
+			// 이거 안되는데?
+
+			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_JusinBox"),
+				ETOI(m_eSceneType), TEXT("Clone_Layer"), &JusinBoxDesc)))
+				return;
+		}
+
+		if (true == m_pModelCom->Play_Animation(fTimeDelta))
+			Set_Dead();
+
+		return;
+	}
+
+	// ===위 분신 === 아래 본체===
+
+	if (m_fCurrentHp <= 0)
+		Set_Dead();
+
+	if (m_bAwake)
+	{
+		attacking = true;
+
+		m_pModelCom->Set_Animation(0, false);
+		if (true == m_pModelCom->Play_Animation(fTimeDelta))
+		{
+			m_bAwake = false;
+			attacking = false;
+		}
+	}
+	else if (Intersect_ToPlayerSphere())
+	{
+		if (!attacking)
+		{
+			m_fStateTime += fTimeDelta;
+
+			if (m_fStateTime > 2.f && !attacking)
+			{
+				attacking = true;
+				state = (BOSSSTATE)(m_pGameInstance->Random(1, ETOI(BOSS_END)));
+
+				switch (state)
+				{
+				case BOSS_ATTACK:
+				{
+					m_pModelCom->Set_Animation(2, false);
+					break;
+				}
+				case BOSS_TP:
+				{
+					m_pModelCom->Set_Animation(3, false);
+					break;
+				}
+				case BOSS_SPAWN:
+				{
+					m_pModelCom->Set_Animation(1, false);
+					break;
+				}
+				case BOSS_CLONE:
+				{
+					m_pModelCom->Set_Animation(1, false);
+
+					break;
+				}
+				}
+			}
+		}
+		else
+		{
+			switch (state)
+			{
+			case BOSS_ATTACK:
+			{
+				if (m_pModelCom->Get_CurrentTrackPos() >= 23.6f && m_pModelCom->Get_CurrentTrackPos() <= 23.8f)
+				{
+					// 큐브 생성
+					CJusinBox::JUSINBOX_DESC JusinBoxDesc{};
+					JusinBoxDesc.Scenetype = m_eSceneType;
+					JusinBoxDesc.NumTexture = 16;
+					JusinBoxDesc.state = JUSINSTATE::MISSILE;
+					XMStoreFloat3(&JusinBoxDesc.pos, m_pTransformCom->Get_State(STATE::POSITION));
+					JusinBoxDesc.pos.y += 1;
+					JusinBoxDesc.Scenetype = m_eSceneType;
+					JusinBoxDesc.look = XMVector3Normalize(m_pTransformCom->Get_State(STATE::LOOK));
+
+					if (FAILED(m_pGameInstance->Add_GameObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_JusinBox"),
+						ETOI(m_eSceneType), TEXT("Clone_Layer"), &JusinBoxDesc)))
+						return;
+				}
+				break;
+			}
+			case BOSS_TP:
+			{
+				if (m_pModelCom->Get_CurrentTrackPos() >= 9.6f && m_pModelCom->Get_CurrentTrackPos() <= 10.f)
+				{
+					_float3 svPos;
+					XMStoreFloat3(&svPos, m_pTransformCom->Get_State(STATE::POSITION));
+					svPos.x += m_pGameInstance->Random(0, 15);
+					svPos.y;
+					svPos.z += m_pGameInstance->Random(0, 15);
+
+					m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(svPos.x, svPos.y, svPos.z, 1.f));
+				}
+				break;
+			}
+			case BOSS_SPAWN:
+			{
+				if (m_pModelCom->Get_CurrentTrackPos() >= 163.6f && m_pModelCom->Get_CurrentTrackPos() <= 164.f)
+				{
+					// 해골병사 생성
+					CSkeletonVanguard::VANGUARD_Desc desc{};
+					_float3 svPos;
+					XMStoreFloat3(&svPos, m_pTransformCom->Get_State(STATE::POSITION));
+					_vector vLook = XMVector3Normalize(m_pTransformCom->Get_State(STATE::LOOK));
+					desc.Scenetype = m_eSceneType;
+					_float fDistance = 5.f;
+
+					desc.look = vLook;
+					desc.pos = svPos;
+					for (size_t i = 0; i < 5; i++)
+					{
+						_vector vSpawnPos = XMLoadFloat3(&svPos) + (vLook * fDistance);
+
+						XMStoreFloat3(&desc.pos, vSpawnPos);
+
+						desc.pos.x += (i * 3);
+
+						if (FAILED(m_pGameInstance->Add_GameObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_SkeletonVanguard"),
+							ETOI(m_eSceneType), TEXT("Clone_Layer"), &desc)))
+							return;
+					}
+				}
+				break;
+			}
+			case BOSS_CLONE:
+			{
+				if (m_pModelCom->Get_CurrentTrackPos() >= 163.6f && m_pModelCom->Get_CurrentTrackPos() <= 164.f)
+				{
+					NAMELESSKING_DESC desc{};
+					_float3 svPos;
+					XMStoreFloat3(&svPos, m_pTransformCom->Get_State(STATE::POSITION));
+					
+					desc.Shadow = 0;
+					desc.Scenetype = m_eSceneType;
+					int randNum = m_pGameInstance->Random(3, 7);
+
+					for (size_t i = 0; i < randNum; i++)
+					{
+						desc.pos.x = svPos.x + m_pGameInstance->Random(0, 15);
+						desc.pos.y = svPos.y;
+						desc.pos.z = svPos.z + m_pGameInstance->Random(0, 15);
+
+						if (FAILED(m_pGameInstance->Add_GameObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_NameLessKing"),
+							ETOI(m_eSceneType), TEXT("Clone_Layer"), &desc)))
+							return;
+					}
+				}
+				break;
+			}
+			}
+
+
+			
+		}
+
+		if (true == m_pModelCom->Play_Animation(fTimeDelta))
+		{
+			if (attacking)
+			{
+				attacking = false;
+				m_fStateTime = 0;
+			}
+		}
+		
+	}
+
+	for (auto& iter : m_pColliderCom)
+		iter->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CNameLessKing::Late_Update(_float fTimeDelta)
 {
-
+	__super::Late_Update(fTimeDelta);
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::NONBLEND, this);
 }
 
@@ -122,7 +302,11 @@ HRESULT CNameLessKing::Render()
 
 
 #ifdef _DEBUG
-	m_pColliderCom->Render();
+	if (m_bShadow != 0) 
+	{
+		for (auto& iter : m_pColliderCom)
+			iter->Render();
+	}
 	//m_pNavigationCom->Render();
 #endif // _DEBUG
 
@@ -132,15 +316,27 @@ HRESULT CNameLessKing::Render()
 
 HRESULT CNameLessKing::Ready_Components()
 {
-	CBounding_AABB::BOUNDING_AABB_DESC AABBDesc;
+	if (m_bShadow != 0)
+	{
+		CBounding_AABB::BOUNDING_AABB_DESC AABBDesc;
 
-	AABBDesc.vExtents = _float3(0.5f, 1.f, 0.5f);
-	AABBDesc.vCenter = _float3(0.f, AABBDesc.vExtents.y, 0.f);
-	AABBDesc.owner = this;
+		AABBDesc.vExtents = _float3(1.f, 1.f, 1.f);
+		AABBDesc.vCenter = _float3(0.f, AABBDesc.vExtents.y, 0.f);
+		AABBDesc.owner = this;
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_AABB"),
-		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
-		return E_FAIL;
+		if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_AABB"),
+			TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom[0]), &AABBDesc)))
+			return E_FAIL;
+
+		CBounding_Sphere::BOUNDING_SPHERE_DESC SphereDesc{};
+		SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
+		SphereDesc.fRadius = 20.0f;
+		SphereDesc.owner = this;
+
+		if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_Sphere"),
+			TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom[1]), &SphereDesc)))
+			return E_FAIL;
+	}
 
 	if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Model_NameLessKing"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
@@ -174,18 +370,18 @@ HRESULT CNameLessKing::Ready_PartObjects()
 		return E_FAIL;
 	pBody = dynamic_cast<CBody_Player*>(m_PartObjects[TEXT("Part_Body")]);
 	if (nullptr == pBody)
-		return E_FAIL;
-
-	
-
-	CWeapon::WEAPON_DESC				WeaponDesc{};
-	WeaponDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();
-	WeaponDesc.pSocketMatrix = pBody->Get_SocketBoneMatrixPtr("J_R_Weapon_Socket");
-	WeaponDesc.Scenetype = m_eSceneType;
-
-	if (FAILED(__super::Add_PartObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_Weapon"),
-		TEXT("Part_Weapon"), &WeaponDesc)))
 		return E_FAIL;*/
+
+	CJusinBox::JUSINBOX_DESC JusinBoxDesc{};
+	JusinBoxDesc.pParentMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+	JusinBoxDesc.pSocketMatrix = m_pModelCom->Get_BoneMatrixPtr("J_R_WeaponSocket");
+	JusinBoxDesc.Scenetype = m_eSceneType;
+	JusinBoxDesc.NumTexture = 16;
+	JusinBoxDesc.state = JUSINSTATE::STAFF;
+
+	if (FAILED(__super::Add_PartObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_JusinBox"),
+		TEXT("Part_Box"), &JusinBoxDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -220,20 +416,26 @@ HRESULT CNameLessKing::Bind_ShaderResources()
 	return S_OK;
 }
 
-_bool CNameLessKing::Intersect_ToPlayer()
+
+
+
+_bool CNameLessKing::Intersect_ToPlayerSphere()
 {
 	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
 
 	if (collider == nullptr) return false;
 
-	if (m_pColliderCom->Intersect(collider))
+	if (m_pColliderCom[1]->Intersect(collider))
 	{
-		m_pColliderCom->Set_isColl(true);
+		m_pTransformCom->LookAt(dynamic_cast<CTransform*>(collider->Get_Owner()->Get_Component(TEXT("Com_Transform")))->Get_State(STATE::POSITION));
+
+		m_pColliderCom[1]->Set_isColl(true);
+
 		return true;
 	}
 	else
 	{
-		m_pColliderCom->Set_isColl(false);
+		m_pColliderCom[1]->Set_isColl(false);
 		return false;
 	}
 }
@@ -269,7 +471,9 @@ void CNameLessKing::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pColliderCom);
+	for (auto& iter : m_pColliderCom)
+	Safe_Release(iter);
+
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
 }

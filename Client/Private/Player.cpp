@@ -50,6 +50,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	//≥◊∫Ò∞‘¿Ãº« ¿·±Ò ≤®µ“
 
+	m_fMaxHp = 200;
+	m_fCurrentHp = m_fMaxHp;
 	
 	
 	return S_OK;
@@ -62,6 +64,8 @@ void CPlayer::Priority_Update(_float fTimeDelta)
 
 void CPlayer::Update(_float fTimeDelta)
 {
+	if (m_fCurrentHp <= 0)
+		Set_Dead();
 
 	//Intersect_ToMonster();
 	if(m_bRoll)	m_pTransformCom->Go_Roll(fTimeDelta, 20.f);
@@ -97,14 +101,20 @@ void CPlayer::Update(_float fTimeDelta)
 		else if (m_pGameInstance->Get_DIKeyDown(DIK_R)) // »˙
 		{
 			state = PLAYERSTATE::HEAL;
-			Set_Dead();
+
+			if(m_fCurrentHp += 100 > m_fMaxHp)
+				m_fCurrentHp = m_fMaxHp;
+			else
+				m_fCurrentHp += 100;
+			wcout << "√º∑¬»∏∫π " << endl;
+			wcout << "«ˆ¿Á √º∑¬ : " << m_fCurrentHp << endl;
 		}
 		else
 		{
 			state = PLAYERSTATE::IDLE;
 		}
 
-		 if (GetKeyState(VK_UP) & 0x8000)
+		if (GetKeyState(VK_UP) & 0x8000)
 		{
 			//m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);
 			m_pTransformCom->Go_Straight(fTimeDelta);

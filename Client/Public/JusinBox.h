@@ -12,12 +12,15 @@ NS_END
 
 NS_BEGIN(Client)
 
+enum JUSINSTATE { STAFF, MISSILE, JSUINEND };
 class CJusinBox final : public CPartObject
 {
 public:
-	typedef struct tagBowDesc final : public CPartObject::PARTOBJECT_DESC
+	typedef struct tagJusinBoxDesc final : public CPartObject::PARTOBJECT_DESC
 	{
 		const _float4x4* pSocketMatrix = { nullptr };
+		_vector look;
+		JUSINSTATE state;
 	}JUSINBOX_DESC;
 private:
 	CJusinBox(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -41,9 +44,10 @@ protected:
 private:
 	const _float4x4* m_pSocketMatrix = { nullptr };
 	_uint m_iBoXDamage = 0;
-	_bool Intersect_ToPlayer();
-
-
+	void Intersect_ToPlayer();
+	JUSINSTATE m_eState = JSUINEND;
+	_vector m_vLook;
+	_float m_fDeleteTime = { 0 };
 protected:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();

@@ -47,7 +47,9 @@ HRESULT CSkeleton::Initialize(void* pArg)
 
 
 	m_eObjectType = OBJECTTYPE::MONSTER;
-	m_fCurrentHp = 100;
+
+	m_fMaxHp = 30;
+	m_fCurrentHp = m_fMaxHp;
 
 	return S_OK;
 }
