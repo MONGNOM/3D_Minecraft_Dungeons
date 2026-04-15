@@ -68,19 +68,22 @@ void CPlayer::Update(_float fTimeDelta)
 		Set_Dead();
 
 	//Intersect_ToMonster();
-	if(m_bRoll)	m_pTransformCom->Go_Roll(fTimeDelta, 20.f);
+	
+	if (m_bRoll)	m_pTransformCom->Go_Roll(fTimeDelta, 10.f);
 
 	bool bIsActionState = (state == PLAYERSTATE::HEAL || state == PLAYERSTATE::FAILING || state == PLAYERSTATE::BOW || state == PLAYERSTATE::ATTACK);
 
 	if (bIsActionState)
 	{
 		// 조작 불가 상태
+
 		if (pBody->IsAnimationFinished())
 			state = PLAYERSTATE::IDLE;
 	}
 	else
 	{
 		// 조작상태
+		
 		if (m_pGameInstance->Get_DIMouseDown(DIMB::RBUTTON)) // 활 쏘기
 		{
 			state = PLAYERSTATE::BOW;
@@ -90,7 +93,7 @@ void CPlayer::Update(_float fTimeDelta)
 			state = PLAYERSTATE::ATTACK;
 		}
 		
-		else if (m_pGameInstance->Get_DIKeyDown(DIK_SPACE)) // 구르기
+	 	else if (m_pGameInstance->Get_DIKeyDown(DIK_SPACE)) // 구르기
 		{
 			if (!m_bRoll)
 			{
@@ -114,22 +117,24 @@ void CPlayer::Update(_float fTimeDelta)
 			state = PLAYERSTATE::IDLE;
 		}
 
+		if (m_bRoll) return;
+
 		if (GetKeyState(VK_UP) & 0x8000)
 		{
 			//m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);
 			m_pTransformCom->Go_Straight(fTimeDelta);
 			state = PLAYERSTATE::WALK;
 		}
-		 if (GetKeyState(VK_DOWN) & 0x8000)
+		if (GetKeyState(VK_DOWN) & 0x8000)
 		{
 			m_pTransformCom->Go_Backward(fTimeDelta);
 			state = PLAYERSTATE::WALK;
 		}
-		 if (GetKeyState(VK_LEFT) & 0x8000)
+		if (GetKeyState(VK_LEFT) & 0x8000)
 		{
 			m_pTransformCom->Turn(XMVectorSet(0.f,1.f,0.f,0.f), fTimeDelta * -1.f);
 		}
-		 if (GetKeyState(VK_RIGHT) & 0x8000)
+		if (GetKeyState(VK_RIGHT) & 0x8000)
 		{
 			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta );
 		}

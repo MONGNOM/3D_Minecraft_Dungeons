@@ -29,7 +29,6 @@ HRESULT CBody_Skeleton::Initialize(void* pArg)
 	auto	pDesc = static_cast<CBODY_SKELETONDESC*>(pArg);
 
 	m_pParentState = pDesc->pParentState;
-
 	m_pState = *m_pParentState;
 	
 	if (FAILED(__super::Initialize(pArg)))

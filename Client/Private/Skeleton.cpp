@@ -95,23 +95,23 @@ HRESULT CSkeleton::Render()
 void CSkeleton::Intersect_ToPlayer()
 {
 
-	/*CTransform* pPlayerTransform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Transform")));
+	CTransform* pPlayerTransform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Transform")));
 	m_pTransformCom->LookAt(pPlayerTransform->Get_State(STATE::POSITION));
 
-	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+	//CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
 
-	if (collider == nullptr) return;
+	//if (collider == nullptr) return;
 
-	if (m_pColliderCom->Intersect(collider))
-	{
-		collider->Get_Owner()->TakeHit(10);
-		m_pColliderCom->Set_isColl(true);
-		wcout << collider->Get_Owner()->Get_ObjectName() << "에게 피해를 입혔다" << endl;
-	}
-	else
-	{
-		m_pColliderCom->Set_isColl(false);
-	}*/
+	//if (m_pColliderCom->Intersect(collider))
+	//{
+	//	collider->Get_Owner()->TakeHit(10);
+	//	m_pColliderCom->Set_isColl(true);
+	//	wcout << collider->Get_Owner()->Get_ObjectName() << "에게 피해를 입혔다" << endl;
+	//}
+	//else
+	//{
+	//	m_pColliderCom->Set_isColl(false);
+	//}
 
 
 	/*const list<CGameObject*>& object = m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Layer_Clone"));
