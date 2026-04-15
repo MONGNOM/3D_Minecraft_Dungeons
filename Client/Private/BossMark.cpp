@@ -1,0 +1,128 @@
+#include "BossMark.h"
+#include "GameInstance.h"
+
+CBossMark::CBossMark(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+    : CUIObject{pDevice, pContext}
+{
+}
+
+CBossMark::CBossMark(const CBossMark& Prototype)
+    :CUIObject(Prototype)
+{
+}
+
+HRESULT CBossMark::Initialize_Prototype()
+{
+    return S_OK;
+}
+
+HRESULT CBossMark::Initialize(void* pArg)
+{
+    BOSSMARK_DESC* pDesc = static_cast<BOSSMARK_DESC*>(pArg);
+    m_fSizeX = pDesc->fSizeX;
+    m_fSizeY = pDesc->fSizeY;
+    m_fX = pDesc->fX;
+    m_fY = pDesc->fY;
+    m_fPos = pDesc->pos;
+    m_iNumTexture = pDesc->iNumTexture;
+    m_eSceneType = pDesc->Scenetype;
+
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
+    if (FAILED(Ready_Components()))
+        return E_FAIL;
+
+    return S_OK;
+}
+
+void CBossMark::Priority_Update(_float fTimeDelta)
+{
+}
+
+void CBossMark::Update(_float fTimeDelta)
+{
+    __super::Update_Transform();
+}
+
+void CBossMark::Late_Update(_float fTimeDelta)
+{
+    m_pGameInstance->Add_RenderGroup(RENDERGROUP::UI, this);
+}
+
+HRESULT CBossMark::Render()
+{
+    if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+        return E_FAIL;
+
+    if (FAILED(__super::Bind_ShaderResource(m_pShaderCom, "g_ViewMatrix", D3DTS::VIEW)))
+        return E_FAIL;
+
+    if (FAILED(__super::Bind_ShaderResource(m_pShaderCom, "g_ProjMatrix", D3DTS::PROJ)))
+        return E_FAIL;
+
+    if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, "g_Texture", m_iNumTexture)))
+        return E_FAIL;
+
+    if (FAILED(m_pShaderCom->Begin(0)))
+        return E_FAIL;
+
+    if (FAILED(m_pVIBufferCom->Bind_Resources()))
+        return E_FAIL;
+
+    if (FAILED(m_pVIBufferCom->Render()))
+        return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CBossMark::Ready_Components()
+{
+    if (FAILED(__super::Add_Component(m_eSceneType, TEXT("Prototype_Component_Texture_BossMark"),
+        TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+        return E_FAIL;
+
+    if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxTex"),
+        TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+        return E_FAIL;
+
+    if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
+        TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
+        return E_FAIL;
+
+    return S_OK;
+}
+
+CBossMark* CBossMark::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+    CBossMark* pInstance = new CBossMark(pDevice, pContext);
+
+    if (FAILED(pInstance->Initialize_Prototype()))
+    {
+        MSG_BOX("Failed to Created : CBossMark");
+        Safe_Release(pInstance);
+    }
+    return pInstance;
+}
+
+
+CGameObject* CBossMark::Clone(void* pArg)
+{
+    CBossMark* pInstance = new CBossMark(*this);
+
+    if (FAILED(pInstance->Initialize(pArg)))
+    {
+        MSG_BOX("Failed to Cloned : CBossMark");
+        Safe_Release(pInstance);
+    }
+    return pInstance;
+}
+
+void CBossMark::Free()
+{
+    __super::Free();
+
+    Safe_Release(m_pShaderCom);
+    Safe_Release(m_pTextureCom);
+    Safe_Release(m_pVIBufferCom);
+}

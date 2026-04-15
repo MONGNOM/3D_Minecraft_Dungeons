@@ -24,6 +24,7 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual void DecreaseHp(_uint damage) { m_fSizeX -= damage; }
 
 protected:
 	_float						m_fX{}, m_fY{}, m_fSizeX{}, m_fSizeY{};

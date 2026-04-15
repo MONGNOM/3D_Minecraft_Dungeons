@@ -3,6 +3,7 @@
 #include "Level_Loading.h"
 #include "Cursor.h"
 #include <fstream>
+#include "BossMark.h"
 
 
 CMainApp::CMainApp()
@@ -71,7 +72,13 @@ HRESULT CMainApp::Render()
 	if (FAILED(m_pGameInstance->Draw()))
 		return E_FAIL;
 
-	m_pGameInstance->Draw_Font(TEXT("Font_Default"), TEXT("니네들은 싸우지마, 욕하지마!"), _float2(100.f, 0.f));
+
+	// 이거 보스맵으로 추가해야함
+
+	m_pGameInstance->Draw_Font(TEXT("Font_BossUI1"), TEXT("이름 없는 자"), _float2(g_iWinSizeX * 0.5f - 100, 50.f));
+
+	m_pGameInstance->Draw_Font(TEXT("Font_BossUI1"), TEXT("이름 없는 자를 격파하세요"), _float2(g_iWinSizeX - 570, 50.f));
+	m_pGameInstance->Draw_Font(TEXT("Font_Damage"), TEXT("이름 없는 왕국"), _float2(g_iWinSizeX - 258, 110.f), XMVectorSet(0.918f, 0.690f, 0.235f, 1.0f));
 
 
 	if (FAILED(m_pGameInstance->Present()))
@@ -113,8 +120,19 @@ HRESULT CMainApp::Ready_Fonts()
 	CloseHandle(hFile);*/
 
 	/*MakeSpriteFont "넥슨lv1고딕 Bold" /FontSize:16 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 158ex.spritefont */
-
+	
+	//MakeSpriteFont "나눔고딕" / FontSize:32 / FontStyle : Bold / FastPack / CharacterRegion : 0x0020 - 0x00FF / CharacterRegion : 0x3131 - 0x3163 / CharacterRegion : 0xAC00 - 0xD800 / DefaultCharacter : 0xAC00 MC_Test_Bold.spritefont
+	
 	if (FAILED(m_pGameInstance->Add_Font(TEXT("Font_Default"), TEXT("../Bin/Resources/Fonts/158ex.SpriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(TEXT("Font_Damage"), TEXT("../Bin/Resources/Fonts/MC_Galmuri11_24.SpriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(TEXT("Font_BossUI"), TEXT("../Bin/Resources/Fonts/MC_Galmuri11_28.SpriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(TEXT("Font_BossUI1"), TEXT("../Bin/Resources/Fonts/MC_Galmuri11_32.SpriteFont"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -168,6 +186,23 @@ HRESULT CMainApp::Ready_Prototype_For_Static_Level()
 		MSG_BOX("Faild to Add_Prototype : Prototype_Component_Collider_OBB");
 		return E_FAIL;
 	}
+
+	// 보스 ui
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
+		CBossMark::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_BossMark");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Texture_BossMark"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/UI/Boss/BossTex_%d.png"), 4))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Texture_healthbar");
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -189,6 +224,65 @@ HRESULT CMainApp::Ready_Layer_UI(const _tchar* pLayerTag)
 {
 	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_Cursor"),
 		ETOI(LEVEL::STATIC), pLayerTag)))
+		return E_FAIL;
+
+	// 던전씬에 옮길 보스 ui
+	CBossMark::BOSSMARK_DESC Desc{};
+	
+
+	//// 체력바 프레임
+	Desc.fSizeX = 950;
+	Desc.fSizeY = 30;
+	Desc.fX = g_iWinSizeX * 0.5f + 10;
+	Desc.fY = 140;
+	Desc.iNumTexture = 1;
+	Desc.Scenetype = CGameObject::SCENETYPE::STATIC;
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
+		ETOI(LEVEL::STATIC), pLayerTag, &Desc)))
+		return E_FAIL;
+
+	// 체력바
+	Desc.fSizeX = 950;
+	Desc.fSizeY = 30;
+	Desc.fX = g_iWinSizeX * 0.5f + 10;
+	Desc.fY = 140;
+	Desc.iNumTexture = 0;
+	Desc.Scenetype = CGameObject::SCENETYPE::STATIC;
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
+		ETOI(LEVEL::STATIC), pLayerTag, &Desc)))
+		return E_FAIL;
+
+
+	////마커 1
+	Desc.fSizeX = 29;
+	Desc.fSizeY = 29;
+	Desc.fX = g_iWinSizeX * 0.5f - 150;
+	Desc.fY = 140;
+	Desc.iNumTexture = 3;
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
+		ETOI(LEVEL::STATIC), pLayerTag, &Desc)))
+		return E_FAIL;
+
+	////마커 2
+	Desc.fSizeX = 29;
+	Desc.fSizeY = 29;
+	Desc.fX = g_iWinSizeX * 0.5f + 150;
+	Desc.fY = 140;
+	Desc.iNumTexture = 3;
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
+		ETOI(LEVEL::STATIC), pLayerTag, &Desc)))
+		return E_FAIL;
+
+	// 이름 옆에 마커
+	Desc.fSizeX = 49;
+	Desc.fSizeY = 39;
+	Desc.fX = g_iWinSizeX * 0.5f - 150;
+	Desc.fY = 80;
+	Desc.iNumTexture = 2;
+	Desc.Scenetype = CGameObject::SCENETYPE::STATIC;
+
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
+		ETOI(LEVEL::STATIC), pLayerTag, &Desc)))
 		return E_FAIL;
 
 	return S_OK;

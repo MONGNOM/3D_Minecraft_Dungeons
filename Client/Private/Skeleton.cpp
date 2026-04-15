@@ -1,9 +1,10 @@
 #include "Skeleton.h"
 
-//#include "Weapon.h"
+#include "HpBar.h"
 #include "Body_Skeleton.h"
 #include "GameInstance.h"
 #include "Bow.h"
+#include "DamageFont.h"
 
 CSkeleton::CSkeleton(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CContainerObject{ pDevice, pContext }
@@ -45,10 +46,22 @@ HRESULT CSkeleton::Initialize(void* pArg)
 		Desc->fDegreePerSec = 180.f;
 	}
 
+	CHpBar::HPBAR_DESC desc{};
+	desc.fSizeY = 11;
+	desc.fSizeX = 98;
+	desc.Scenetype = m_eSceneType;
+	desc.iNumTexture = 0;
+	desc.owner = this;
+	
+	if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_HpBar"), m_eObjectType, TEXT("Clone_Layer"), &desc)))
+	{
+		MSG_BOX("스켈레톤 Hp바 안 만들어짐");
+		return E_FAIL;
+	}
 
 	m_eObjectType = OBJECTTYPE::MONSTER;
 
-	m_fMaxHp = 30;
+	m_fMaxHp = 300000;
 	m_fCurrentHp = m_fMaxHp;
 
 	return S_OK;
@@ -62,8 +75,12 @@ void CSkeleton::Priority_Update(_float fTimeDelta)
 void CSkeleton::Update(_float fTimeDelta)
 {
 	if (m_fCurrentHp <= 0)
-		Set_Dead();
+	{
+		m_bOwner = false;
+		dynamic_cast<CHpBar*>(m_pHpBar)->isDead();
 
+		Set_Dead();
+	}
 	Intersect_ToPlayer();
 	
 	if (m_iState & SKELETONSTATE::ATTACK)
@@ -96,6 +113,9 @@ void CSkeleton::Intersect_ToPlayer()
 {
 
 	CTransform* pPlayerTransform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Transform")));
+
+	if (pPlayerTransform == nullptr) return;
+
 	m_pTransformCom->LookAt(pPlayerTransform->Get_State(STATE::POSITION));
 
 	//CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
@@ -130,6 +150,35 @@ void CSkeleton::Intersect_ToPlayer()
 			wcout << collider->Get_Owner()->Get_ObjectName() << "에게 피해를 입혔다" << endl;
 		}
 	}*/
+}
+
+void CSkeleton::TakeHit(_uint damage)
+{
+	 m_fCurrentHp -= damage; 
+
+	 /*if (FAILED(m_pGameInstance->Add_Font(TEXT("Font_Default"), TEXT("../Bin/Resources/Fonts/158ex.SpriteFont"))))
+		 return;*/
+
+	 _vector vSkeletonPos = m_pTransformCom->Get_State(STATE::POSITION);
+
+	 // 2. 머리 위 높이만 살짝 더해줍니다. (여전히 3D 월드 좌표입니다)
+	 vSkeletonPos = XMVectorSetY(vSkeletonPos, XMVectorGetY(vSkeletonPos) + 3.f);
+	 vSkeletonPos = XMVectorSetZ(vSkeletonPos, XMVectorGetZ(vSkeletonPos) + 0.3f);
+	 CDamageFont::DAMAGEFONT_DESC desc{};
+	 desc.fSizeY = 400;
+	 desc.fSizeX = 400;
+	 desc.Scenetype = m_eSceneType;
+	 XMStoreFloat3(&desc.pos, vSkeletonPos);
+	 desc.damage = damage;
+	 //m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(fOrthoX, fOrthoY, BarPos.z, 1.f));
+
+	 if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_DamageFont"), m_eObjectType, TEXT("Clone_Layer"), &desc)))
+	 {
+		 MSG_BOX("스켈레톤 폰트 안 만들어짐");
+		 return;
+	 }
+
+
 }
 
 HRESULT CSkeleton::Ready_Components()

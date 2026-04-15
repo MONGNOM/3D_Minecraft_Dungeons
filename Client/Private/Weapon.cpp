@@ -130,10 +130,14 @@ void CWeapon::Intersect_ToMonster()
 
 		if (m_pColliderCom->Intersect(collider) && collider->Get_Owner()->Get_ObjectType() == OBJECTTYPE::MONSTER)
 		{
+			
 			collider->Get_Owner()->TakeHit(m_iSwordDamage);
+
 			m_pColliderCom->Set_isColl(true);
 			collider->Set_isColl(true);
 			wcout << collider->Get_Owner()->Get_ObjectName() << m_iSwordDamage <<" 에게 피해를 입혔다" << endl;
+			//DecreaseHp(m_iSwordDamage);
+		
 			// m_pColliderCom->SetActive_Collider(false);
 			// 애니메이션 때릴떄 콜라이더 떄리는거 3번만 켜야하는데 이걸 어떻게 3번만 켜주냐 그것도 타이밍 맞춰서 시간으로 노가다 해야하나?
 			// 특정 프레임에만 콜라이더 키게 할 수 있나

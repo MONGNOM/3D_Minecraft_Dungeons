@@ -31,6 +31,9 @@
 #include "NameLessKing.h"
 #include "JusinBox.h"
 #include "Arrow.h"
+#include "HpBar.h"
+#include "DamageFont.h"
+#include "BossMark.h"
 
 
 
@@ -176,6 +179,21 @@ HRESULT CLoader::Loading_For_LogoLevel()
 HRESULT CLoader::Loading_For_GamePlayLevel()
 {
 	lstrcpy(m_szLoadingText, TEXT("텍스쳐를 로딩 중 입니다."));
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_HpBar"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/UI/Monster/ReSize_health_bar_%d.png"), 2))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Texture_healthbar");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_BossMark"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/UI/Boss/BossTex_%d.png"), 4))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Texture_healthbar");
+		return E_FAIL;
+	}
+
 	/* Prototype_Component_Texture_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Terrain"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/white.png"), 1))))
@@ -186,6 +204,13 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Tool"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/white.png"), 1))))
+	{
+		MSG_BOX("Faild to Add_Prototype : BackGround Texture");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Damage"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/NonColor.png"), 1))))
 	{
 		MSG_BOX("Faild to Add_Prototype : BackGround Texture");
 		return E_FAIL;
@@ -703,6 +728,26 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		return E_FAIL;
 	}
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_HpBar"),
+		CHpBar::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_HpBar");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_DamageFont"),
+		CDamageFont::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_DamageFont");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_BossMark"),
+		CBossMark::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_BossMark");
+		return E_FAIL;
+	}
 	
 	
 
@@ -725,6 +770,13 @@ HRESULT CLoader::Loading_For_Dungeon()
 		MSG_BOX("Faild to Add_Prototype : Texture_HotBar");
 		return E_FAIL;
 	}*/
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Texture_HpBar"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/UI/Monster/ReSize_health_bar_%d.png"), 2))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Texture_healthbar");
+		return E_FAIL;
+	}
 
 	lstrcpy(m_szLoadingText, TEXT("텍스쳐를 로딩 중 입니다."));
 	/* Prototype_Component_Texture_Terrain */

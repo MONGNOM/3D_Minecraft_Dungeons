@@ -151,6 +151,15 @@
     <Filter Include="02.GameObject\Player\Bow">
       <UniqueIdentifier>{d8beab5a-51b6-485c-8add-8dcbd5b03ec7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\UI\03. HpBar">
+      <UniqueIdentifier>{7a7261ac-edbd-4262-9cc2-189b67377332}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\UI\04. DamageFont">
+      <UniqueIdentifier>{aae2d611-eac6-4bd5-869d-b09365beef43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\UI\05. BossMark">
+      <UniqueIdentifier>{07a471cb-5c7b-4495-99de-6ff96e60d856}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -318,6 +327,15 @@
     <ClInclude Include="..\Public\JusinBox.h">
       <Filter>02.GameObject\NameLessKing\JusinBox</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\HpBar.h">
+      <Filter>02.GameObject\UI\03. HpBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DamageFont.h">
+      <Filter>02.GameObject\UI\04. DamageFont</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BossMark.h">
+      <Filter>02.GameObject\UI\05. BossMark</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -482,6 +500,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\JusinBox.cpp">
       <Filter>02.GameObject\NameLessKing\JusinBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HpBar.cpp">
+      <Filter>02.GameObject\UI\03. HpBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DamageFont.cpp">
+      <Filter>02.GameObject\UI\04. DamageFont</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BossMark.cpp">
+      <Filter>02.GameObject\UI\05. BossMark</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

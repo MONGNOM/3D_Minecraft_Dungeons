@@ -110,6 +110,7 @@ void CArrow::Intersect_ToMonster()
 		m_pColliderCom->Set_isColl(true);
 		colliderplayer->Set_isColl(true);
 		wcout << colliderplayer->Get_Owner()->Get_ObjectName() << "에게 피해를 입혔다" << endl;
+		//DecreaseHp(m_iSwordDamage);
 		Set_Dead();
 		return;
 	}

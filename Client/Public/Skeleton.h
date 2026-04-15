@@ -32,9 +32,11 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	_bool* Get_FakeBool() { return &Fakebool; }
+	
 protected:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
+	_bool m_bOwner = true;
 
 private:
 	_uint			m_iState = {};
@@ -43,8 +45,9 @@ private:
 	CNavigation* m_pNavigationCom = { nullptr };
 	class CBody_Skeleton* pBody = nullptr;
 	_bool Fakebool = true;
+	CGameObject* m_pHpBar = nullptr;
 	void Intersect_ToPlayer();
-
+	virtual void TakeHit(_uint damage) override;
 	
 
 
