@@ -1,13 +1,14 @@
 #include "HpBar.h"
 #include "GameInstance.h"
+#include "Skeleton.h"
 
 CHpBar::CHpBar(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-    : CUIObject{pDevice, pContext}
+    : CUIObject{pDevice, pContext}, m_pOwner(nullptr)
 {
 }
 
 CHpBar::CHpBar(const CHpBar& Prototype)
-    :CUIObject(Prototype)
+    :CUIObject(Prototype), m_pOwner(Prototype.m_pOwner)
 {
 }
 
@@ -21,6 +22,7 @@ HRESULT CHpBar::Initialize(void* pArg)
     HPBAR_DESC* pDesc = static_cast<HPBAR_DESC*>(pArg);
     m_iNumTexture = pDesc->iNumTexture;
     m_fSizeX = pDesc->fSizeX;
+    m_fOriginalSizeX = pDesc->fSizeX;
     m_fSizeY = pDesc->fSizeY;
     m_fPos = pDesc->pos;
     m_pOwner = pDesc->owner;
@@ -62,15 +64,22 @@ void CHpBar::Update(_float fTimeDelta)
     _float3 BarPos;
     XMStoreFloat3(&BarPos, vScreenPos);
 
-    _float fOrthoX = BarPos.x - (g_iWinSizeX * 0.5f);
-    _float fOrthoY = -BarPos.y + (g_iWinSizeY * 0.5f);
-
-    // 4. UI 위치 적용!
-    m_fX = fOrthoX;
-    m_fY = fOrthoY;
-    m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(fOrthoX, fOrthoY, BarPos.z, 1.f));
+    fOrthoX =  BarPos.x - (g_iWinSizeX * 0.5f);
+    fOrthoY = -BarPos.y + (g_iWinSizeY * 0.5f);
     
-        
+    CSkeleton* pSkeleton = dynamic_cast<CSkeleton*>(m_pOwner);
+    if (*pSkeleton->Get_TakeHit())
+    {
+        m_fSizeX = m_fOriginalSizeX * m_pOwner->Get_HpRatio();
+        pSkeleton->Set_TakeHit(false);
+    }
+
+    _float fLostWidth = m_fOriginalSizeX - m_fSizeX;
+    _float fOffsetX = fLostWidth * 0.5f;
+    m_fX = fOrthoX - fOffsetX;
+    m_fY = fOrthoY;
+    m_pTransformCom->SetUp_Scale(m_fSizeX, m_fSizeY, 1.f);
+    m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fX, m_fY, BarPos.z, 1.f));
 }
 
 void CHpBar::Late_Update(_float fTimeDelta)

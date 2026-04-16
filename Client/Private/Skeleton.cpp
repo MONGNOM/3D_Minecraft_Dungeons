@@ -61,9 +61,9 @@ HRESULT CSkeleton::Initialize(void* pArg)
 
 	m_eObjectType = OBJECTTYPE::MONSTER;
 
-	m_fMaxHp = 300000;
+	m_fMaxHp = 60;
 	m_fCurrentHp = m_fMaxHp;
-
+	m_bTakehit = false;
 	return S_OK;
 }
 
@@ -95,6 +95,7 @@ void CSkeleton::Update(_float fTimeDelta)
 
 void CSkeleton::Late_Update(_float fTimeDelta)
 {
+
 	__super::Late_Update(fTimeDelta);
 
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::NONBLEND, this);
@@ -155,7 +156,7 @@ void CSkeleton::Intersect_ToPlayer()
 void CSkeleton::TakeHit(_uint damage)
 {
 	 m_fCurrentHp -= damage; 
-
+	 m_bTakehit = true;
 	 /*if (FAILED(m_pGameInstance->Add_Font(TEXT("Font_Default"), TEXT("../Bin/Resources/Fonts/158ex.SpriteFont"))))
 		 return;*/
 
@@ -177,8 +178,7 @@ void CSkeleton::TakeHit(_uint damage)
 		 MSG_BOX("½ºÄÌ·¹Åæ ÆùÆ® ¾È ¸¸µé¾îÁü");
 		 return;
 	 }
-
-
+	 
 }
 
 HRESULT CSkeleton::Ready_Components()

@@ -32,7 +32,9 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	_bool* Get_FakeBool() { return &Fakebool; }
-	
+	_bool* Get_TakeHit() { return &m_bTakehit; }
+	void Set_TakeHit(_bool value) {m_bTakehit = value; }
+
 protected:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
@@ -48,7 +50,7 @@ private:
 	CGameObject* m_pHpBar = nullptr;
 	void Intersect_ToPlayer();
 	virtual void TakeHit(_uint damage) override;
-	
+	_bool m_bTakehit = false;
 
 
 public:

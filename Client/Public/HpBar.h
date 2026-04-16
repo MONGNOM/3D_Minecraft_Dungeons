@@ -43,7 +43,9 @@ protected:
 	CTexture* m_pTextureCom = { nullptr };
 	CGameObject* m_pOwner = nullptr;
 	HRESULT Ready_Components();
-
+	_float fOrthoX;
+	_float fOrthoY;
+	_float m_fOriginalSizeX;
 public:
 	static CHpBar* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

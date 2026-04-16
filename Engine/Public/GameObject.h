@@ -38,6 +38,9 @@ public:
 	_uint Get_TextureNum() { return m_iNumTexture; }
 	virtual void TakeHit(_uint damage) { m_fCurrentHp -= damage; }
 
+	_float Get_HpRatio() { return m_fCurrentHp / m_fMaxHp; }
+	_float Get_CurrentHp() { return m_fCurrentHp; }
+
 
 public:
 	virtual HRESULT Initialize_Prototype();
