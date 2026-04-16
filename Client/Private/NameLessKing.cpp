@@ -4,6 +4,7 @@
 #include "Body_Player.h"
 #include "GameInstance.h"
 #include "SkeletonVanguard.h"
+#include "BossMark.h"
 
 CNameLessKing::CNameLessKing(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CContainerObject{ pDevice, pContext }
@@ -29,7 +30,7 @@ HRESULT CNameLessKing::Initialize(void* pArg)
 	Desc->fDegreePerSec = 180.f;
 
 	m_bShadow = Desc->Shadow;
-	
+	m_bTakehit = false;
 	/* 백그라운드의 멤버를 채워넣어야한다면 여기서 채운다. */
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -65,6 +66,12 @@ HRESULT CNameLessKing::Initialize(void* pArg)
 	m_fCurrentHp = m_fMaxHp;
 	
 	return S_OK;
+}
+
+void CNameLessKing::TakeHit(_uint damage)
+{
+	m_fCurrentHp -= damage;
+	m_bTakehit = true;
 }
 
 void CNameLessKing::Priority_Update(_float fTimeDelta)
@@ -121,6 +128,65 @@ void CNameLessKing::Update(_float fTimeDelta)
 		{
 			m_bAwake = false;
 			attacking = false;
+			// 던전씬에 옮길 보스 ui
+			CBossMark::BOSSMARK_DESC Desc{};
+
+
+			//// 체력바 프레임
+			Desc.fSizeX = 950;
+			Desc.fSizeY = 30;
+			Desc.fX = g_iWinSizeX * 0.5f + 10;
+			Desc.fY = 140;
+			Desc.iNumTexture = 1;
+			Desc.Scenetype = CGameObject::SCENETYPE::STATIC;
+			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
+				ETOI(LEVEL::STATIC), TEXT("Layer_UI"), &Desc)))
+				return;
+
+			// 체력바
+			Desc.fSizeX = 950;
+			Desc.fSizeY = 30;
+			Desc.fX = g_iWinSizeX * 0.5f + 10;
+			Desc.fY = 140;
+			Desc.iNumTexture = 0;
+			Desc.Scenetype = CGameObject::SCENETYPE::STATIC;
+			Desc.owner = this;
+			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
+				ETOI(LEVEL::STATIC), TEXT("Layer_UI"), &Desc)))
+				return;
+
+
+			////마커 1
+			Desc.fSizeX = 29;
+			Desc.fSizeY = 29;
+			Desc.fX = g_iWinSizeX * 0.5f - 150;
+			Desc.fY = 140;
+			Desc.iNumTexture = 3;
+			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
+				ETOI(LEVEL::STATIC), TEXT("Layer_UI"), &Desc)))
+				return;
+
+			////마커 2
+			Desc.fSizeX = 29;
+			Desc.fSizeY = 29;
+			Desc.fX = g_iWinSizeX * 0.5f + 150;
+			Desc.fY = 140;
+			Desc.iNumTexture = 3;
+			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
+				ETOI(LEVEL::STATIC), TEXT("Layer_UI"), &Desc)))
+				return;
+
+			// 이름 옆에 마커
+			Desc.fSizeX = 49;
+			Desc.fSizeY = 39;
+			Desc.fX = g_iWinSizeX * 0.5f - 150;
+			Desc.fY = 80;
+			Desc.iNumTexture = 2;
+			Desc.Scenetype = CGameObject::SCENETYPE::STATIC;
+
+			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
+				ETOI(LEVEL::STATIC), TEXT("Layer_UI"), &Desc)))
+				return;
 		}
 	}
 	else if (Intersect_ToPlayerSphere())
@@ -310,6 +376,13 @@ HRESULT CNameLessKing::Render()
 	//m_pNavigationCom->Render();
 #endif // _DEBUG
 
+	if (!m_bAwake)
+	{
+		m_pGameInstance->Draw_Font(TEXT("Font_BossUI1"), TEXT("이름 없는 자"), _float2(g_iWinSizeX * 0.5f - 100, 50.f));
+
+		m_pGameInstance->Draw_Font(TEXT("Font_BossUI1"), TEXT("이름 없는 자를 격파하세요"), _float2(g_iWinSizeX - 570, 50.f));
+		m_pGameInstance->Draw_Font(TEXT("Font_Damage"), TEXT("이름 없는 왕국"), _float2(g_iWinSizeX - 258, 110.f), XMVectorSet(0.918f, 0.690f, 0.235f, 1.0f));
+	}
 
 	return S_OK;
 }

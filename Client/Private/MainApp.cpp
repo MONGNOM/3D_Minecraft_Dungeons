@@ -75,10 +75,7 @@ HRESULT CMainApp::Render()
 
 	// 이거 보스맵으로 추가해야함
 
-	m_pGameInstance->Draw_Font(TEXT("Font_BossUI1"), TEXT("이름 없는 자"), _float2(g_iWinSizeX * 0.5f - 100, 50.f));
 
-	m_pGameInstance->Draw_Font(TEXT("Font_BossUI1"), TEXT("이름 없는 자를 격파하세요"), _float2(g_iWinSizeX - 570, 50.f));
-	m_pGameInstance->Draw_Font(TEXT("Font_Damage"), TEXT("이름 없는 왕국"), _float2(g_iWinSizeX - 258, 110.f), XMVectorSet(0.918f, 0.690f, 0.235f, 1.0f));
 
 
 	if (FAILED(m_pGameInstance->Present()))
@@ -226,64 +223,7 @@ HRESULT CMainApp::Ready_Layer_UI(const _tchar* pLayerTag)
 		ETOI(LEVEL::STATIC), pLayerTag)))
 		return E_FAIL;
 
-	// 던전씬에 옮길 보스 ui
-	CBossMark::BOSSMARK_DESC Desc{};
 	
-
-	//// 체력바 프레임
-	Desc.fSizeX = 950;
-	Desc.fSizeY = 30;
-	Desc.fX = g_iWinSizeX * 0.5f + 10;
-	Desc.fY = 140;
-	Desc.iNumTexture = 1;
-	Desc.Scenetype = CGameObject::SCENETYPE::STATIC;
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
-		ETOI(LEVEL::STATIC), pLayerTag, &Desc)))
-		return E_FAIL;
-
-	// 체력바
-	Desc.fSizeX = 950;
-	Desc.fSizeY = 30;
-	Desc.fX = g_iWinSizeX * 0.5f + 10;
-	Desc.fY = 140;
-	Desc.iNumTexture = 0;
-	Desc.Scenetype = CGameObject::SCENETYPE::STATIC;
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
-		ETOI(LEVEL::STATIC), pLayerTag, &Desc)))
-		return E_FAIL;
-
-
-	////마커 1
-	Desc.fSizeX = 29;
-	Desc.fSizeY = 29;
-	Desc.fX = g_iWinSizeX * 0.5f - 150;
-	Desc.fY = 140;
-	Desc.iNumTexture = 3;
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
-		ETOI(LEVEL::STATIC), pLayerTag, &Desc)))
-		return E_FAIL;
-
-	////마커 2
-	Desc.fSizeX = 29;
-	Desc.fSizeY = 29;
-	Desc.fX = g_iWinSizeX * 0.5f + 150;
-	Desc.fY = 140;
-	Desc.iNumTexture = 3;
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
-		ETOI(LEVEL::STATIC), pLayerTag, &Desc)))
-		return E_FAIL;
-
-	// 이름 옆에 마커
-	Desc.fSizeX = 49;
-	Desc.fSizeY = 39;
-	Desc.fX = g_iWinSizeX * 0.5f - 150;
-	Desc.fY = 80;
-	Desc.iNumTexture = 2;
-	Desc.Scenetype = CGameObject::SCENETYPE::STATIC;
-
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
-		ETOI(LEVEL::STATIC), pLayerTag, &Desc)))
-		return E_FAIL;
 
 	return S_OK;
 }

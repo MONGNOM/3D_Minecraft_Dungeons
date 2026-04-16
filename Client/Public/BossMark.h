@@ -17,6 +17,7 @@ public:
 	typedef struct tagBossMarkDesc final : public CUIObject::UI_DESC
 	{
 		_uint iNumTexture {};
+		CGameObject* owner = nullptr;
 	}BOSSMARK_DESC;
 
 private:
@@ -39,9 +40,11 @@ protected:
 	CShader* m_pShaderCom = { nullptr };
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
-
+	_float m_fOriginalSizeX;
 	HRESULT Ready_Components();
+	CGameObject* m_pOwner;
 
+	_float m_fOriginalX = 0.f;
 public:
 	static CBossMark* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

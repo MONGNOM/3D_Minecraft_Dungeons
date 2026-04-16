@@ -1,5 +1,6 @@
 #include "BossMark.h"
 #include "GameInstance.h"
+#include "NameLessKing.h"
 
 CBossMark::CBossMark(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CUIObject{pDevice, pContext}
@@ -21,11 +22,18 @@ HRESULT CBossMark::Initialize(void* pArg)
     BOSSMARK_DESC* pDesc = static_cast<BOSSMARK_DESC*>(pArg);
     m_fSizeX = pDesc->fSizeX;
     m_fSizeY = pDesc->fSizeY;
+    m_fOriginalSizeX = pDesc->fSizeX;
     m_fX = pDesc->fX;
     m_fY = pDesc->fY;
     m_fPos = pDesc->pos;
     m_iNumTexture = pDesc->iNumTexture;
     m_eSceneType = pDesc->Scenetype;
+    m_fOriginalX = m_fX;
+   
+    if (m_iNumTexture == 0)
+    {
+        m_pOwner = pDesc->owner;
+    }
 
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
@@ -34,6 +42,7 @@ HRESULT CBossMark::Initialize(void* pArg)
         return E_FAIL;
 
     return S_OK;
+    // m_iNumTexture 0 이면 체력임
 }
 
 void CBossMark::Priority_Update(_float fTimeDelta)
@@ -43,6 +52,29 @@ void CBossMark::Priority_Update(_float fTimeDelta)
 void CBossMark::Update(_float fTimeDelta)
 {
     __super::Update_Transform();
+
+    if (m_iNumTexture == 0)
+    {
+        CNameLessKing* pNameLessKing = dynamic_cast<CNameLessKing*>(m_pOwner);
+
+       
+
+        if (*pNameLessKing->Get_TakeHit())
+        {
+            m_fSizeX = m_fOriginalSizeX * m_pOwner->Get_HpRatio();
+            pNameLessKing->Set_TakeHit(false);
+        }
+
+        //m_pTransformCom->SetUp_Scale(m_fSizeX, m_fSizeY, 1.f);
+
+        _float fLostWidth = m_fOriginalSizeX - m_fSizeX;
+        _float fOffsetX = fLostWidth * 0.5f;
+        m_fX = m_fOriginalX - fOffsetX;
+        //m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fX, m_fY, 0.f, 1.f));
+
+     
+    }
+
 }
 
 void CBossMark::Late_Update(_float fTimeDelta)

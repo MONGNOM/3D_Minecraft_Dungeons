@@ -26,7 +26,6 @@ HRESULT CHpBar::Initialize(void* pArg)
     m_fSizeY = pDesc->fSizeY;
     m_fPos = pDesc->pos;
     m_pOwner = pDesc->owner;
-
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
@@ -85,7 +84,6 @@ void CHpBar::Update(_float fTimeDelta)
 void CHpBar::Late_Update(_float fTimeDelta)
 {
     
-  
 
     m_pGameInstance->Add_RenderGroup(RENDERGROUP::UI, this);
 }

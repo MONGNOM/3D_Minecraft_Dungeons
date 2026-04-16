@@ -42,13 +42,14 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-
+	_bool* Get_TakeHit() { return &m_bTakehit; }
+	void Set_TakeHit(_bool value) { m_bTakehit = value; }
 
 protected:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
 	HRESULT Bind_ShaderResources();
-
+	virtual void TakeHit(_uint damage)override;
 private:
 	_bool Intersect_ToPlayerSphere();
 
@@ -68,6 +69,7 @@ private:
 	_uint m_iRandNum;	
 	_float m_fStateTime = 0;
 	_uint m_bShadow = 0;
+	_bool m_bTakehit = false;
 
 public:
 	static CNameLessKing* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
