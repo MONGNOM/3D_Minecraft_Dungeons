@@ -160,6 +160,18 @@
     <Filter Include="02.GameObject\UI\05. BossMark">
       <UniqueIdentifier>{07a471cb-5c7b-4495-99de-6ff96e60d856}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\UI\06. CoolTime">
+      <UniqueIdentifier>{b8c63e75-35eb-4dc9-a540-e31857eaab28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\BossPath">
+      <UniqueIdentifier>{3ad24cbd-471b-45c2-bfa1-149c87c151a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\Boss">
+      <UniqueIdentifier>{1bd74960-6576-4a6a-a211-0e4847e79032}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Door">
+      <UniqueIdentifier>{947085b3-e8ed-46d6-950f-bf7a4faa6cc6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -336,6 +348,15 @@
     <ClInclude Include="..\Public\BossMark.h">
       <Filter>02.GameObject\UI\05. BossMark</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Level_Boss.h">
+      <Filter>01.Levels\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_BossPath.h">
+      <Filter>01.Levels\BossPath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Door.h">
+      <Filter>02.GameObject\Door</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -510,6 +531,15 @@
     <ClCompile Include="..\Private\BossMark.cpp">
       <Filter>02.GameObject\UI\05. BossMark</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Level_Boss.cpp">
+      <Filter>01.Levels\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_BossPath.cpp">
+      <Filter>01.Levels\BossPath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Door.cpp">
+      <Filter>02.GameObject\Door</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl">
@@ -528,6 +558,12 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxDefaultCube.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex_Blend.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex_Hp.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

@@ -1,23 +1,23 @@
-#include "Building.h"
+#include "Door.h"
 #include "GameInstance.h"
 
-CBuilding::CBuilding(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CDoor::CDoor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
 }
 
-CBuilding::CBuilding(const CBuilding& Prototype)
+CDoor::CDoor(const CDoor& Prototype)
 	: CGameObject(Prototype)
 
 {
 }
 
-HRESULT CBuilding::Initialize_Prototype()
+HRESULT CDoor::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CBuilding::Initialize(void* pArg)
+HRESULT CDoor::Initialize(void* pArg)
 {
 	/* 백그라운드의 멤버를 채워넣어야한다면 여기서 채운다. */
 	if (FAILED(__super::Initialize(pArg)))
@@ -30,36 +30,33 @@ HRESULT CBuilding::Initialize(void* pArg)
 
 	if (desc != nullptr)
 	{
-		m_fRot = desc->rot;
 		m_fPos = desc->pos;
 	}
-	m_Name = TEXT("Building");
 
-	m_pTransformCom->Set_Rotation(m_fRot);
+	m_Name = TEXT("Door");
+	
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
 
 
 	return S_OK;
 }
 
-void CBuilding::Priority_Update(_float fTimeDelta)
+void CDoor::Priority_Update(_float fTimeDelta)
 {
 
 }
 
-void CBuilding::Update(_float fTimeDelta)
+void CDoor::Update(_float fTimeDelta)
 {
-
+	
 }
 
-void CBuilding::Late_Update(_float fTimeDelta)
+void CDoor::Late_Update(_float fTimeDelta)
 {
-	__super::Late_Update(fTimeDelta);
-
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::NONBLEND, this);
 }
 
-HRESULT CBuilding::Render()
+HRESULT CDoor::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -86,7 +83,7 @@ HRESULT CBuilding::Render()
 	return S_OK;
 }
 
-HRESULT CBuilding::Ready_Components()
+HRESULT CDoor::Ready_Components()
 {
 
 
@@ -94,14 +91,14 @@ HRESULT CBuilding::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Model_Building"),
+	if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Model_Door"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CBuilding::Bind_ShaderResources()
+HRESULT CDoor::Bind_ShaderResources()
 {
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
@@ -133,32 +130,32 @@ HRESULT CBuilding::Bind_ShaderResources()
 	return S_OK;
 }
 
-CBuilding* CBuilding::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CDoor* CDoor::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CBuilding* pInstance = new CBuilding(pDevice, pContext);
+	CDoor* pInstance = new CDoor(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : CBuilding");
+		MSG_BOX("Failed to Created : CDoor");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
 
-CGameObject* CBuilding::Clone(void* pArg)
+CGameObject* CDoor::Clone(void* pArg)
 {
-	CBuilding* pInstance = new CBuilding(*this);
+	CDoor* pInstance = new CDoor(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CBuilding");
+		MSG_BOX("Failed to Cloned : CDoor");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CBuilding::Free()
+void CDoor::Free()
 {
 	__super::Free();
 

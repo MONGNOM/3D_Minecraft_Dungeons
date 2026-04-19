@@ -1,15 +1,15 @@
-#include "Level_Dungeon.h"
+#include "Level_BossPath.h"
 #include "GameInstance.h"
 #include "FreeCamera.h"
 #include "HotBar.h"
 #include "Level_Loading.h"
 
-CLevel_Dungeon::CLevel_Dungeon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) 
+CLevel_BossPath::CLevel_BossPath(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) 
 	: CLevel {pDevice, pContext}
 {
 }
 
-std::string WStringToString1(const std::wstring& wstr)
+std::string WStringToString3(const std::wstring& wstr)
 {
 	if (wstr.empty()) return std::string();
 
@@ -23,7 +23,7 @@ std::string WStringToString1(const std::wstring& wstr)
 	return strTo;
 }
 
-std::wstring StringToWString1(const std::string& str)
+std::wstring StringToWString3(const std::string& str)
 {
 	if (str.empty()) return std::wstring();
 
@@ -39,50 +39,44 @@ std::wstring StringToWString1(const std::string& str)
 	return wstrTo;
 }
 
-HRESULT CLevel_Dungeon::Initialize()
+HRESULT CLevel_BossPath::Initialize()
 {
 	ShowCursor(FALSE);
 
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
-		return E_FAIL;
-
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-		return E_FAIL;*/
-
-	if (FAILED(Ready_Layer_Camera(TEXT("Load_Layer"))))
+	/*if (FAILED(Ready_Layer_Camera(TEXT("Load_Layer"))))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 	
 	if (FAILED(Ready_Layer_Load()))
-		return E_FAIL;
+		return E_FAIL;*/
 	
 
 	return S_OK;
 }
 
-void CLevel_Dungeon::Update(_float fTimeDelta)
+void CLevel_BossPath::Update(_float fTimeDelta)
 {
 	if (GetKeyState(VK_SPACE) & 0x8000)
 	{
-		if (FAILED(m_pGameInstance->Change_Level(ETOI(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::BOSSPATH))))
+		if (FAILED(m_pGameInstance->Change_Level(ETOI(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::BOSS))))
 			return;
 	}
 }
 
-HRESULT CLevel_Dungeon::Render()
+HRESULT CLevel_BossPath::Render()
 {
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("마인크래프트 던전"));
+	SetWindowText(g_hWnd, TEXT("마인크래프트 던전 가는 길"));
 #endif 
 	return S_OK;
 }
 
-HRESULT CLevel_Dungeon::Ready_Lights()
+HRESULT CLevel_BossPath::Ready_Lights()
 {
 	LIGHT_DESC			LightDesc{};
 
@@ -99,7 +93,7 @@ HRESULT CLevel_Dungeon::Ready_Lights()
 	return S_OK;
 }
 
-HRESULT CLevel_Dungeon::Ready_Layer_Camera(const _wstring& strLayerTag)
+HRESULT CLevel_BossPath::Ready_Layer_Camera(const _wstring& strLayerTag)
 {
 	CFreeCamera::FREECAMERA_DESC cameraDesc{};
 
@@ -111,40 +105,40 @@ HRESULT CLevel_Dungeon::Ready_Layer_Camera(const _wstring& strLayerTag)
 	cameraDesc.fNear = 0.1f;
 	cameraDesc.fFar = 500.f;
 	cameraDesc.fMouseSensor = 0.05f;
-	cameraDesc.Scenetype = CGameObject::SCENETYPE::DUNGEON;
+	cameraDesc.Scenetype = CGameObject::SCENETYPE::BOSSPATH;
 
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_FreeCamera"),
-		ETOI(LEVEL::DUNGEON), strLayerTag, &cameraDesc)))
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_FreeCamera"),
+		ETOI(LEVEL::BOSSPATH), strLayerTag, &cameraDesc)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CLevel_Dungeon::Ready_Layer_BackGround(const _wstring& strLayerTag)
+HRESULT CLevel_BossPath::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
 	return S_OK;
 }
 
-HRESULT CLevel_Dungeon::Ready_Layer_Player(const _wstring& strLayerTag)
+HRESULT CLevel_BossPath::Ready_Layer_Player(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Player"),
-		ETOI(LEVEL::DUNGEON), strLayerTag)))
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_Player"),
+		ETOI(LEVEL::BOSSPATH), strLayerTag)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CLevel_Dungeon::Ready_Layer_Monster(const _wstring& strLayerTag)
+HRESULT CLevel_BossPath::Ready_Layer_Monster(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Skeleton"),
-		ETOI(LEVEL::DUNGEON), strLayerTag)))
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_Skeleton"),
+		ETOI(LEVEL::BOSSPATH), strLayerTag)))
 		return E_FAIL;
 
 
 	return S_OK;
 }
 
-HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
+HRESULT CLevel_BossPath::Add_HotBar(const _wstring& strLayerTag)
 {
 	//_float  sizeY = 148 * 0.6f;
 	//_float  posY = 0.6f;
@@ -158,8 +152,8 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 	//DescHeart.fY = g_iWinSizeY - DescHeart.fSizeY * 0.73f;
 	//DescHeart.iNumTexture = 4;
 
-	//if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
-	//	ETOI(LEVEL::DUNGEON), strLayerTag, &DescHeart)))
+	//if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_HotBar"),
+	//	ETOI(LEVEL::BOSSPATH), strLayerTag, &DescHeart)))
 	//	return E_FAIL;
 
 
@@ -170,8 +164,8 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 	//DescHeartBack.fY = g_iWinSizeY - DescHeartBack.fSizeY * 0.55f;
 	//DescHeartBack.iNumTexture = 5;
 
-	//if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
-	//	ETOI(LEVEL::DUNGEON), strLayerTag, &DescHeartBack)))
+	//if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_HotBar"),
+	//	ETOI(LEVEL::BOSSPATH), strLayerTag, &DescHeartBack)))
 	//	return E_FAIL;
 
 	//
@@ -185,8 +179,8 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 	//DescLeft.fY = g_iWinSizeY - DescLeft.fSizeY * posY;
 	//DescLeft.iNumTexture = 0;
 
-	//if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
-	//	ETOI(LEVEL::DUNGEON), strLayerTag, &DescLeft)))
+	//if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_HotBar"),
+	//	ETOI(LEVEL::BOSSPATH), strLayerTag, &DescLeft)))
 	//	return E_FAIL;
 
 
@@ -199,8 +193,8 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 	//DescMiddle.fY = g_iWinSizeY - DescMiddle.fSizeY * posY;
 	//DescMiddle.iNumTexture = 1;
 
-	//if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
-	//	ETOI(LEVEL::DUNGEON), strLayerTag, &DescMiddle)))
+	//if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_HotBar"),
+	//	ETOI(LEVEL::BOSSPATH), strLayerTag, &DescMiddle)))
 	//	return E_FAIL;
 
 
@@ -213,8 +207,8 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 	//DescRight.fY = g_iWinSizeY - DescRight.fSizeY * posY;
 	//DescRight.iNumTexture = 2;
 
-	//if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
-	//	ETOI(LEVEL::DUNGEON), strLayerTag, &DescRight)))
+	//if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_HotBar"),
+	//	ETOI(LEVEL::BOSSPATH), strLayerTag, &DescRight)))
 	//	return E_FAIL;
 
 
@@ -228,8 +222,8 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 	//DescBackLeft.fY = g_iWinSizeY - DescBackLeft.fSizeY * BackposY;
 	//DescBackLeft.iNumTexture = 3;
 
-	//if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
-	//	ETOI(LEVEL::DUNGEON), strLayerTag, &DescBackLeft)))
+	//if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_HotBar"),
+	//	ETOI(LEVEL::BOSSPATH), strLayerTag, &DescBackLeft)))
 	//	return E_FAIL;
 
 
@@ -241,10 +235,10 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 	DescBackLeft.fX = g_iWinSizeX * 0.5f;
 	DescBackLeft.fY = g_iWinSizeY - DescBackLeft.fSizeY *0.48f;
 	DescBackLeft.iNumTexture = 0;
-	DescBackLeft.Scenetype = CGameObject::SCENETYPE::DUNGEON;
+	DescBackLeft.Scenetype = CGameObject::SCENETYPE::BOSSPATH;
 
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
-		ETOI(LEVEL::DUNGEON), strLayerTag, &DescBackLeft)))
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_HotBar"),
+		ETOI(LEVEL::BOSSPATH), strLayerTag, &DescBackLeft)))
 		return E_FAIL;
 
 
@@ -254,10 +248,10 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 	DescBackLeft.fX = g_iWinSizeX * 0.5f;
 	DescBackLeft.fY = g_iWinSizeY - DescBackLeft.fSizeY + 75;
 	DescBackLeft.iNumTexture = 2;
-	DescBackLeft.Scenetype = CGameObject::SCENETYPE::DUNGEON;
+	DescBackLeft.Scenetype = CGameObject::SCENETYPE::BOSSPATH;
 
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
-		ETOI(LEVEL::DUNGEON), strLayerTag, &DescBackLeft)))
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_HotBar"),
+		ETOI(LEVEL::BOSSPATH), strLayerTag, &DescBackLeft)))
 		return E_FAIL;
 
 
@@ -267,10 +261,10 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 	DescBackLeft.fX = g_iWinSizeX * 0.5f;
 	DescBackLeft.fY = g_iWinSizeY - DescBackLeft.fSizeY + 25;
 	DescBackLeft.iNumTexture = 4;
-	DescBackLeft.Scenetype = CGameObject::SCENETYPE::DUNGEON;
+	DescBackLeft.Scenetype = CGameObject::SCENETYPE::BOSSPATH;
 
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
-		ETOI(LEVEL::DUNGEON), strLayerTag, &DescBackLeft)))
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_HotBar"),
+		ETOI(LEVEL::BOSSPATH), strLayerTag, &DescBackLeft)))
 		return E_FAIL;
 
 	//하트빨간색
@@ -279,10 +273,10 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 	DescBackLeft.fX = g_iWinSizeX * 0.5f;
 	DescBackLeft.fY = g_iWinSizeY - DescBackLeft.fSizeY + 25;
 	DescBackLeft.iNumTexture = 3;
-	DescBackLeft.Scenetype = CGameObject::SCENETYPE::DUNGEON;
+	DescBackLeft.Scenetype = CGameObject::SCENETYPE::BOSSPATH;
 
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
-		ETOI(LEVEL::DUNGEON), strLayerTag, &DescBackLeft)))
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_HotBar"),
+		ETOI(LEVEL::BOSSPATH), strLayerTag, &DescBackLeft)))
 		return E_FAIL;
 
 	
@@ -293,10 +287,10 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 	DescBackLeft.fX = g_iWinSizeX * 0.5f + 547;
 	DescBackLeft.fY = g_iWinSizeY - DescBackLeft.fSizeY + 35;
 	DescBackLeft.iNumTexture = 1;
-	DescBackLeft.Scenetype = CGameObject::SCENETYPE::DUNGEON;
+	DescBackLeft.Scenetype = CGameObject::SCENETYPE::BOSSPATH;
 
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
-		ETOI(LEVEL::DUNGEON), strLayerTag, &DescBackLeft)))
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_HotBar"),
+		ETOI(LEVEL::BOSSPATH), strLayerTag, &DescBackLeft)))
 		return E_FAIL;
 
 	//포션 쿨타임 플레이어가 키 입력시 쿨타임 보여주는것 -> 
@@ -305,10 +299,10 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 	DescBackLeft.fX = g_iWinSizeX * 0.5f + 157;
 	DescBackLeft.fY = g_iWinSizeY - 110;
 	DescBackLeft.iNumTexture = 5;
-	DescBackLeft.Scenetype = CGameObject::SCENETYPE::DUNGEON;
+	DescBackLeft.Scenetype = CGameObject::SCENETYPE::BOSSPATH;
 
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
-		ETOI(LEVEL::DUNGEON), strLayerTag, &DescBackLeft)))
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_HotBar"),
+		ETOI(LEVEL::BOSSPATH), strLayerTag, &DescBackLeft)))
 		return E_FAIL;
 
 	//구르기 쿨타임 플레이어가 키 입력시 쿨타임 보여주는것 
@@ -317,10 +311,10 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 	DescBackLeft.fX = g_iWinSizeX * 0.5f + 403;
 	DescBackLeft.fY = g_iWinSizeY - 86;
 	DescBackLeft.iNumTexture = 6;
-	DescBackLeft.Scenetype = CGameObject::SCENETYPE::DUNGEON;
+	DescBackLeft.Scenetype = CGameObject::SCENETYPE::BOSSPATH;
 
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
-		ETOI(LEVEL::DUNGEON), strLayerTag, &DescBackLeft)))
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_HotBar"),
+		ETOI(LEVEL::BOSSPATH), strLayerTag, &DescBackLeft)))
 		return E_FAIL;
 
 
@@ -328,22 +322,22 @@ HRESULT CLevel_Dungeon::Add_HotBar(const _wstring& strLayerTag)
 	return S_OK;
 }
 
-HRESULT CLevel_Dungeon::Ready_Layer_UI(const _wstring& strLayerTag)
+HRESULT CLevel_BossPath::Ready_Layer_UI(const _wstring& strLayerTag)
 {
 	Add_HotBar(strLayerTag);
 
 	CGameObject::GAMEOBJECT_DESC desc;
-	desc.Scenetype = CGameObject::SCENETYPE::DUNGEON;
+	desc.Scenetype = CGameObject::SCENETYPE::BOSSPATH;
 
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Sky"),
-		ETOI(LEVEL::DUNGEON), strLayerTag, &desc)))
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_Sky"),
+		ETOI(LEVEL::BOSSPATH), strLayerTag, &desc)))
 		return E_FAIL;
 	
 
 	return S_OK;
 }
 
-HRESULT CLevel_Dungeon::Ready_Layer_Load()
+HRESULT CLevel_BossPath::Ready_Layer_Load()
 {
 	vector<OBJECTINFO> objectInfoList;
 	m_pGameInstance->Load_Date(TEXT("../Robby_Save.json"), objectInfoList);
@@ -352,14 +346,14 @@ HRESULT CLevel_Dungeon::Ready_Layer_Load()
 	{
 		CGameObject::GAMEOBJECT_DESC Desc{};
 		Desc.m_sPrototype = object.PrototypeName;
-		Desc.name = StringToWString1(object.Name);
+		Desc.name = StringToWString3(object.Name);
 		Desc.pos = object.Translation;
 		Desc.rot = object.Rotation;
 		Desc.NumTexture = object.data;
-		Desc.Scenetype = CGameObject::SCENETYPE::DUNGEON;
+		Desc.Scenetype = CGameObject::SCENETYPE::BOSSPATH;
 
-		if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), StringToWString1(object.PrototypeName),
-			ETOI(LEVEL::DUNGEON), TEXT("Load_Layer"), &Desc)))
+		if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), StringToWString3(object.PrototypeName),
+			ETOI(LEVEL::BOSSPATH), TEXT("Load_Layer"), &Desc)))
 			return E_FAIL;
 	}
 
@@ -371,21 +365,22 @@ HRESULT CLevel_Dungeon::Ready_Layer_Load()
 
 
 
-CLevel_Dungeon* CLevel_Dungeon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CLevel_BossPath* CLevel_BossPath::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CLevel_Dungeon* pInstance = new CLevel_Dungeon(pDevice, pContext);
+	CLevel_BossPath* pInstance = new CLevel_BossPath(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_BOX("Failed to Create : CLevel_Dungeon");
+		MSG_BOX("Failed to Create : CLevel_BossPath");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CLevel_Dungeon::Free()
+void CLevel_BossPath::Free()
 {
 	__super::Free();
+
 
 }

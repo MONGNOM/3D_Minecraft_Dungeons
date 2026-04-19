@@ -42,6 +42,7 @@ void CFreeCamera::Priority_Update(_float fTimeDelta)
 
 		_vector vTargetPos = XMVectorSet(playerPos.x, playerPos.y + 1, playerPos.z, 1.f);
 		m_pTransformCom->LookAt(vTargetPos);
+
 		break;
 	}	
 	case SCENETYPE::GAMEPLAY :

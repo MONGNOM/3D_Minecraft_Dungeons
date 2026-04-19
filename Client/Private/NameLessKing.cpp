@@ -85,7 +85,7 @@ void CNameLessKing::Update(_float fTimeDelta)
 	
 	if (m_bShadow == 0)
 	{
-		CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+		CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), ETOI(m_eSceneType), TEXT("Com_Collider")));
 		if (collider == nullptr) return;
 		m_pTransformCom->LookAt(dynamic_cast<CTransform*>(collider->Get_Owner()->Get_Component(TEXT("Com_Transform")))->Get_State(STATE::POSITION));
 
@@ -104,7 +104,7 @@ void CNameLessKing::Update(_float fTimeDelta)
 			// 이거 안되는데?
 
 			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_JusinBox"),
-				ETOI(m_eSceneType), TEXT("Clone_Layer"), &JusinBoxDesc)))
+				ETOI(m_eSceneType), TEXT("Load_Layer"), &JusinBoxDesc)))
 				return;
 		}
 
@@ -195,7 +195,7 @@ void CNameLessKing::Update(_float fTimeDelta)
 		{
 			m_fStateTime += fTimeDelta;
 
-			if (m_fStateTime > 2.f && !attacking)
+			if (m_fStateTime > 0.5f && !attacking)
 			{
 				attacking = true;
 				state = (BOSSSTATE)(m_pGameInstance->Random(1, ETOI(BOSS_END)));
@@ -245,7 +245,7 @@ void CNameLessKing::Update(_float fTimeDelta)
 					JusinBoxDesc.look = XMVector3Normalize(m_pTransformCom->Get_State(STATE::LOOK));
 
 					if (FAILED(m_pGameInstance->Add_GameObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_JusinBox"),
-						ETOI(m_eSceneType), TEXT("Clone_Layer"), &JusinBoxDesc)))
+						ETOI(m_eSceneType), TEXT("Load_Layer"), &JusinBoxDesc)))
 						return;
 				}
 				break;
@@ -274,6 +274,7 @@ void CNameLessKing::Update(_float fTimeDelta)
 					XMStoreFloat3(&svPos, m_pTransformCom->Get_State(STATE::POSITION));
 					_vector vLook = XMVector3Normalize(m_pTransformCom->Get_State(STATE::LOOK));
 					desc.Scenetype = m_eSceneType;
+					desc.NumTexture = 0;
 					_float fDistance = 5.f;
 
 					desc.look = vLook;
@@ -287,7 +288,7 @@ void CNameLessKing::Update(_float fTimeDelta)
 						desc.pos.x += (i * 3);
 
 						if (FAILED(m_pGameInstance->Add_GameObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_SkeletonVanguard"),
-							ETOI(m_eSceneType), TEXT("Clone_Layer"), &desc)))
+							ETOI(m_eSceneType), TEXT("Load_Layer"), &desc)))
 							return;
 					}
 				}
@@ -312,14 +313,13 @@ void CNameLessKing::Update(_float fTimeDelta)
 						desc.pos.z = svPos.z + m_pGameInstance->Random(0, 15);
 
 						if (FAILED(m_pGameInstance->Add_GameObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_NameLessKing"),
-							ETOI(m_eSceneType), TEXT("Clone_Layer"), &desc)))
+							ETOI(m_eSceneType), TEXT("Load_Layer"), &desc)))
 							return;
 					}
 				}
 				break;
 			}
 			}
-
 
 			
 		}
@@ -334,6 +334,7 @@ void CNameLessKing::Update(_float fTimeDelta)
 		}
 		
 	}
+	
 
 	for (auto& iter : m_pColliderCom)
 		iter->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
@@ -376,13 +377,7 @@ HRESULT CNameLessKing::Render()
 	//m_pNavigationCom->Render();
 #endif // _DEBUG
 
-	if (!m_bAwake)
-	{
-		m_pGameInstance->Draw_Font(TEXT("Font_BossUI1"), TEXT("이름 없는 자"), _float2(g_iWinSizeX * 0.5f - 100, 50.f));
-
-		m_pGameInstance->Draw_Font(TEXT("Font_BossUI1"), TEXT("이름 없는 자를 격파하세요"), _float2(g_iWinSizeX - 570, 50.f));
-		m_pGameInstance->Draw_Font(TEXT("Font_Damage"), TEXT("이름 없는 왕국"), _float2(g_iWinSizeX - 258, 110.f), XMVectorSet(0.918f, 0.690f, 0.235f, 1.0f));
-	}
+		
 
 	return S_OK;
 }
@@ -494,7 +489,7 @@ HRESULT CNameLessKing::Bind_ShaderResources()
 
 _bool CNameLessKing::Intersect_ToPlayerSphere()
 {
-	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), ETOI(m_eSceneType), TEXT("Com_Collider")));
 
 	if (collider == nullptr) return false;
 

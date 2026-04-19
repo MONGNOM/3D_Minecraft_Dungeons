@@ -30,7 +30,7 @@ HRESULT CArrow::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_iArrowDamage = m_pGameInstance->Random(10, 30);
+	m_iArrowDamage = m_pGameInstance->Random(20, 30);
 
 
 	if (desc != nullptr)
@@ -39,13 +39,13 @@ HRESULT CArrow::Initialize(void* pArg)
 		m_fPos = desc->pos;
 		m_eSceneType = desc->Scenetype;
 		m_etype = desc->type;
+		m_Name = desc->name;
+		m_pTransformCom->Set_State(STATE::LOOK, desc->look);
 	}
-	m_Name = TEXT("Arrow");
 
 
 	m_pTransformCom->Set_Rotation(m_fRot);
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
-	m_pTransformCom->Set_State(STATE::LOOK, desc->look);
 	object = m_eSceneType == GAMEPLAY ? &m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Layer_Clone")) : &m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Load_Layer"));
 
 	return S_OK;
@@ -100,7 +100,7 @@ void CArrow::Intersect_ToMonster()
 {
 	m_pColliderCom->Set_isColl(false);
 
-	CCollider* colliderplayer = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+	CCollider* colliderplayer = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), ETOI(m_eSceneType), TEXT("Com_Collider")));
 
 	if (colliderplayer == nullptr) return;
 
@@ -110,7 +110,6 @@ void CArrow::Intersect_ToMonster()
 		m_pColliderCom->Set_isColl(true);
 		colliderplayer->Set_isColl(true);
 		wcout << colliderplayer->Get_Owner()->Get_ObjectName() << "에게 피해를 입혔다" << endl;
-		//DecreaseHp(m_iSwordDamage);
 		Set_Dead();
 		return;
 	}
@@ -193,7 +192,7 @@ HRESULT CArrow::Bind_ShaderResources()
 
 
 
-	if (FAILED(m_pGameInstance->Bind_CamPosition(m_pShaderCom, "g_vCamPosition")))
+	/*if (FAILED(m_pGameInstance->Bind_CamPosition(m_pShaderCom, "g_vCamPosition")))
 		return E_FAIL;
 
 	const LIGHT_DESC* pLightDesc = m_pGameInstance->Get_LightDesc(0);
@@ -207,7 +206,7 @@ HRESULT CArrow::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	return S_OK;
 }

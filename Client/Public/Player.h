@@ -37,6 +37,12 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	void Set_Roll(_bool value) { m_bRoll = value; }
+	void Set_TakeHit(_bool vaule) { m_bTakehit = vaule; }
+	_bool* Get_TakeHit() { return &m_bTakehit; }
+	_bool* Get_Roll() { return &m_bRoll; }
+	_bool* Get_Potion() { return &m_bPotion; }
+	_float* Get_PotionCoolTime() { return &PotioncoolTiem; }
+	_float* Get_JumpCoolTime() { return &jumpCoolTime; }
 
 protected:
 	HRESULT Ready_Components();
@@ -51,8 +57,14 @@ private:
 	PLAYERSTATE state = {};
 	class CBody_Player* pBody;
 	const list<CGameObject*>* object = { nullptr };
-	
+	void TakeHit(_uint damage);
 	_bool m_bRoll = false;
+	_bool m_bTakehit = false;
+	_bool m_bPotion = false;
+	_float PotioncoolTiem = 0.f;
+	_float maxcooltiem = 2;
+	_float jumpCoolTime = 0;
+
 
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

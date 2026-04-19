@@ -144,6 +144,15 @@ HRESULT CMainApp::Ready_Prototype_For_Static_Level()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/Shaderfiles/Shader_VtxTex.hlsl"), VTXTEX::Elements, VTXTEX::iNumElements))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxTex_Blend"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/Shaderfiles/Shader_VtxTex_Blend.hlsl"), VTXTEX::Elements, VTXTEX::iNumElements))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxTex_Hp"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/Shaderfiles/Shader_VtxTex_Hp.hlsl"), VTXTEX::Elements, VTXTEX::iNumElements))))
+		return E_FAIL;
+	
+
 	/* Prototype_Component_VIBuffer_Rect */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
 		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))

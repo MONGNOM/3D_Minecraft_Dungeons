@@ -64,11 +64,30 @@ void CPlayer::Priority_Update(_float fTimeDelta)
 
 void CPlayer::Update(_float fTimeDelta)
 {
+	__super::Update(fTimeDelta);
+
 	if (m_fCurrentHp <= 0)
 		Set_Dead();
 
+	if (PotioncoolTiem > 0)
+	{
+		PotioncoolTiem -= fTimeDelta;
+		
+	}
+	if (PotioncoolTiem <= 0)
+		m_bPotion = true;
+
+	if (jumpCoolTime > 0)
+	{
+		jumpCoolTime -= fTimeDelta;
+
+	}
+	
+	
+
 	//Intersect_ToMonster();
 	
+
 	if (m_bRoll)	m_pTransformCom->Go_Roll(fTimeDelta, 10.f);
 
 	bool bIsActionState = (state == PLAYERSTATE::HEAL || state == PLAYERSTATE::FAILING || state == PLAYERSTATE::BOW || state == PLAYERSTATE::ATTACK);
@@ -95,22 +114,30 @@ void CPlayer::Update(_float fTimeDelta)
 		
 	 	else if (m_pGameInstance->Get_DIKeyDown(DIK_SPACE)) // 구르기
 		{
-			if (!m_bRoll)
+			if (!m_bRoll && jumpCoolTime <= 0)
 			{
+				jumpCoolTime = 2;
 				m_bRoll = true;
 				state = PLAYERSTATE::FAILING;
 			}
 		}
 		else if (m_pGameInstance->Get_DIKeyDown(DIK_R)) // 힐
 		{
-			state = PLAYERSTATE::HEAL;
+			if (m_bPotion)
+			{
+				state = PLAYERSTATE::HEAL;
+				
+				m_bPotion = false;
+				PotioncoolTiem = maxcooltiem;
 
-			if(m_fCurrentHp += 100 > m_fMaxHp)
-				m_fCurrentHp = m_fMaxHp;
-			else
-				m_fCurrentHp += 100;
-			wcout << "체력회복 " << endl;
-			wcout << "현재 체력 : " << m_fCurrentHp << endl;
+				if (m_fCurrentHp += 100 > m_fMaxHp)
+					m_fCurrentHp = m_fMaxHp;
+				else
+					m_fCurrentHp += 100;
+
+				wcout << "체력회복 " << endl;
+				wcout << "현재 체력 : " << m_fCurrentHp << endl;
+			}
 		}
 		else
 		{
@@ -121,8 +148,8 @@ void CPlayer::Update(_float fTimeDelta)
 
 		if (GetKeyState(VK_UP) & 0x8000)
 		{
-			//m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);
-			m_pTransformCom->Go_Straight(fTimeDelta);
+			m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);
+			//m_pTransformCom->Go_Straight(fTimeDelta);
 			state = PLAYERSTATE::WALK;
 		}
 		if (GetKeyState(VK_DOWN) & 0x8000)
@@ -138,15 +165,22 @@ void CPlayer::Update(_float fTimeDelta)
 		{
 			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta );
 		}
+	
+		if (m_pGameInstance->Get_DIKeyDown(DIK_K)) // 구르기
+		{
+			m_fCurrentHp -= 10;
+			wcout << "체력이 깎임 -> 현재 체력 : " << m_fCurrentHp << endl;
+		}
+
+		
 		
 	}
 
 
-	//m_pNavigationCom->Compute_Height(m_pTransformCom);
+	m_pNavigationCom->Compute_Height(m_pTransformCom);
 	
 	m_pColliderCom->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	
-	__super::Update(fTimeDelta);
 }
 
 void CPlayer::Late_Update(_float fTimeDelta)
@@ -156,11 +190,18 @@ void CPlayer::Late_Update(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::NONBLEND, this);
 }
 
+void CPlayer::TakeHit(_uint damage)
+{
+	m_fCurrentHp -= damage;
+	m_bTakehit = true;
+}
+
+
 HRESULT CPlayer::Render()
 {
 #ifdef _DEBUG
 	m_pColliderCom->Render();
-	//m_pNavigationCom->Render();
+	m_pNavigationCom->Render();
 #endif // _DEBUG
 
 
@@ -179,13 +220,13 @@ HRESULT CPlayer::Ready_Components()
 		TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
 		return E_FAIL;
 
-	//CNavigation::NAVIGATION_DESC		NavigationDesc{};
-	//NavigationDesc.iCurrentCellIndex = 1;
-	//NavigationDesc.pTransform = m_pTransformCom;
-	//
-	//if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Navigation"),
-	//	TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom), &NavigationDesc)))
-	//	return E_FAIL;
+	CNavigation::NAVIGATION_DESC		NavigationDesc{};
+	NavigationDesc.iCurrentCellIndex = 1;
+	NavigationDesc.pTransform = m_pTransformCom;
+	
+	if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Navigation"),
+		TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom), &NavigationDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -284,5 +325,5 @@ void CPlayer::Free()
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);
-	//Safe_Release(m_pNavigationCom);
+	Safe_Release(m_pNavigationCom);
 }

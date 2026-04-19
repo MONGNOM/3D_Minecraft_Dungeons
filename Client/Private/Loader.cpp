@@ -34,6 +34,8 @@
 #include "HpBar.h"
 #include "DamageFont.h"
 #include "BossMark.h"
+#include "Door.h"
+
 
 
 
@@ -105,6 +107,14 @@ HRESULT CLoader::Loading()
 
 	case LEVEL::DUNGEON:
 		hr = Loading_For_Dungeon();
+		break;
+
+	case LEVEL::BOSS:
+		hr = Loading_For_Boss();
+		break;
+
+	case LEVEL::BOSSPATH:
+		hr = Loading_For_BossPath();
 		break;
 
 	default:
@@ -232,7 +242,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 
 	/* Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Block"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/mincraft_%d.dds"), 17))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/mincraft_%d.dds"), 22))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Cube Texture");
 		return E_FAIL;
@@ -326,6 +336,13 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	//	return E_FAIL;
 	//}
 
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f); // *XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Door"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Door/Door.fbx", "Prototype_Component_Model_Door", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Door");
+		return E_FAIL;
+	}
 	
 
 	PreLocalTransformMatrix = XMMatrixScaling(0.001f, 0.001f, 0.001f);
@@ -552,6 +569,13 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		return E_FAIL;
 	}
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Door"),
+		CDoor::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Door");
+		return E_FAIL;
+	}
+
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Building"), 
 		CBuilding::Create(m_pDevice, m_pContext))))
 	{
@@ -764,12 +788,19 @@ HRESULT CLoader::Loading_For_Dungeon()
 	lstrcpy(m_szLoadingText, TEXT("사운드를 로딩 중 입니다."));
 
 
-	/*if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Texture_HotBar"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/HotBar2/hotbarBackground%d.png"), 6))))
+	//if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Texture_HotBar"),
+	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/HotBar2/hotbarBackground%d.png"), 6))))
+	//{
+	//	MSG_BOX("Faild to Add_Prototype : Texture_HotBar");
+	//	return E_FAIL;
+	//}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Texture_HotBar"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/UI/HotBar/Rhotbar_%d.png"), 7))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Texture_HotBar");
 		return E_FAIL;
-	}*/
+	}
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Texture_HpBar"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/UI/Monster/ReSize_health_bar_%d.png"), 2))))
@@ -810,7 +841,7 @@ HRESULT CLoader::Loading_For_Dungeon()
 
 	/* Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Texture_Block"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/mincraft_%d.dds"), 17))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/mincraft_%d.dds"), 18))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Cube Texture");
 		return E_FAIL;
@@ -1044,6 +1075,7 @@ HRESULT CLoader::Loading_For_Dungeon()
 	}
 
 
+
 	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Zombie"),
 		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../Bin/Resources/mincraft/Character/Monster/Zombie.fbx", "Prototype_Component_Model_Zombie", PreLocalTransformMatrix))))
@@ -1074,7 +1106,7 @@ HRESULT CLoader::Loading_For_Dungeon()
 	lstrcpy(m_szLoadingText, TEXT("네비게이션을 로딩 중 입니다."));
 	/* Prototype_Component_Navigation */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Navigation"),
-		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.dat"), TEXT("../Bin/DataFiles/Neighbors.dat")))))
+		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Robby_Navigation.dat"), TEXT("../Bin/DataFiles/Robby_Neighbors.dat")))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Component_Navigation");
 		return E_FAIL;
@@ -1306,12 +1338,37 @@ HRESULT CLoader::Loading_For_Dungeon()
 		return E_FAIL;
 	}
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_HotBar"),
+		CHotBar::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_HotBar");
+		return E_FAIL;
+	}
+
 
 
 	
 
 	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
 
+
+	m_isFinished = true;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_Boss()
+{
+	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
+
+	m_isFinished = true;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_BossPath()
+{
+	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
 
 	m_isFinished = true;
 

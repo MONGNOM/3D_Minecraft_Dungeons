@@ -376,16 +376,7 @@ HRESULT CModel::Ready_Static_Model_Load(const string& strFilePath, const string&
             return E_FAIL;
 
         m_Meshes.push_back(pMesh);
-        // ==========================================================
-        //  이제 pVertices 와 pIndices 안에는 완벽한 3D 모델 데이터가 들어있습니다!
-        // 여기서 CMesh를 생성하시고, 다이렉트X 버텍스/인덱스 버퍼를 만드시면 됩니다!
-        //
-        // 예시: 
-        // CMesh* pMesh = CMesh::Create_FromBinary(m_pDevice, ..., pVertices, iNumVerts, pIndices, iNumIndices);
-        // m_Meshes.push_back(pMesh);
-        // ==========================================================
-
-        //  버퍼에 다 넘겨줬다면 쓸모없어진 임시 배열은 메모리 누수 방지를 위해 지워줍니다!
+       
         Safe_Delete_Array(pVertices);
         Safe_Delete_Array(pIndices);
     }

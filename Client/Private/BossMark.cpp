@@ -105,6 +105,14 @@ HRESULT CBossMark::Render()
     if (FAILED(m_pVIBufferCom->Render()))
         return E_FAIL;
 
+    if (m_iNumTexture == 3)
+    {
+        m_pGameInstance->Draw_Font(TEXT("Font_BossUI1"), TEXT("이름 없는 자"), _float2(g_iWinSizeX * 0.5f - 100, 50.f));
+
+        m_pGameInstance->Draw_Font(TEXT("Font_BossUI1"), TEXT("이름 없는 자를 격파하세요"), _float2(g_iWinSizeX - 570, 50.f));
+        m_pGameInstance->Draw_Font(TEXT("Font_Damage"), TEXT("이름 없는 왕국"), _float2(g_iWinSizeX - 258, 110.f), XMVectorSet(0.918f, 0.690f, 0.235f, 1.0f));
+    }
+
     return S_OK;
 }
 

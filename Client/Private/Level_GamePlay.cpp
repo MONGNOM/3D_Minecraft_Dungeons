@@ -82,7 +82,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 	CameraDesc.fSpeedPerSec = 10.f;
 	CameraDesc.fDegreePerSec = 180.f;
 	//CameraDesc.vEye = _float4(100.f, 70.f, 200.f, 1.f); // 배치 위치 
- 	CameraDesc.vEye = _float4(0.f, 10.f, -7.f, 1.f);
+	CameraDesc.vEye = _float4(0.f, 10.f, -7.f, 1.f);
 	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
 	CameraDesc.fFovy = XMConvertToRadians(60.f) ;
 	CameraDesc.fNear = 0.1f;

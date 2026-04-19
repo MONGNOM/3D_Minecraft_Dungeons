@@ -6,6 +6,8 @@
 #include "Level_Logo.h"
 #include "Level_GamePlay.h"
 #include "Level_Dungeon.h"
+#include "Level_Boss.h"
+#include "Level_BossPath.h"
 
 CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel { pDevice, pContext }
@@ -47,6 +49,12 @@ void CLevel_Loading::Update(_float fTimeDelta)
 			break;
 		case LEVEL::DUNGEON:
 			pNextLevel = CLevel_Dungeon::Create(m_pDevice, m_pContext);
+			break;
+		case LEVEL::BOSS:
+			pNextLevel = CLevel_Boss::Create(m_pDevice, m_pContext);
+			break;
+		case LEVEL::BOSSPATH:
+			pNextLevel = CLevel_BossPath::Create(m_pDevice, m_pContext);
 			break;
 		}
 

@@ -31,7 +31,7 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-
+	_wstring text;
 private:
 	_uint m_iNumTexture{};
 
@@ -39,8 +39,12 @@ protected:
 	CShader* m_pShaderCom = { nullptr };
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
-
+	CGameObject* m_pPlayer = nullptr;
 	HRESULT Ready_Components();
+
+	_float m_fOriginalSizeY;
+	_float m_fOriginalY;
+	_float whiteTiemr = 0;
 
 public:
 	static CHotBar* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

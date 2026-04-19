@@ -96,7 +96,7 @@ void CBody_Player::Update(_float fTimeDelta)
 
 		case PLAYERSTATE::FAILING:
 		{
-			CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));  // 레이어이름을 저렇게 할까그냥
+			CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), ETOI(m_eSceneType), TEXT("Com_Collider")));  // 레이어이름을 저렇게 할까그냥
 			collider->SetActive_Collider(false);
 			m_pModelCom->Set_Animation(3, false);
 			break;
@@ -140,13 +140,14 @@ void CBody_Player::Update(_float fTimeDelta)
 			{
 				m_bshot = false;
 				CArrow::ArrowDesc desc{};
-				desc.Scenetype = m_eSceneType;
 				desc.rot = m_pTransformCom->Get_Rotation();
 				XMStoreFloat3(&desc.pos, XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3][0])));
 				desc.pos.y += 1.5f;
-				desc.look = XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[2][0]));
-				desc.type = OBJECTTYPE::PLAYER;
-				if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_Arrow"), m_eObjectType, TEXT("Clone_Layer"), &desc)))
+				desc.look = XMVector3Normalize(XMLoadFloat4((reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[2][0]))));
+				desc.Scenetype = m_eSceneType;
+				desc.NumTexture = 0;
+
+				if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_Arrow"), ETOI(m_eSceneType), TEXT("Load_Layer"), &desc)))
 				{
 					MSG_BOX("화살안만들어졌어");
 					return;
@@ -156,7 +157,7 @@ void CBody_Player::Update(_float fTimeDelta)
 			}
 		case PLAYERSTATE::FAILING:
 			{
-				CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+				CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), ETOI(m_eSceneType), TEXT("Com_Collider")));
 				collider->SetActive_Collider(true);
 				dynamic_cast<CPlayer*>(m_pPlayer)->Set_Roll(false);
 				break;

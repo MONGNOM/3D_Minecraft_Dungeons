@@ -315,12 +315,6 @@ void CImGui_Panel_Hierarchy::Render()
             }
             iSelectedProtoIndex++;
              
-            // ==========================================================
-             //  [여기에 코드를 작성해주세요!] 
-             // 1. 프로토타입 매니저에서 selectedPrototypeName 으로 원본 찾기
-             // 2. 원본->Clone() 호출하여 새 오브젝트 생성
-             // 3. 생성된 새 오브젝트를 현재 Scene(하이어라키) 리스트에 추가
-             // ==========================================================
         }
 
 
@@ -332,8 +326,7 @@ void CImGui_Panel_Hierarchy::Render()
     ImGui::Text("Map_Data");
     ImGui::Separator(); // 예쁜 가로줄 긋기
 
-    // 1. 저장 버튼
-    // 버튼을 클릭하는 바로 그 순간(프레임)에만 true가 반환됩니다.
+    
     if (ImGui::Button("Save") || CGameInstance::GetInstance()->Get_DIKeyState(DIK_LCONTROL) && CGameInstance::GetInstance()->Get_DIKeyDown(DIK_S))
     {
         vector<OBJECTINFO> objectInfoList;

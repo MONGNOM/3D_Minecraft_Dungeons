@@ -49,8 +49,21 @@ HRESULT CWeapon::Initialize(void* pArg)
 
 	m_iSwordDamage = m_pGameInstance->Random(10, 40);
 	
-	object = m_eSceneType == GAMEPLAY ? &m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Layer_Clone")) : &m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Load_Layer"));
+	if (m_eSceneType == GAMEPLAY)
+		object = &m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Layer_Clone"));
+	else
+		object = &m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Load_Layer"));
 
+	// 2. 포인터가 유효한지 먼저 검사하고, 유효하다면 비어있는지(empty) 확인합니다.
+	if (object == nullptr || object->empty())
+	{
+		// 레이어 자체가 없거나, 레이어는 있는데 안에 든 오브젝트가 0개일 때
+		object = nullptr;
+
+		// 여기에 중단점(F9 키)을 걸어서 이 안으로 잘 들어오는지 확인해 보세요!
+		int a = 10;
+	}
+	
 	return S_OK;
 }
 
@@ -115,7 +128,7 @@ HRESULT CWeapon::Render()
 
 void CWeapon::Intersect_ToMonster()
 {
-	if (nullptr == object)
+	if (nullptr == object ||  0 >= object->size() )
 		return;
 	
 

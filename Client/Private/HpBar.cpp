@@ -83,8 +83,6 @@ void CHpBar::Update(_float fTimeDelta)
 
 void CHpBar::Late_Update(_float fTimeDelta)
 {
-    
-
     m_pGameInstance->Add_RenderGroup(RENDERGROUP::UI, this);
 }
 

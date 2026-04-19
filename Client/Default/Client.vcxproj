@@ -155,7 +155,10 @@
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\public\Body_Player.h" />
     <ClInclude Include="..\public\Body_Skeleton.h" />
+    <ClInclude Include="..\Public\Door.h" />
+    <ClInclude Include="..\Public\Level_Boss.h" />
     <ClInclude Include="..\Public\BossMark.h" />
+    <ClInclude Include="..\Public\Level_BossPath.h" />
     <ClInclude Include="..\Public\Bow.h" />
     <ClInclude Include="..\public\Bridge.h" />
     <ClInclude Include="..\Public\Bucket.h" />
@@ -215,7 +218,10 @@
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\private\Body_Player.cpp" />
     <ClCompile Include="..\private\Body_Skeleton.cpp" />
+    <ClCompile Include="..\Private\Door.cpp" />
+    <ClCompile Include="..\Private\Level_Boss.cpp" />
     <ClCompile Include="..\Private\BossMark.cpp" />
+    <ClCompile Include="..\Private\Level_BossPath.cpp" />
     <ClCompile Include="..\Private\Bow.cpp" />
     <ClCompile Include="..\private\Bridge.cpp" />
     <ClCompile Include="..\Private\Bucket.cpp" />
@@ -279,6 +285,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex_Blend.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTex_Hp.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

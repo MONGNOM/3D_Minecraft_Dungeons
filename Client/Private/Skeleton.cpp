@@ -53,7 +53,7 @@ HRESULT CSkeleton::Initialize(void* pArg)
 	desc.iNumTexture = 0;
 	desc.owner = this;
 	
-	if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_HpBar"), m_eObjectType, TEXT("Clone_Layer"), &desc)))
+	if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_HpBar"), m_eObjectType, m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), &desc)))
 	{
 		MSG_BOX("½ºÄÌ·¹Åæ Hp¹Ù ¾È ¸¸µé¾îÁü");
 		return E_FAIL;
@@ -113,7 +113,7 @@ HRESULT CSkeleton::Render()
 void CSkeleton::Intersect_ToPlayer()
 {
 
-	CTransform* pPlayerTransform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Transform")));
+	CTransform* pPlayerTransform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), ETOI(m_eSceneType), TEXT("Com_Transform")));
 
 	if (pPlayerTransform == nullptr) return;
 
@@ -173,7 +173,7 @@ void CSkeleton::TakeHit(_uint damage)
 	 desc.damage = damage;
 	 //m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(fOrthoX, fOrthoY, BarPos.z, 1.f));
 
-	 if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_DamageFont"), m_eObjectType, TEXT("Clone_Layer"), &desc)))
+	 if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_DamageFont"), m_eObjectType, m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), &desc)))
 	 {
 		 MSG_BOX("½ºÄÌ·¹Åæ ÆùÆ® ¾È ¸¸µé¾îÁü");
 		 return;

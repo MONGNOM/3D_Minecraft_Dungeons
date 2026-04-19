@@ -19,7 +19,7 @@ namespace Client
 	const unsigned int		g_iWinSizeX = { 2560 };
 	const unsigned int		g_iWinSizeY = { 1440 };
 
-	enum class LEVEL { STATIC, LOADING, LOGO, GAMEPLAY, DUNGEON, END };
+	enum class LEVEL { STATIC, LOADING, LOGO, GAMEPLAY, DUNGEON, BOSSPATH, BOSS, END };
 
 
 }
