@@ -30,22 +30,8 @@ HRESULT CFreeCamera::Initialize(void* pArg)
 
 void CFreeCamera::Priority_Update(_float fTimeDelta)
 {
-	switch (m_eSceneType)
+	if (m_eSceneType == GAMEPLAY)
 	{
-	case SCENETYPE::DUNGEON:
-	{
-		CTransform* pTerTransform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Load_Layer"), ETOI(m_eSceneType), TEXT("Com_Transform")));
-		if (nullptr == pTerTransform) break;
-		_float3 playerPos;
-		XMStoreFloat3(&playerPos, pTerTransform->Get_State(STATE::POSITION));
-		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(playerPos.x - 15.f, playerPos.y + 20.f, playerPos.z - 15.f, 1.f));
-
-		_vector vTargetPos = XMVectorSet(playerPos.x, playerPos.y + 1, playerPos.z, 1.f);
-		m_pTransformCom->LookAt(vTargetPos);
-
-		break;
-	}	
-	case SCENETYPE::GAMEPLAY :
 		if (m_pGameInstance->Get_DIKeyState(DIK_LSHIFT))
 			m_fMoveSpeed = fTimeDelta * 2;
 		else
@@ -95,8 +81,20 @@ void CFreeCamera::Priority_Update(_float fTimeDelta)
 				m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), fTimeDelta * MouseMove * m_fMouseSensor);
 			}
 		}
-		break;
+
 	}
+	else
+	{
+		CTransform* pTerTransform = dynamic_cast<CTransform*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Load_Layer"), ETOI(m_eSceneType), TEXT("Com_Transform")));
+		if (nullptr == pTerTransform) return;
+		_float3 playerPos;
+		XMStoreFloat3(&playerPos, pTerTransform->Get_State(STATE::POSITION));
+		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(playerPos.x - 15.f, playerPos.y + 20.f, playerPos.z - 15.f, 1.f));
+
+		_vector vTargetPos = XMVectorSet(playerPos.x, playerPos.y + 1, playerPos.z, 1.f);
+		m_pTransformCom->LookAt(vTargetPos);
+	}
+
 	__super::Update_TransformMatrices();
 	
 }

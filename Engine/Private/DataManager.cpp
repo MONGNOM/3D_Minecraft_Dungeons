@@ -75,6 +75,16 @@ HRESULT CDataManager::Load_Date(const _tchar* filePath, vector<tagObjectInfo>& o
 	return S_OK;
 }
 
+const PLAYER_DATA& CDataManager::Get_PlayerData() const
+{
+	return 	m_sPlayerdata;
+}
+
+void CDataManager::Set_PlayerData(const PLAYER_DATA& data)
+{
+	m_sPlayerdata = data;
+}
+
 CDataManager* CDataManager::Create()
 {
 	return new CDataManager;

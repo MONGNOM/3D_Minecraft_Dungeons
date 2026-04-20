@@ -96,6 +96,7 @@ void CBody_Player::Update(_float fTimeDelta)
 
 		case PLAYERSTATE::FAILING:
 		{
+
 			CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), ETOI(m_eSceneType), TEXT("Com_Collider")));  // 레이어이름을 저렇게 할까그냥
 			collider->SetActive_Collider(false);
 			m_pModelCom->Set_Animation(3, false);

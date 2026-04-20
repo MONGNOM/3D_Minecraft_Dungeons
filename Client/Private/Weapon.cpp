@@ -47,7 +47,7 @@ HRESULT CWeapon::Initialize(void* pArg)
 	));*/
 	m_pColliderCom->Set_isColl(false);
 
-	m_iSwordDamage = m_pGameInstance->Random(10, 40);
+	
 	
 	if (m_eSceneType == GAMEPLAY)
 		object = &m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Layer_Clone"));
@@ -133,7 +133,7 @@ void CWeapon::Intersect_ToMonster()
 	
 
 	// 콜라이더 색깔이 이상하ㅔㄱ 바뀜 이거 체크 해야할듯
-	
+	m_iSwordDamage = m_pGameInstance->Random(10, 40);
 
 	for (auto& iter : *object)
 	{

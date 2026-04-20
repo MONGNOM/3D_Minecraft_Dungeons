@@ -40,6 +40,8 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	_bool* Get_TakeHit() { return &m_bTakehit; }
+	void Set_TakeHit(_bool value) { m_bTakehit = value; }
 
 protected:
 	HRESULT Ready_Components();
@@ -48,6 +50,11 @@ private:
 	_bool Intersect_ToPlayer();
 	_bool Intersect_ToPlayerAttack();
 	_bool Intersect_ToPlayerSphere();
+	_bool m_bTakehit = false;
+
+	CGameObject* m_pHpBar = nullptr;
+
+	virtual void TakeHit(_uint damage) override;
 
 private:
 	CCollider* m_pColliderCom[ETOI(COLLIDER::END)] = { nullptr };

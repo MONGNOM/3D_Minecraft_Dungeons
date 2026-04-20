@@ -34,6 +34,8 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	_bool* Get_TakeHit() { return &m_bTakehit; }
+	void Set_TakeHit(_bool value) { m_bTakehit = value; }
 
 
 protected:
@@ -43,6 +45,7 @@ private:
 	_bool Intersect_ToPlayer();
 	_bool Intersect_ToPlayerAttack();
 	_bool Intersect_ToPlayerSphere();
+	CGameObject* m_pHpBar = nullptr;
 
 private:
 	CCollider* m_pColliderCom[ETOI(COLLIDER::END)] = {nullptr};
@@ -50,6 +53,8 @@ private:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	ZOMBIESTATE state = {};
+	_bool m_bTakehit = false;
+	virtual void TakeHit(_uint damage) override;
 
 	_uint damage;
 

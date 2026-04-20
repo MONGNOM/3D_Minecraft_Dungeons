@@ -30,7 +30,6 @@ HRESULT CArrow::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_iArrowDamage = m_pGameInstance->Random(20, 30);
 
 
 	if (desc != nullptr)
@@ -40,12 +39,13 @@ HRESULT CArrow::Initialize(void* pArg)
 		m_eSceneType = desc->Scenetype;
 		m_etype = desc->type;
 		m_Name = desc->name;
-		m_pTransformCom->Set_State(STATE::LOOK, desc->look);
 	}
 
 
 	m_pTransformCom->Set_Rotation(m_fRot);
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
+	m_pTransformCom->Set_State(STATE::LOOK, desc->look);
+
 	object = m_eSceneType == GAMEPLAY ? &m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Layer_Clone")) : &m_pGameInstance->Get_LayerObjects(m_eSceneType, TEXT("Load_Layer"));
 
 	return S_OK;
@@ -103,6 +103,8 @@ void CArrow::Intersect_ToMonster()
 	CCollider* colliderplayer = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), ETOI(m_eSceneType), TEXT("Com_Collider")));
 
 	if (colliderplayer == nullptr) return;
+
+	m_iArrowDamage = m_pGameInstance->Random(20, 40);
 
 	if (m_pColliderCom->Intersect(colliderplayer) && m_etype == OBJECTTYPE::MONSTER)
 	{

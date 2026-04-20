@@ -33,13 +33,6 @@ HRESULT CHotBar::Initialize(void* pArg)
     if (FAILED(Ready_Components()))
         return E_FAIL;
 
-    if (m_iNumTexture == 3 || m_iNumTexture == 4 || m_iNumTexture == 5 || m_iNumTexture == 6)
-    {
-
-        // 이거 씬마다로 해줘야함 씬 추가해야해서
-       // m_pPlayer = m_pGameInstance->Get_GameObject(TEXT("Prototype_GameObject_Player0"), TEXT("Load_Layer"), ETOI(LEVEL::DUNGEON));
-    }
-
 
     return S_OK;
 }
@@ -54,7 +47,7 @@ void CHotBar::Update(_float fTimeDelta)
 
     if (m_iNumTexture == 3 || m_iNumTexture == 4) // 4는 1초뒤로
     {
-        m_pPlayer = m_pGameInstance->Get_GameObject(TEXT("Prototype_GameObject_Player0"), TEXT("Load_Layer"), ETOI(LEVEL::DUNGEON));
+        m_pPlayer = m_pGameInstance->Get_GameObject(TEXT("Prototype_GameObject_Player0"), TEXT("Load_Layer"), m_eSceneType);
         CPlayer* player = dynamic_cast<CPlayer*>(m_pPlayer);
 
         //whiteTiemr += fTimeDelta;
@@ -83,7 +76,7 @@ HRESULT CHotBar::Render()
     
     if (m_iNumTexture == 3 || m_iNumTexture == 4)
     {
-        m_pPlayer = m_pGameInstance->Get_GameObject(TEXT("Prototype_GameObject_Player0"), TEXT("Load_Layer"), ETOI(LEVEL::DUNGEON));
+        m_pPlayer = m_pGameInstance->Get_GameObject(TEXT("Prototype_GameObject_Player0"), TEXT("Load_Layer"), m_eSceneType);
 
         if (nullptr == m_pPlayer)
             return E_FAIL;
@@ -97,7 +90,7 @@ HRESULT CHotBar::Render()
     }
     else if (m_iNumTexture == 5 || m_iNumTexture == 6)
     {
-        m_pPlayer = m_pGameInstance->Get_GameObject(TEXT("Prototype_GameObject_Player0"), TEXT("Load_Layer"), ETOI(LEVEL::DUNGEON));
+        m_pPlayer = m_pGameInstance->Get_GameObject(TEXT("Prototype_GameObject_Player0"), TEXT("Load_Layer"), m_eSceneType);
         if (nullptr == m_pPlayer)
             return E_FAIL;
 

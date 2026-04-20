@@ -3,6 +3,8 @@
 #include "Weapon.h"
 #include "Body_Player.h"
 #include "GameInstance.h"
+#include "DamageFont.h"
+#include "HpBar.h"
 
 CSkeletonVanguard::CSkeletonVanguard(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -64,6 +66,23 @@ HRESULT CSkeletonVanguard::Initialize(void* pArg)
 
 	m_pTransformCom->LookAt(vTargetPos);
 
+
+	CHpBar::HPBAR_DESC gdesc{};
+	gdesc.fSizeY = 11;
+	gdesc.fSizeX = 98;
+	gdesc.Scenetype = m_eSceneType;
+	gdesc.iNumTexture = 0;
+	gdesc.owner = this;
+	gdesc.connet = &m_pHpBar;
+	gdesc.CheckOwner = 4;
+	if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_HpBar"), m_eObjectType, m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), &gdesc)))
+	{
+		MSG_BOX("스켈레톤 Hp바 안 만들어짐");
+		return E_FAIL;
+	}
+
+	m_bTakehit = false;
+
 	return S_OK;
 }
 
@@ -74,7 +93,12 @@ void CSkeletonVanguard::Priority_Update(_float fTimeDelta)
 void CSkeletonVanguard::Update(_float fTimeDelta)
 {
 	if (m_fCurrentHp <= 0)
+	{
 		Set_Dead();
+
+		if (m_pHpBar != nullptr)
+			dynamic_cast<CHpBar*>(m_pHpBar)->Set_OwnerDead();
+	}
 
 	if (Intersect_ToPlayer())
 	{
@@ -287,6 +311,31 @@ _bool CSkeletonVanguard::Intersect_ToPlayerSphere()
 	{
 		m_pColliderCom[ETOI(COLLIDER::SPHERE)]->Set_isColl(false);
 		return false;
+	}
+}
+
+void CSkeletonVanguard::TakeHit(_uint damage)
+{
+	m_fCurrentHp -= damage;
+	m_bTakehit = true;
+
+	_vector vSkeletonPos = m_pTransformCom->Get_State(STATE::POSITION);
+
+	// 2. 머리 위 높이만 살짝 더해줍니다. (여전히 3D 월드 좌표입니다)
+	vSkeletonPos = XMVectorSetY(vSkeletonPos, XMVectorGetY(vSkeletonPos) + 3.f);
+	vSkeletonPos = XMVectorSetZ(vSkeletonPos, XMVectorGetZ(vSkeletonPos) + 0.3f);
+	CDamageFont::DAMAGEFONT_DESC desc{};
+	desc.fSizeY = 400;
+	desc.fSizeX = 400;
+	desc.Scenetype = m_eSceneType;
+	XMStoreFloat3(&desc.pos, vSkeletonPos);
+	desc.damage = damage;
+	//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(fOrthoX, fOrthoY, BarPos.z, 1.f));
+
+	if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_DamageFont"), m_eObjectType, m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), &desc)))
+	{
+		MSG_BOX("조밉 폰트 안 만들어짐");
+		return;
 	}
 }
 

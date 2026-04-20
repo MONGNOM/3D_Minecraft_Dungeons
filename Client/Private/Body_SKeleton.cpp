@@ -66,9 +66,10 @@ void CBody_Skeleton::Update(_float fTimeDelta)
 			desc.rot = m_pTransformCom->Get_Rotation();
 			XMStoreFloat3(&desc.pos, XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3][0])));
 			desc.pos.y += 1.5f;
-			desc.look = XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[2][0]));
+			desc.look = XMVector3Normalize(XMLoadFloat4((reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[2][0]))));
 			desc.type = OBJECTTYPE::MONSTER;
-			if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_Arrow"), m_eObjectType, TEXT("Clone_Layer"), &desc)))
+
+			if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_Arrow"), ETOI(m_eSceneType), TEXT("Load_Layer"), &desc)))
 			{
 				MSG_BOX("화살안만들어졌어");
 				return;
@@ -180,7 +181,7 @@ HRESULT CBody_Skeleton::Bind_ShaderResources()
 
 _bool CBody_Skeleton::Intersect_ToPlayer()
 {
-	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), TEXT("Layer_Clone"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), ETOI(m_eSceneType), TEXT("Com_Collider")));
 
 	if (collider == nullptr) return false;
 

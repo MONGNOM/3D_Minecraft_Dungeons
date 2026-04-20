@@ -18,6 +18,7 @@ public:
 	{
 		_uint iNumTexture {};
 		CGameObject* owner = nullptr;
+		CGameObject** connet = nullptr;
 	}BOSSMARK_DESC;
 
 private:
@@ -32,7 +33,9 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-
+	void Set_OwnerDead() { m_bOwnerDead = true; }
+	void isDead() { Set_Dead(); m_pOwner = nullptr; }
+	
 private:
 	_uint m_iNumTexture{};
 
@@ -43,6 +46,7 @@ protected:
 	_float m_fOriginalSizeX;
 	HRESULT Ready_Components();
 	CGameObject* m_pOwner;
+	_bool m_bOwnerDead = false;
 
 	_float m_fOriginalX = 0.f;
 public:

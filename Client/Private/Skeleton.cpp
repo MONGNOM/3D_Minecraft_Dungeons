@@ -52,13 +52,16 @@ HRESULT CSkeleton::Initialize(void* pArg)
 	desc.Scenetype = m_eSceneType;
 	desc.iNumTexture = 0;
 	desc.owner = this;
-	
+	desc.connet = &m_pHpBar;
+	desc.CheckOwner = 0;
+
 	if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_HpBar"), m_eObjectType, m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), &desc)))
 	{
 		MSG_BOX("½ºÄÌ·¹Åæ Hp¹Ù ¾È ¸¸µé¾îÁü");
 		return E_FAIL;
 	}
 
+	
 	m_eObjectType = OBJECTTYPE::MONSTER;
 
 	m_fMaxHp = 60;
@@ -70,17 +73,21 @@ HRESULT CSkeleton::Initialize(void* pArg)
 void CSkeleton::Priority_Update(_float fTimeDelta)
 {
 	__super::Priority_Update(fTimeDelta);
+
+
+
 }
 
 void CSkeleton::Update(_float fTimeDelta)
 {
 	if (m_fCurrentHp <= 0)
 	{
-		m_bOwner = false;
-		dynamic_cast<CHpBar*>(m_pHpBar)->isDead();
-
 		Set_Dead();
+
+		if (m_pHpBar != nullptr)
+			dynamic_cast<CHpBar*>(m_pHpBar)->Set_OwnerDead();
 	}
+
 	Intersect_ToPlayer();
 	
 	if (m_iState & SKELETONSTATE::ATTACK)

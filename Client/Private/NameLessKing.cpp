@@ -29,6 +29,7 @@ HRESULT CNameLessKing::Initialize(void* pArg)
 	Desc->fSpeedPerSec = 10.f;
 	Desc->fDegreePerSec = 180.f;
 
+
 	m_bShadow = Desc->Shadow;
 	m_bTakehit = false;
 	/* 백그라운드의 멤버를 채워넣어야한다면 여기서 채운다. */
@@ -138,9 +139,11 @@ void CNameLessKing::Update(_float fTimeDelta)
 			Desc.fX = g_iWinSizeX * 0.5f + 10;
 			Desc.fY = 140;
 			Desc.iNumTexture = 1;
-			Desc.Scenetype = CGameObject::SCENETYPE::STATIC;
-			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
-				ETOI(LEVEL::STATIC), TEXT("Layer_UI"), &Desc)))
+			Desc.Scenetype = CGameObject::SCENETYPE::BOSS;
+			Desc.connet = &m_pHpBar;
+
+			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSS), TEXT("Prototype_GameObject_BossMark"),
+				ETOI(LEVEL::BOSS), TEXT("Layer_UI"), &Desc)))
 				return;
 
 			// 체력바
@@ -149,10 +152,11 @@ void CNameLessKing::Update(_float fTimeDelta)
 			Desc.fX = g_iWinSizeX * 0.5f + 10;
 			Desc.fY = 140;
 			Desc.iNumTexture = 0;
-			Desc.Scenetype = CGameObject::SCENETYPE::STATIC;
+			Desc.Scenetype = CGameObject::SCENETYPE::BOSS;
 			Desc.owner = this;
-			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
-				ETOI(LEVEL::STATIC), TEXT("Layer_UI"), &Desc)))
+			Desc.connet = &m_pHpBar1;
+			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSS), TEXT("Prototype_GameObject_BossMark"),
+				ETOI(LEVEL::BOSS), TEXT("Layer_UI"), &Desc)))
 				return;
 
 
@@ -162,8 +166,9 @@ void CNameLessKing::Update(_float fTimeDelta)
 			Desc.fX = g_iWinSizeX * 0.5f - 150;
 			Desc.fY = 140;
 			Desc.iNumTexture = 3;
-			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
-				ETOI(LEVEL::STATIC), TEXT("Layer_UI"), &Desc)))
+			Desc.connet = &m_pHpBar2;
+			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSS), TEXT("Prototype_GameObject_BossMark"),
+				ETOI(LEVEL::BOSS), TEXT("Layer_UI"), &Desc)))
 				return;
 
 			////마커 2
@@ -172,8 +177,9 @@ void CNameLessKing::Update(_float fTimeDelta)
 			Desc.fX = g_iWinSizeX * 0.5f + 150;
 			Desc.fY = 140;
 			Desc.iNumTexture = 3;
-			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
-				ETOI(LEVEL::STATIC), TEXT("Layer_UI"), &Desc)))
+			Desc.connet = &m_pHpBar3;
+			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSS), TEXT("Prototype_GameObject_BossMark"),
+				ETOI(LEVEL::BOSS), TEXT("Layer_UI"), &Desc)))
 				return;
 
 			// 이름 옆에 마커
@@ -182,10 +188,10 @@ void CNameLessKing::Update(_float fTimeDelta)
 			Desc.fX = g_iWinSizeX * 0.5f - 150;
 			Desc.fY = 80;
 			Desc.iNumTexture = 2;
-			Desc.Scenetype = CGameObject::SCENETYPE::STATIC;
-
-			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
-				ETOI(LEVEL::STATIC), TEXT("Layer_UI"), &Desc)))
+			Desc.Scenetype = CGameObject::SCENETYPE::BOSS;
+			Desc.connet = &m_pHpBar4;
+			if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSS), TEXT("Prototype_GameObject_BossMark"),
+				ETOI(LEVEL::BOSS), TEXT("Layer_UI"), &Desc)))
 				return;
 		}
 	}
@@ -256,9 +262,9 @@ void CNameLessKing::Update(_float fTimeDelta)
 				{
 					_float3 svPos;
 					XMStoreFloat3(&svPos, m_pTransformCom->Get_State(STATE::POSITION));
-					svPos.x += m_pGameInstance->Random(0, 15);
+					svPos.x += m_pGameInstance->Random(-3, 3);
 					svPos.y;
-					svPos.z += m_pGameInstance->Random(0, 15);
+					svPos.z += m_pGameInstance->Random(-3, 3);
 
 					m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(svPos.x, svPos.y, svPos.z, 1.f));
 				}
@@ -338,6 +344,25 @@ void CNameLessKing::Update(_float fTimeDelta)
 
 	for (auto& iter : m_pColliderCom)
 		iter->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+
+	if (m_fCurrentHp <= 0)
+	{
+		Set_Dead();
+
+		// 이거 하드코딩이라서 수정해야함 
+
+		if (m_pHpBar != nullptr)
+			dynamic_cast<CBossMark*>(m_pHpBar)->Set_OwnerDead();
+		if (m_pHpBar1 != nullptr)
+			dynamic_cast<CBossMark*>(m_pHpBar1)->Set_OwnerDead();
+		 if (m_pHpBar2 != nullptr)
+			dynamic_cast<CBossMark*>(m_pHpBar2)->Set_OwnerDead();
+		if (m_pHpBar3 != nullptr)
+			dynamic_cast<CBossMark*>(m_pHpBar3)->Set_OwnerDead();
+		if (m_pHpBar4 != nullptr)
+			dynamic_cast<CBossMark*>(m_pHpBar4)->Set_OwnerDead();
+	}
+
 }
 
 void CNameLessKing::Late_Update(_float fTimeDelta)

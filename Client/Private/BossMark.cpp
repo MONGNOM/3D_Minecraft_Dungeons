@@ -29,11 +29,13 @@ HRESULT CBossMark::Initialize(void* pArg)
     m_iNumTexture = pDesc->iNumTexture;
     m_eSceneType = pDesc->Scenetype;
     m_fOriginalX = m_fX;
-   
+
     if (m_iNumTexture == 0)
     {
         m_pOwner = pDesc->owner;
     }
+
+    *pDesc->connet = this;
 
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
@@ -51,28 +53,30 @@ void CBossMark::Priority_Update(_float fTimeDelta)
 
 void CBossMark::Update(_float fTimeDelta)
 {
-    __super::Update_Transform();
-
-    if (m_iNumTexture == 0)
+    if (m_bOwnerDead)
+        isDead();
+    else
     {
-        CNameLessKing* pNameLessKing = dynamic_cast<CNameLessKing*>(m_pOwner);
+        __super::Update_Transform();
 
-       
-
-        if (*pNameLessKing->Get_TakeHit())
+        if (m_iNumTexture == 0)
         {
-            m_fSizeX = m_fOriginalSizeX * m_pOwner->Get_HpRatio();
-            pNameLessKing->Set_TakeHit(false);
+            CNameLessKing* pNameLessKing = dynamic_cast<CNameLessKing*>(m_pOwner);
+
+
+            if (*pNameLessKing->Get_TakeHit())
+            {
+                m_fSizeX = m_fOriginalSizeX * m_pOwner->Get_HpRatio();
+                pNameLessKing->Set_TakeHit(false);
+            }
+
+            //m_pTransformCom->SetUp_Scale(m_fSizeX, m_fSizeY, 1.f);
+
+            _float fLostWidth = m_fOriginalSizeX - m_fSizeX;
+            _float fOffsetX = fLostWidth * 0.5f;
+            m_fX = m_fOriginalX - fOffsetX;
+            //m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fX, m_fY, 0.f, 1.f));
         }
-
-        //m_pTransformCom->SetUp_Scale(m_fSizeX, m_fSizeY, 1.f);
-
-        _float fLostWidth = m_fOriginalSizeX - m_fSizeX;
-        _float fOffsetX = fLostWidth * 0.5f;
-        m_fX = m_fOriginalX - fOffsetX;
-        //m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fX, m_fY, 0.f, 1.f));
-
-     
     }
 
 }

@@ -46,14 +46,14 @@ HRESULT CLevel_BossPath::Initialize()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_Layer_Camera(TEXT("Load_Layer"))))
+	if (FAILED(Ready_Layer_Camera(TEXT("Load_Layer"))))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 	
 	if (FAILED(Ready_Layer_Load()))
-		return E_FAIL;*/
+		return E_FAIL;
 	
 
 	return S_OK;
@@ -328,7 +328,8 @@ HRESULT CLevel_BossPath::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	CGameObject::GAMEOBJECT_DESC desc;
 	desc.Scenetype = CGameObject::SCENETYPE::BOSSPATH;
-
+	desc.NumTexture = 0;
+	
 	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_Sky"),
 		ETOI(LEVEL::BOSSPATH), strLayerTag, &desc)))
 		return E_FAIL;
@@ -340,7 +341,7 @@ HRESULT CLevel_BossPath::Ready_Layer_UI(const _wstring& strLayerTag)
 HRESULT CLevel_BossPath::Ready_Layer_Load()
 {
 	vector<OBJECTINFO> objectInfoList;
-	m_pGameInstance->Load_Date(TEXT("../Robby_Save.json"), objectInfoList);
+	m_pGameInstance->Load_Date(TEXT("../BossPath_Save.json"), objectInfoList);
 
 	for (auto& object : objectInfoList)
 	{

@@ -17,6 +17,25 @@ CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 {
 	m_eNextLevelID = eNextLevelID;
+	switch (m_eNextLevelID)
+	{
+	case LEVEL::LOGO:
+		m_iNumLoading = 0;
+		break;
+	case LEVEL::GAMEPLAY:
+		m_iNumLoading = 0;
+		break;
+	case LEVEL::DUNGEON:
+		m_iNumLoading = 1;
+		break;
+	case LEVEL::BOSS:
+		m_iNumLoading = 3;
+		break;
+	case LEVEL::BOSSPATH:
+		m_iNumLoading = 2;
+		break;
+	}
+
 
 	/* 로딩 화면을 구성해주기위한 객체들을 생성한다. */
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
@@ -31,6 +50,8 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 
 	return S_OK;
 }
+
+
 
 void CLevel_Loading::Update(_float fTimeDelta)
 {
@@ -85,7 +106,31 @@ HRESULT CLevel_Loading::Render()
 
 HRESULT CLevel_Loading::Ready_Layer_BackGround(const _tchar* pLayerTag)
 {
-	
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::LOADING), TEXT("Prototype_Component_Texture_Title"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/Title/TitleImage_%d.png"), 4))))
+	{
+		MSG_BOX("Fail to Add_Prototype : Title Texture");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::LOADING), TEXT("Prototype_GameObject_Loading"),
+		CBackGround::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Loading");
+		return E_FAIL;
+	}
+
+
+	CBackGround::BACKGROUND_DESC BackGroundDesc{};
+
+	BackGroundDesc.currentLevel = LEVEL::LOADING;
+	BackGroundDesc.NumTexture = m_iNumLoading;
+	BackGroundDesc.Scenetype = CGameObject::SCENETYPE::LOADING;
+
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::LOADING), TEXT("Prototype_GameObject_Loading"),
+		ETOI(LEVEL::LOADING), pLayerTag, &BackGroundDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }

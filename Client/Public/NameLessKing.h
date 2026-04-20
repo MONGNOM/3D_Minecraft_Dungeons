@@ -29,6 +29,7 @@ public:
 	typedef struct tagNameLessKing : public CContainerObject::CONTAINEROBJECT_DESC
 	{
 		_uint Shadow = 0;
+
 	}NAMELESSKING_DESC;
 private:
 	CNameLessKing(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -52,6 +53,11 @@ protected:
 	virtual void TakeHit(_uint damage)override;
 private:
 	_bool Intersect_ToPlayerSphere();
+	CGameObject* m_pHpBar = nullptr;
+	CGameObject* m_pHpBar1 = nullptr;
+	CGameObject* m_pHpBar2 = nullptr;
+	CGameObject* m_pHpBar3 = nullptr;
+	CGameObject* m_pHpBar4 = nullptr;
 
 private:
 	CCollider* m_pColliderCom[2] = { nullptr };

@@ -3,6 +3,8 @@
 #include "Weapon.h"
 #include "Body_Player.h"
 #include "GameInstance.h"
+#include "HpBar.h"
+#include "DamageFont.h"
 
 CZombie::CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -23,10 +25,10 @@ HRESULT CZombie::Initialize_Prototype()
 HRESULT CZombie::Initialize(void* pArg)
 {
 	
-	CGameObject::GAMEOBJECT_DESC* desc = reinterpret_cast<GAMEOBJECT_DESC*>(pArg);
+	CGameObject::GAMEOBJECT_DESC* Gdesc = reinterpret_cast<GAMEOBJECT_DESC*>(pArg);
 
-	desc->fSpeedPerSec = 3.f;
-	desc->fDegreePerSec = 180.f;
+	Gdesc->fSpeedPerSec = 3.f;
+	Gdesc->fDegreePerSec = 180.f;
 
 
 	/* 백그라운드의 멤버를 채워넣어야한다면 여기서 채운다. */
@@ -37,11 +39,26 @@ HRESULT CZombie::Initialize(void* pArg)
 		return E_FAIL;
 	
 
-	if (desc != nullptr)
+	if (Gdesc != nullptr)
 	{
-		m_fPos = desc->pos;
+		m_fPos = Gdesc->pos;
 		
 		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
+	}
+
+
+	CHpBar::HPBAR_DESC desc{};
+	desc.fSizeY = 11;
+	desc.fSizeX = 98;
+	desc.Scenetype = m_eSceneType;
+	desc.iNumTexture = 0;
+	desc.owner = this;
+	desc.connet = &m_pHpBar;
+	desc.CheckOwner = 1;
+	if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_HpBar"), m_eObjectType, m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), &desc)))
+	{
+		MSG_BOX("스켈레톤 Hp바 안 만들어짐");
+		return E_FAIL;
 	}
 
 	m_eObjectType = OBJECTTYPE::MONSTER;
@@ -57,6 +74,7 @@ HRESULT CZombie::Initialize(void* pArg)
 
 	m_fMaxHp = 50;
 	m_fCurrentHp = m_fMaxHp;
+	m_bTakehit = false;
 
 	return S_OK;
 }
@@ -68,7 +86,12 @@ void CZombie::Priority_Update(_float fTimeDelta)
 void CZombie::Update(_float fTimeDelta)
 {
 	if (m_fCurrentHp <= 0)
+	{
 		Set_Dead();
+
+		if (m_pHpBar != nullptr)
+			dynamic_cast<CHpBar*>(m_pHpBar)->Set_OwnerDead();
+	}
 
 	if (Intersect_ToPlayer())
 	{
@@ -290,6 +313,31 @@ _bool CZombie::Intersect_ToPlayerSphere()
 }
 
 
+
+void CZombie::TakeHit(_uint damage)
+{
+	m_fCurrentHp -= damage;
+	m_bTakehit = true;
+	
+	_vector vSkeletonPos = m_pTransformCom->Get_State(STATE::POSITION);
+
+	// 2. 머리 위 높이만 살짝 더해줍니다. (여전히 3D 월드 좌표입니다)
+	vSkeletonPos = XMVectorSetY(vSkeletonPos, XMVectorGetY(vSkeletonPos) + 3.f);
+	vSkeletonPos = XMVectorSetZ(vSkeletonPos, XMVectorGetZ(vSkeletonPos) + 0.3f);
+	CDamageFont::DAMAGEFONT_DESC desc{};
+	desc.fSizeY = 400;
+	desc.fSizeX = 400;
+	desc.Scenetype = m_eSceneType;
+	XMStoreFloat3(&desc.pos, vSkeletonPos);
+	desc.damage = damage;
+	//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(fOrthoX, fOrthoY, BarPos.z, 1.f));
+
+	if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_DamageFont"), m_eObjectType, m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), &desc)))
+	{
+		MSG_BOX("조밉 폰트 안 만들어짐");
+		return;
+	}
+}
 
 CZombie* CZombie::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

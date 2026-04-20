@@ -38,7 +38,6 @@ protected:
 
 protected:
 	HRESULT Ready_Components();
-	HRESULT Switch_Components();
 
 public:
 	static CBackGround* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

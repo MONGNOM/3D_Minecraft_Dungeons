@@ -54,8 +54,10 @@ HRESULT CLevel_Logo::Ready_Layer_BackGround(const _wstring& strLayerTag)
 	CBackGround::BACKGROUND_DESC BackGroundDesc{};
 
 	BackGroundDesc.currentLevel = LEVEL::LOGO;
+	BackGroundDesc.NumTexture = 0;
+	BackGroundDesc.Scenetype = CGameObject::SCENETYPE::LOGO;
 
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::LOGO), TEXT("Prototype_GameObject_Title"),
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::LOGO), TEXT("Prototype_GameObject_Loading"),
 		ETOI(LEVEL::LOGO), strLayerTag, &BackGroundDesc)))
 		return E_FAIL;
 

@@ -34,6 +34,7 @@ public:
 	_bool* Get_FakeBool() { return &Fakebool; }
 	_bool* Get_TakeHit() { return &m_bTakehit; }
 	void Set_TakeHit(_bool value) {m_bTakehit = value; }
+	_bool* Get_OwnerDead() { return &m_bOwner; }
 
 protected:
 	HRESULT Ready_Components();

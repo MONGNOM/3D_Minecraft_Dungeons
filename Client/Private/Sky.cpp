@@ -31,6 +31,10 @@ HRESULT CSky::Initialize(void* pArg)
 
 	m_Name = TEXT("Sky_Box");
 	//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(Desc->pos.x, Desc->pos.y, Desc->pos.z, 1.f));
+
+	m_eSceneType = Desc->Scenetype;
+	m_iNumTexture = Desc->NumTexture;
+
 		
 	m_eObjectType = ENVIRONMENT;
 	return S_OK;
@@ -43,8 +47,8 @@ void CSky::Priority_Update(_float fTimeDelta)
 
 void CSky::Update(_float fTimeDelta)
 {
-	/*m_pTransformCom->Set_State(STATE::POSITION,
-		XMLoadFloat4(m_pGameInstance->Get_CamPosition()));*/
+	m_pTransformCom->Set_State(STATE::POSITION,
+		XMLoadFloat4(m_pGameInstance->Get_CamPosition()));
 }
 
 void CSky::Late_Update(_float fTimeDelta)

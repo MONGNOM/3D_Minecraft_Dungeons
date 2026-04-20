@@ -45,20 +45,15 @@ HRESULT CLevel_Boss::Initialize()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+
+	if (FAILED(Ready_Layer_Camera(TEXT("Load_Layer"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-		return E_FAIL;*/
-
-	//if (FAILED(Ready_Layer_Camera(TEXT("Load_Layer"))))
-	//	return E_FAIL;
-
-	//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-	//	return E_FAIL;
-	//
-	//if (FAILED(Ready_Layer_Load()))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+		return E_FAIL;
+	
+	if (FAILED(Ready_Layer_Load()))
+		return E_FAIL;
 	
 
 	return S_OK;
@@ -340,7 +335,7 @@ HRESULT CLevel_Boss::Ready_Layer_UI(const _wstring& strLayerTag)
 HRESULT CLevel_Boss::Ready_Layer_Load()
 {
 	vector<OBJECTINFO> objectInfoList;
-	m_pGameInstance->Load_Date(TEXT("../Robby_Save.json"), objectInfoList);
+	m_pGameInstance->Load_Date(TEXT("../Boss_Save.json"), objectInfoList);
 
 	for (auto& object : objectInfoList)
 	{

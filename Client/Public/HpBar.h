@@ -16,8 +16,11 @@ class CHpBar : public CUIObject
 public:
 	typedef struct tagHpbarDesc final : public CUIObject::UI_DESC
 	{
-		_uint iNumTexture {};
+		_uint iNumTexture{};
+		_uint CheckOwner{};
 		CGameObject* owner = nullptr;
+		CGameObject** connet = nullptr;
+
 
 	}HPBAR_DESC;
 
@@ -34,6 +37,7 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	void isDead() { Set_Dead(); m_pOwner = nullptr; }
+	void Set_OwnerDead() { m_bOwnerDead = true; }
 private:
 	_uint m_iNumTexture{};
 
@@ -46,6 +50,8 @@ protected:
 	_float fOrthoX;
 	_float fOrthoY;
 	_float m_fOriginalSizeX;
+	_bool m_bOwnerDead = false;
+	_uint ownerType;
 public:
 	static CHpBar* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

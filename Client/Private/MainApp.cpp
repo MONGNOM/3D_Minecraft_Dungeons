@@ -4,6 +4,7 @@
 #include "Cursor.h"
 #include <fstream>
 #include "BossMark.h"
+#include "BackGround.h"
 
 
 CMainApp::CMainApp()
@@ -65,17 +66,13 @@ void CMainApp::Update(_float fTimeDelta)
 
 HRESULT CMainApp::Render()
 {
-	_float4		vClearColor = _float4(0.5f, 0.5f, 1.f, 1.f);
+	//_float4		vClearColor = _float4(0.5f, 0.5f, 1.f, 1.f);
+	_float4		vClearColor = _float4(0.0f, 0.0f, 0.f, 1.f);
 	if (FAILED(m_pGameInstance->Clear_Buffers(&vClearColor)))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Draw()))
 		return E_FAIL;
-
-
-	// 이거 보스맵으로 추가해야함
-
-
 
 
 	if (FAILED(m_pGameInstance->Present()))
@@ -193,21 +190,7 @@ HRESULT CMainApp::Ready_Prototype_For_Static_Level()
 		return E_FAIL;
 	}
 
-	// 보스 ui
 
-	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_BossMark"),
-		CBossMark::Create(m_pDevice, m_pContext))))
-	{
-		MSG_BOX("Faild to Add_Prototype : GameObject_BossMark");
-		return E_FAIL;
-	}
-
-	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Texture_BossMark"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/UI/Boss/BossTex_%d.png"), 4))))
-	{
-		MSG_BOX("Faild to Add_Prototype : Texture_healthbar");
-		return E_FAIL;
-	}
 
 	return S_OK;
 }
@@ -220,7 +203,6 @@ HRESULT CMainApp::Ready_StartLevel(LEVEL eStartLevelID)
 
 	if (FAILED(m_pGameInstance->Change_Level(ETOI(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, eStartLevelID))))
 		return E_FAIL;
-
 
 
 	return S_OK;

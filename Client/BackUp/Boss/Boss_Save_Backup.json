@@ -1,8 +1,8 @@
 {
-    "Count": 1042,
+    "Count": 1043,
     "GameObject": [
         {
-            "PrototypeName": "Prototype_GameObject_NameLessKing",
+            "PrototypeName": "Prototype_GameObject_Player",
             "Rotation": [
                 0.0,
                 0.0,
@@ -14,9 +14,30 @@
                 1.0
             ],
             "Translation": [
+                9.979842185974121,
+                0.5,
+                3.6019434928894043
+            ],
+            "data": 0,
+            "name": "Prototype_GameObject_Player0",
+            "type": 0
+        },
+        {
+            "PrototypeName": "Prototype_GameObject_NameLessKing",
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.9999987483024597,
+                0.9999993443489075,
+                0.999999463558197
+            ],
+            "Translation": [
                 14.137654304504395,
                 0.9999977946281433,
-                28.863849639892578
+                15.863849639892578
             ],
             "data": 0,
             "name": "NameLessKing",

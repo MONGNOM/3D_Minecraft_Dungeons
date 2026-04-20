@@ -34,6 +34,8 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	_bool* Get_TakeHit() { return &m_bTakehit; }
+	void Set_TakeHit(_bool value) { m_bTakehit = value; }
 
 
 protected:
@@ -52,8 +54,11 @@ private:
 	CREEPERSTATE state = {};
 	_float m_iMaxHp{};
 	_float m_iCurrentHp{};
+	CGameObject* m_pHpBar = nullptr;
 
 	_uint damage;
+	_bool m_bTakehit = false;
+	virtual void TakeHit(_uint damage) override;
 
 public:
 	static CCreeper* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

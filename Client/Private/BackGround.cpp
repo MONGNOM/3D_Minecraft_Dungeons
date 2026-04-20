@@ -31,13 +31,21 @@ HRESULT CBackGround::Initialize(void* pArg)
 	Desc.fSizeX = g_iWinSizeX;
 	Desc.fSizeY = g_iWinSizeY;
 
+	
 		
 	/* 백그라운드의 멤버를 채워넣어야한다면 여기서 채운다. */
 	if (FAILED(__super::Initialize(&Desc)))
 		return E_FAIL;
 	
+	BACKGROUND_DESC* desc = reinterpret_cast<BACKGROUND_DESC*>(pArg);
+	m_iNumTexture = desc->NumTexture;
+	m_eSceneType = desc->Scenetype;
+
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
+
+	
+
 
 	return S_OK;
 }
@@ -71,7 +79,7 @@ HRESULT CBackGround::Render()
 	if (FAILED(__super::Bind_ShaderResource(m_pShaderCom, "g_ProjMatrix", D3DTS::PROJ)))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, "g_Texture", 0)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, "g_Texture", m_iNumTexture)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Begin(0)))
@@ -90,8 +98,7 @@ HRESULT CBackGround::Render()
 // 로딩백그라운드 하나 만들까 
 HRESULT CBackGround::Ready_Components()
 {
-	
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::LOGO), TEXT("Prototype_Component_Texture_Title"),
+	if (FAILED(__super::Add_Component(m_eSceneType, TEXT("Prototype_Component_Texture_Title"),
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
 
@@ -106,10 +113,7 @@ HRESULT CBackGround::Ready_Components()
 	return S_OK;
 }
 
-HRESULT CBackGround::Switch_Components()
-{
-	return E_NOTIMPL;
-}
+
 
 CBackGround* CBackGround::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
