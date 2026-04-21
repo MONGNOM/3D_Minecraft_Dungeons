@@ -63,7 +63,7 @@ HRESULT CCreeper::Initialize(void* pArg)
 	gdesc.owner = this;
 	gdesc.connet = &m_pHpBar;
 	gdesc.CheckOwner = 2;
-	if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_HpBar"), m_eObjectType, m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), &gdesc)))
+	if (FAILED(m_pGameInstance->Add_GameObject(m_eSceneType, TEXT("Prototype_GameObject_HpBar"), m_eSceneType, m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), &gdesc)))
 	{
 		MSG_BOX("½ºÄÌ·¹Åæ Hp¹Ù ¾È ¸¸µé¾îÁü");
 		return E_FAIL;
@@ -280,6 +280,10 @@ _bool CCreeper::Intersect_ToPlayerAttack()
 		collider->Get_Owner()->TakeHit(damage);
 		wcout << collider->Get_Owner()->Get_ObjectName() << "¿¡°Ô ÇÇÇØ¸¦ ÀÔÇû´Ù" << endl;
 		Set_Dead();
+
+		if (m_pHpBar != nullptr)
+			dynamic_cast<CHpBar*>(m_pHpBar)->Set_OwnerDead();
+
 		return true;
 	}
 	else

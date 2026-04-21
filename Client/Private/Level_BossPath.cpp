@@ -3,6 +3,7 @@
 #include "FreeCamera.h"
 #include "HotBar.h"
 #include "Level_Loading.h"
+#include "Door.h"
 
 CLevel_BossPath::CLevel_BossPath(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) 
 	: CLevel {pDevice, pContext}
@@ -61,7 +62,9 @@ HRESULT CLevel_BossPath::Initialize()
 
 void CLevel_BossPath::Update(_float fTimeDelta)
 {
-	if (GetKeyState(VK_SPACE) & 0x8000)
+	CGameObject* door = m_pGameInstance->Get_GameObject(TEXT("Door"), TEXT("Load_Layer"), ETOI(LEVEL::BOSSPATH));
+
+	if (door != nullptr && dynamic_cast<CDoor*>(door)->Get_SceneChange())
 	{
 		if (FAILED(m_pGameInstance->Change_Level(ETOI(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::BOSS))))
 			return;
@@ -326,14 +329,24 @@ HRESULT CLevel_BossPath::Ready_Layer_UI(const _wstring& strLayerTag)
 {
 	Add_HotBar(strLayerTag);
 
-	CGameObject::GAMEOBJECT_DESC desc;
+	//CGameObject::GAMEOBJECT_DESC desc;
+	//desc.Scenetype = CGameObject::SCENETYPE::BOSSPATH;
+	//desc.NumTexture = 0;
+	//if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_Sky"),
+	//	ETOI(LEVEL::BOSSPATH), strLayerTag, &desc)))
+	//	return E_FAIL;
+	//
+
+	CGameObject::GAMEOBJECT_DESC desc{};
+	desc.name = TEXT("Terrain");
+	desc.pos = _float3(-10, -30, -10);
+	desc.m_sPrototype = "Prototype_GameObject_Terrain";
 	desc.Scenetype = CGameObject::SCENETYPE::BOSSPATH;
-	desc.NumTexture = 0;
-	
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_Sky"),
+
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_Terrain"),
 		ETOI(LEVEL::BOSSPATH), strLayerTag, &desc)))
 		return E_FAIL;
-	
+
 
 	return S_OK;
 }

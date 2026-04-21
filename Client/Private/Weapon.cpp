@@ -133,7 +133,7 @@ void CWeapon::Intersect_ToMonster()
 	
 
 	// 콜라이더 색깔이 이상하ㅔㄱ 바뀜 이거 체크 해야할듯
-	m_iSwordDamage = m_pGameInstance->Random(10, 40);
+	m_iSwordDamage = m_pGameInstance->Random(100, 400);
 
 	for (auto& iter : *object)
 	{

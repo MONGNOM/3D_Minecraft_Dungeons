@@ -20,6 +20,9 @@ HRESULT CTerrain::Initialize_Prototype()
 HRESULT CTerrain::Initialize(void* pArg)
 {	
 	/* 백그라운드의 멤버를 채워넣어야한다면 여기서 채운다. */
+	TERRAIN_DESC* desc = reinterpret_cast<TERRAIN_DESC*>(pArg);
+	m_fPos = desc->pos;
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 	
@@ -27,6 +30,7 @@ HRESULT CTerrain::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_eObjectType = OBJECTTYPE::ENVIRONMENT;
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
 
 	return S_OK;
 }
@@ -72,19 +76,19 @@ HRESULT CTerrain::Render()
 
 HRESULT CTerrain::Ready_Components()
 {
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Terrain"),
+	if (FAILED(__super::Add_Component(m_eSceneType, TEXT("Prototype_Component_Texture_Terrain"),
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxNorTex"),
+	if (FAILED(__super::Add_Component(m_eSceneType, TEXT("Prototype_Component_Shader_VtxNorTex"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_VIBuffer_Terrain"),
+	if (FAILED(__super::Add_Component(m_eSceneType, TEXT("Prototype_Component_VIBuffer_Terrain"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Navigation"),
+	if (FAILED(__super::Add_Component(m_eSceneType, TEXT("Prototype_Component_Navigation"),
 		TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom))))
 		return E_FAIL;
 

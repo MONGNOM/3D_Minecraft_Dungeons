@@ -1,6 +1,27 @@
 {
-    "Count": 1598,
+    "Count": 1599,
     "GameObject": [
+        {
+            "PrototypeName": "Prototype_GameObject_Door",
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Translation": [
+                120.23963928222656,
+                64.66883087158203,
+                239.6427459716797
+            ],
+            "data": 0,
+            "name": "Door",
+            "type": 0
+        },
         {
             "PrototypeName": "Prototype_GameObject_Player",
             "Rotation": [
@@ -15,7 +36,7 @@
             ],
             "Translation": [
                 94.485107421875,
-                60.5,
+                0.5,
                 200.31202697753906
             ],
             "data": 0,

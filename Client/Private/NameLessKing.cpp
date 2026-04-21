@@ -285,7 +285,7 @@ void CNameLessKing::Update(_float fTimeDelta)
 
 					desc.look = vLook;
 					desc.pos = svPos;
-					for (size_t i = 0; i < 5; i++)
+					for (size_t i = 0; i < 3; i++)
 					{
 						_vector vSpawnPos = XMLoadFloat3(&svPos) + (vLook * fDistance);
 
@@ -314,9 +314,9 @@ void CNameLessKing::Update(_float fTimeDelta)
 
 					for (size_t i = 0; i < randNum; i++)
 					{
-						desc.pos.x = svPos.x + m_pGameInstance->Random(0, 15);
+						desc.pos.x = svPos.x + m_pGameInstance->Random(-3, 3);
 						desc.pos.y = svPos.y;
-						desc.pos.z = svPos.z + m_pGameInstance->Random(0, 15);
+						desc.pos.z = svPos.z + m_pGameInstance->Random(-3, 3);
 
 						if (FAILED(m_pGameInstance->Add_GameObject(ETOI(m_eSceneType), TEXT("Prototype_GameObject_NameLessKing"),
 							ETOI(m_eSceneType), TEXT("Load_Layer"), &desc)))

@@ -1,5 +1,6 @@
 #include "Door.h"
 #include "GameInstance.h"
+#include "Level_Loading.h"
 
 CDoor::CDoor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -37,7 +38,7 @@ HRESULT CDoor::Initialize(void* pArg)
 	
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(m_fPos.x, m_fPos.y, m_fPos.z, 1.f));
 
-
+	m_bSceneChanger = false;
 	return S_OK;
 }
 
@@ -48,11 +49,46 @@ void CDoor::Priority_Update(_float fTimeDelta)
 
 void CDoor::Update(_float fTimeDelta)
 {
+	if (Intersect_ToPlayer())
+	{
+		m_bSceneChanger = true;
+	}
 	
+
+	m_pColliderCom->Update(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+
+
 }
 
 void CDoor::Late_Update(_float fTimeDelta)
 {
+	/*if (m_bSceneChanger)
+	{
+		switch (m_eSceneType)
+		{
+		case DUNGEON:
+		{
+			if (FAILED(m_pGameInstance->Change_Level(ETOI(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::BOSSPATH))))
+				return;
+			break;
+		}
+		case GAMEPLAY:
+		{
+			m_bSceneChanger = true;
+			if (FAILED(m_pGameInstance->Change_Level(ETOI(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::DUNGEON))))
+				return;
+			break;
+		}
+		case BOSSPATH:
+		{
+			m_bSceneChanger = true;
+			if (FAILED(m_pGameInstance->Change_Level(ETOI(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::BOSS))))
+				return;
+			break;
+		}
+		}
+	}
+	else*/
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::NONBLEND, this);
 }
 
@@ -78,9 +114,30 @@ HRESULT CDoor::Render()
 
 
 
-
+#ifdef _DEBUG
+		m_pColliderCom->Render();
+#endif // _DEBUG
 
 	return S_OK;
+}
+
+_bool CDoor::Intersect_ToPlayer()
+{
+	CCollider* collider = dynamic_cast<CCollider*>(m_pGameInstance->Get_Component(TEXT("Prototype_GameObject_Player0"), m_eSceneType == GAMEPLAY ? TEXT("Layer_Clone") : TEXT("Load_Layer"), ETOI(m_eSceneType), TEXT("Com_Collider")));
+
+	if (collider == nullptr) return false;
+	
+	if (!firstchanger)
+	{
+		if (m_pColliderCom->Intersect(collider))
+		{
+			m_pColliderCom->Set_isColl(true);
+			return true;
+		}
+	}
+
+	firstchanger = false;
+	return false;
 }
 
 HRESULT CDoor::Ready_Components()
@@ -93,6 +150,16 @@ HRESULT CDoor::Ready_Components()
 
 	if (FAILED(__super::Add_Component(ETOI(m_eSceneType), TEXT("Prototype_Component_Model_Door"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+		return E_FAIL;
+
+	CBounding_AABB::BOUNDING_AABB_DESC AABBDesc;
+
+	AABBDesc.vExtents = _float3(4.f, 4.f, 2.f);
+	AABBDesc.vCenter = _float3(0.f, AABBDesc.vExtents.y, 0.f);
+	AABBDesc.owner = this;
+
+	if (FAILED(__super::Add_Component(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Collider_AABB"),
+		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -159,7 +226,7 @@ void CDoor::Free()
 {
 	__super::Free();
 
-
+	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
 }

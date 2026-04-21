@@ -4,6 +4,8 @@
 #include "HotBar.h"
 #include "Level_Loading.h"
 
+#include "Door.h"
+
 CLevel_Dungeon::CLevel_Dungeon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) 
 	: CLevel {pDevice, pContext}
 {
@@ -67,7 +69,9 @@ HRESULT CLevel_Dungeon::Initialize()
 
 void CLevel_Dungeon::Update(_float fTimeDelta)
 {
-	if (GetKeyState(VK_SPACE) & 0x8000)
+	CGameObject* door = m_pGameInstance->Get_GameObject(TEXT("Door"), TEXT("Load_Layer"), ETOI(LEVEL::DUNGEON));
+
+	if (door != nullptr && dynamic_cast<CDoor*>(door)->Get_SceneChange())
 	{
 		if (FAILED(m_pGameInstance->Change_Level(ETOI(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::BOSSPATH))))
 			return;
@@ -334,7 +338,7 @@ HRESULT CLevel_Dungeon::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	CGameObject::GAMEOBJECT_DESC desc;
 	desc.Scenetype = CGameObject::SCENETYPE::DUNGEON;
-
+	desc.NumTexture = 0;
 	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Sky"),
 		ETOI(LEVEL::DUNGEON), strLayerTag, &desc)))
 		return E_FAIL;

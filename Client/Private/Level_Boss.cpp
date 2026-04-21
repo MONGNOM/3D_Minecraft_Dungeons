@@ -323,6 +323,7 @@ HRESULT CLevel_Boss::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	CGameObject::GAMEOBJECT_DESC desc;
 	desc.Scenetype = CGameObject::SCENETYPE::BOSS;
+	desc.NumTexture = 2;
 
 	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::BOSS), TEXT("Prototype_GameObject_Sky"),
 		ETOI(LEVEL::BOSS), strLayerTag, &desc)))

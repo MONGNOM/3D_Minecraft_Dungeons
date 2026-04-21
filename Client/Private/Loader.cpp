@@ -235,7 +235,7 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 	}
 	/* Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Sky"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/sky.dds"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/skyBox_%d.dds"), 2))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Cube Texture");
 		return E_FAIL;
@@ -834,7 +834,7 @@ HRESULT CLoader::Loading_For_Dungeon()
 	}
 	/* Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Texture_Sky"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/sky.dds"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/skyBox_%d.dds"), 2))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Cube Texture");
 		return E_FAIL;
@@ -1346,6 +1346,21 @@ HRESULT CLoader::Loading_For_Dungeon()
 		return E_FAIL;
 	}
 
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f); // *XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Door"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Door/Door.fbx", "Prototype_Component_Model_Door", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Door");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_Door"),
+		CDoor::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_Door");
+		return E_FAIL;
+	}
+
 
 
 	
@@ -1406,7 +1421,7 @@ HRESULT CLoader::Loading_For_Boss()
 	}
 	/* Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::BOSS), TEXT("Prototype_Component_Texture_Sky"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/sky.dds"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/skyBox_%d.dds"), 2))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Cube Texture");
 		return E_FAIL;
@@ -1744,7 +1759,7 @@ HRESULT CLoader::Loading_For_BossPath()
 	}
 	/* Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_Component_Texture_Sky"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/sky.dds"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/skyBox_%d.dds"), 2))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Cube Texture");
 		return E_FAIL;
@@ -1803,7 +1818,20 @@ HRESULT CLoader::Loading_For_BossPath()
 	}
 
 	
-	
+	//if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_Component_Texture_Terrain"),
+	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/white.png"), 1))))
+	//{
+	//	MSG_BOX("Faild to Add_Prototype : BackGround Texture");
+	//	return E_FAIL;
+	//}
+
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_Component_Texture_Terrain"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/Title/T_BG_Bottom.png"), 1))))
+	{
+		MSG_BOX("Faild to Add_Prototype : BackGround Texture");
+		return E_FAIL;
+	}
 
 
 	lstrcpy(m_szLoadingText, TEXT("사운드를 로딩 중 입니다."));
@@ -1917,6 +1945,14 @@ HRESULT CLoader::Loading_For_BossPath()
 		return E_FAIL;
 	}
 
+	lstrcpy(m_szLoadingText, TEXT("객체원형를 로딩 중 입니다."));
+	/* Prototype_GameObject_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_Terrain"),
+		CTerrain::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : GameObject_Terrain");
+		return E_FAIL;
+	}
 
 
 
@@ -2027,6 +2063,7 @@ HRESULT CLoader::Loading_For_BossPath()
 
 
 	//번팅
+
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::BOSSPATH), TEXT("Prototype_GameObject_Door"),
 		CDoor::Create(m_pDevice, m_pContext))))

@@ -160,9 +160,6 @@
     <Filter Include="02.GameObject\UI\05. BossMark">
       <UniqueIdentifier>{07a471cb-5c7b-4495-99de-6ff96e60d856}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\UI\06. CoolTime">
-      <UniqueIdentifier>{b8c63e75-35eb-4dc9-a540-e31857eaab28}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Levels\BossPath">
       <UniqueIdentifier>{3ad24cbd-471b-45c2-bfa1-149c87c151a3}</UniqueIdentifier>
     </Filter>
@@ -171,6 +168,9 @@
     </Filter>
     <Filter Include="02.GameObject\Door">
       <UniqueIdentifier>{947085b3-e8ed-46d6-950f-bf7a4faa6cc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\UI\06. Inventory">
+      <UniqueIdentifier>{b8c63e75-35eb-4dc9-a540-e31857eaab28}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

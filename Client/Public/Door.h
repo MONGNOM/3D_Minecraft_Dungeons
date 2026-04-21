@@ -6,6 +6,7 @@
 NS_BEGIN(Engine)
 class CShader;
 class CModel;
+class CCollider;
 NS_END
 
 NS_BEGIN(Client)
@@ -24,16 +25,19 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	_bool Get_SceneChange() { return m_bSceneChanger; }
 
 protected:
 	CShader* m_pShaderCom = { nullptr };
 	CModel* m_pModelCom = { nullptr };
-
+	CCollider* m_pColliderCom = nullptr;
 
 protected:
+	_bool Intersect_ToPlayer();
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();
-
+	_bool m_bSceneChanger = false;
+	_bool firstchanger = true;
 
 public:
 	static CDoor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
