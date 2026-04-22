@@ -166,6 +166,9 @@
     <Filter Include="01.Utility\05.Renderer">
       <UniqueIdentifier>{d76c1ce7-abe8-4f7e-8720-ca22b68c3973}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.GameObjects\ItemObject">
+      <UniqueIdentifier>{38ef7e6e-b640-49a4-a56b-1d3bc2066e7d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Base.h">
@@ -330,6 +333,9 @@
     <ClInclude Include="..\public\DataManager.h">
       <Filter>01.Utility\11.DataManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ItemObject.h">
+      <Filter>01.Utility\03.GameObjects\ItemObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Base.cpp">
@@ -475,6 +481,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DataManager.cpp">
       <Filter>01.Utility\11.DataManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ItemObject.cpp">
+      <Filter>01.Utility\03.GameObjects\ItemObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

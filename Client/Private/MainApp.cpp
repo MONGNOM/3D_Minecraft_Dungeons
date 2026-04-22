@@ -5,7 +5,8 @@
 #include <fstream>
 #include "BossMark.h"
 #include "BackGround.h"
-
+#include "Inventory.h"
+#include "Icon.h"
 
 CMainApp::CMainApp()
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -162,10 +163,39 @@ HRESULT CMainApp::Ready_Prototype_For_Static_Level()
 		return E_FAIL;
 	}
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Texture_Inventroy"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/UI/Inventory/BackGroundInventory.png"), 1))))
+	{
+		MSG_BOX("Fail to Add_Prototype : Inventroy Texture");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Texture_InventroyIcon"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/UI/Inventory/Icon/Icon%d.png"), 19))))
+	{
+		MSG_BOX("Fail to Add_Prototype : Inventroy Texture");
+		return E_FAIL;
+	}
+
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_Cursor"),
 		CCursor::Create(m_pDevice, m_pContext))))
 	{
 		MSG_BOX("Faild to Add_Prototype : Cursor");
+		return E_FAIL;
+	}
+	
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_Inventroy"),
+		CInventory::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Inventory");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_InventoryIcon"),
+		CIcon::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : InventoryIcon");
 		return E_FAIL;
 	}
 
@@ -210,11 +240,22 @@ HRESULT CMainApp::Ready_StartLevel(LEVEL eStartLevelID)
 
 HRESULT CMainApp::Ready_Layer_UI(const _tchar* pLayerTag)
 {
+	//cursor
 	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_Cursor"),
 		ETOI(LEVEL::STATIC), pLayerTag)))
 		return E_FAIL;
 
-	
+	// 인벤토리
+	CInventory::INVENTORY_DESC invenDesc{};
+	invenDesc.fX = g_iWinSizeX * 0.5f;
+	invenDesc.fY = g_iWinSizeY * 0.5f;
+	invenDesc.fSizeX = g_iWinSizeX;
+	invenDesc.fSizeY = g_iWinSizeY;
+	invenDesc.NumTexture = 0;
+
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_Inventroy"),
+		ETOI(LEVEL::STATIC), pLayerTag, &invenDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }

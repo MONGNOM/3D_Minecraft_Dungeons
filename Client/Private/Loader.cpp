@@ -35,7 +35,10 @@
 #include "DamageFont.h"
 #include "BossMark.h"
 #include "Door.h"
-
+#include "Item_Sword.h"
+#include "Item_Armor.h"
+#include "Item_Bow.h"
+#include "Item_Claymore.h"
 
 
 
@@ -507,8 +510,23 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		MSG_BOX("Faild to Add_Prototype : Model_NameLessKing");
 		return E_FAIL;
 	}
-	
-	
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);// *XMMatrixRotationZ(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Armor"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Armor/Armor.fbx", "Prototype_Component_Model_Armor", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Armor");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationZ(XMConvertToRadians(90.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Claymore"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Claymore/Claymore.fbx", "Prototype_Component_Model_Claymore", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Claymore");
+		return E_FAIL;
+	}
+
 
 
 	lstrcpy(m_szLoadingText, TEXT("네비게이션을 로딩 중 입니다."));
@@ -774,6 +792,35 @@ HRESULT CLoader::Loading_For_GamePlayLevel()
 		return E_FAIL;
 	}
 	
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ItemSword"),
+		CItem_Sword::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_ItemSword");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ItemBow"),
+		CItem_Bow::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_ItemSword");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ItemClaymore"),
+		Item_Claymore::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_ItemSword");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ItemArmor"),
+		CItem_Armor::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_ItemSword");
+		return E_FAIL;
+	}
+
 	
 
 	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
@@ -1055,6 +1102,24 @@ HRESULT CLoader::Loading_For_Dungeon()
 		MSG_BOX("Faild to Add_Prototype : Model_Creeper");
 		return E_FAIL;
 	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationZ(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Armor"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Armor/Armor.fbx", "Prototype_Component_Model_Armor", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Armor");
+		return E_FAIL;
+	}
+
+	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationZ(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_Component_Model_Claymore"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../Bin/Resources/mincraft/Mesh/Prefab/Claymore/Claymore.fbx", "Prototype_Component_Model_Claymore", PreLocalTransformMatrix))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Model_Claymore");
+		return E_FAIL;
+	}
+
+
 
 	/* Prototype_Component_Model_ForkLift */
 	PreLocalTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationX(XMConvertToRadians(90.f)) * XMMatrixRotationZ(XMConvertToRadians(90.f));
@@ -1362,6 +1427,12 @@ HRESULT CLoader::Loading_For_Dungeon()
 	}
 
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_ItemSword"),
+		CItem_Sword::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : Prototype_GameObject_ItemSword");
+		return E_FAIL;
+	}
 
 	
 

@@ -5,6 +5,13 @@
 
 namespace Engine
 {
+
+	typedef struct tagPlayerData
+	{
+		_float hp;
+
+	}PLAYER_DATA;
+
 	typedef struct tagEngineDesc
 	{
 		HINSTANCE	hInstance;

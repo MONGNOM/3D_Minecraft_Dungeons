@@ -4,6 +4,7 @@
 #include "Body_Player.h"
 #include "GameInstance.h"
 #include "Bow.h"
+#include "Inventory.h"
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CContainerObject{ pDevice, pContext }
@@ -52,6 +53,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_fMaxHp = 200;
 	m_fCurrentHp = m_fMaxHp;
+
 	
 	
 	return S_OK;
@@ -82,7 +84,16 @@ void CPlayer::Update(_float fTimeDelta)
 		jumpCoolTime -= fTimeDelta;
 
 	}
-	
+
+	if (m_pGameInstance->Get_DIKeyDown(DIK_I))
+	{
+		CInventory* inven = dynamic_cast<CInventory*>(m_pGameInstance->Get_GameObject(TEXT("Inventory"), TEXT("Layer_UI"), ETOI(LEVEL::STATIC)));
+
+		if (inven != nullptr)
+		{
+			inven->InvenToggle(); // ÀÎº¥Åä¸® ²°´Ù ÄÑ±â
+		}
+	}
 	
 
 	//Intersect_ToMonster();
@@ -121,7 +132,7 @@ void CPlayer::Update(_float fTimeDelta)
 				state = PLAYERSTATE::FAILING;
 			}
 		}
-		else if (m_pGameInstance->Get_DIKeyDown(DIK_R)) // Èú
+		else if (m_pGameInstance->Get_DIKeyDown(DIK_E)) // Èú
 		{
 			if (m_bPotion)
 			{

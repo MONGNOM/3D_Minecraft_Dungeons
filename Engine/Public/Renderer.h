@@ -30,6 +30,7 @@ private:
 	void Render_NonBlend();
 	void Render_Blend();
 	void Render_UI();
+	void Render_INVEN();
 	void Render_CURSOR();
 
 

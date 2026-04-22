@@ -43,6 +43,8 @@ void CRenderer::Draw()
 
 	Render_UI();
 
+	Render_INVEN();
+	
 	Render_CURSOR();
 }
 
@@ -97,6 +99,21 @@ void CRenderer::Render_UI()
 
 	m_RenderObjects[ETOI(RENDERGROUP::UI)].clear();
 }
+
+void CRenderer::Render_INVEN()
+{
+
+	for (auto& pRenderObject : m_RenderObjects[ETOI(RENDERGROUP::INVEN)])
+	{
+		if (nullptr != pRenderObject)
+			pRenderObject->Render();
+
+		Safe_Release(pRenderObject);
+	}
+
+	m_RenderObjects[ETOI(RENDERGROUP::INVEN)].clear();
+}
+
 
 void CRenderer::Render_CURSOR()
 {

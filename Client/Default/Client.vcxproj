@@ -156,6 +156,12 @@
     <ClInclude Include="..\public\Body_Player.h" />
     <ClInclude Include="..\public\Body_Skeleton.h" />
     <ClInclude Include="..\Public\Door.h" />
+    <ClInclude Include="..\Public\Icon.h" />
+    <ClInclude Include="..\Public\Inventory.h" />
+    <ClInclude Include="..\Public\Item_Armor.h" />
+    <ClInclude Include="..\Public\Item_Bow.h" />
+    <ClInclude Include="..\Public\Item_Claymore.h" />
+    <ClInclude Include="..\Public\Item_Sword.h" />
     <ClInclude Include="..\Public\Level_Boss.h" />
     <ClInclude Include="..\Public\BossMark.h" />
     <ClInclude Include="..\Public\Level_BossPath.h" />
@@ -201,6 +207,7 @@
     <ClInclude Include="..\public\Skeleton.h" />
     <ClInclude Include="..\Public\SkeletonVanguard.h" />
     <ClInclude Include="..\public\Sky.h" />
+    <ClInclude Include="..\Public\Slot.h" />
     <ClInclude Include="..\public\Table.h" />
     <ClInclude Include="..\Public\Tent.h" />
     <ClInclude Include="..\Public\Terrain.h" />
@@ -219,6 +226,12 @@
     <ClCompile Include="..\private\Body_Player.cpp" />
     <ClCompile Include="..\private\Body_Skeleton.cpp" />
     <ClCompile Include="..\Private\Door.cpp" />
+    <ClCompile Include="..\Private\Icon.cpp" />
+    <ClCompile Include="..\Private\Inventory.cpp" />
+    <ClCompile Include="..\Private\Item_Armor.cpp" />
+    <ClCompile Include="..\Private\Item_Bow.cpp" />
+    <ClCompile Include="..\Private\Item_Claymore.cpp" />
+    <ClCompile Include="..\Private\Item_Sword.cpp" />
     <ClCompile Include="..\Private\Level_Boss.cpp" />
     <ClCompile Include="..\Private\BossMark.cpp" />
     <ClCompile Include="..\Private\Level_BossPath.cpp" />
@@ -262,6 +275,7 @@
     <ClCompile Include="..\private\Skeleton.cpp" />
     <ClCompile Include="..\Private\SkeletonVanguard.cpp" />
     <ClCompile Include="..\private\Sky.cpp" />
+    <ClCompile Include="..\Private\Slot.cpp" />
     <ClCompile Include="..\private\Table.cpp" />
     <ClCompile Include="..\Private\Tent.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />

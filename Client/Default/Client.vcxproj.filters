@@ -172,6 +172,27 @@
     <Filter Include="02.GameObject\UI\06. Inventory">
       <UniqueIdentifier>{b8c63e75-35eb-4dc9-a540-e31857eaab28}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\UI\06. Inventory\Icon">
+      <UniqueIdentifier>{3f42ea3d-a0c4-4294-b3e4-f36fe3977028}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Item">
+      <UniqueIdentifier>{9bd707f3-ab22-4337-aaba-c7650edb376e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Item\Sword">
+      <UniqueIdentifier>{6d596871-71ac-472b-8ec2-6ae6da781b05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Item\Claymore">
+      <UniqueIdentifier>{ea230278-d42e-4553-8d88-fa152883cee2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Item\Bow">
+      <UniqueIdentifier>{063bb925-23eb-4d72-aa59-91d6610dde8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Item\Armor">
+      <UniqueIdentifier>{06bfb9d0-b736-4b2a-aa8d-5ad82696ce3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\UI\06. Inventory\Slot">
+      <UniqueIdentifier>{141356e8-3e04-45d9-b810-99f4bd76f914}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -357,6 +378,27 @@
     <ClInclude Include="..\Public\Door.h">
       <Filter>02.GameObject\Door</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Inventory.h">
+      <Filter>02.GameObject\UI\06. Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Icon.h">
+      <Filter>02.GameObject\UI\06. Inventory\Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Item_Sword.h">
+      <Filter>02.GameObject\Item\Sword</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Item_Claymore.h">
+      <Filter>02.GameObject\Item\Claymore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Item_Bow.h">
+      <Filter>02.GameObject\Item\Bow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Item_Armor.h">
+      <Filter>02.GameObject\Item\Armor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Slot.h">
+      <Filter>02.GameObject\UI\06. Inventory\Slot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -539,6 +581,27 @@
     </ClCompile>
     <ClCompile Include="..\Private\Door.cpp">
       <Filter>02.GameObject\Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Inventory.cpp">
+      <Filter>02.GameObject\UI\06. Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Icon.cpp">
+      <Filter>02.GameObject\UI\06. Inventory\Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item_Sword.cpp">
+      <Filter>02.GameObject\Item\Sword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item_Armor.cpp">
+      <Filter>02.GameObject\Item\Armor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item_Bow.cpp">
+      <Filter>02.GameObject\Item\Bow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item_Claymore.cpp">
+      <Filter>02.GameObject\Item\Claymore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Slot.cpp">
+      <Filter>02.GameObject\UI\06. Inventory\Slot</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
