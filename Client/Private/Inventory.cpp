@@ -142,32 +142,38 @@ HRESULT CInventory::Initialize(void* pArg)
             CSlot::SLOT_DESC Slot_Desc{}; //  Deafult Slot
             Slot_Desc.fSizeX = 200;
             Slot_Desc.fSizeY = 200;
-            Slot_Desc.fX = 930 * (j + 1) * 0.5f + 100; //g_iWinSizeX * 0.5f - Slot_Desc.fSizeX - 150 * (j + 1);
-            Slot_Desc.fY = 380 * (i + 1) * 0.5f + 100;
+            Slot_Desc.fX = 1025 + (j * 225); //* (j + 0) * 0.5f + 10; //g_iWinSizeX * 0.5f - Slot_Desc.fSizeX - 150 * (j + 1);
+            Slot_Desc.fY = 360 + (i * 250); //* ((i + 1) * 0.5f) + 100;
             Slot_Desc.NumTexture = 6;
-            Slot_Desc.name = TEXT("DeafultSlot");
+            Slot_Desc.name = L"DeafultSlot" + to_wstring(j + 3 * i);
             Slot_Desc.pParentActive = &m_bIsOpen;
+            Slot_Desc.pHover = &m_bHover;
+            Slot_Desc.pClick = &m_bClick;
 
-            if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_InventoryIcon"),
+            if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_Slot"),
                 ETOI(LEVEL::STATIC), TEXT("Load_Layer"), &Slot_Desc)))
                 return E_FAIL;
 
         }
+       
     }
+
 
 
     for (size_t j = 0; j < 3; j++)
     {
-        CSlot::SLOT_DESC Slot_Desc{}; //  Item Slot
+        CSlot::SLOT_DESC Slot_Desc{}; //  (장착)아래 Item Slot
         Slot_Desc.fSizeX = 175;
         Slot_Desc.fSizeY = 175;
-        Slot_Desc.fX = 200 * (j + 1) + 50;
-        Slot_Desc.fY = g_iWinSizeY - 200;
+        Slot_Desc.fX = 200 + (j * 250);
+        Slot_Desc.fY = g_iWinSizeY - 160;
         Slot_Desc.NumTexture = 16;
-        Slot_Desc.name = TEXT("ItemSlot");
+        Slot_Desc.name = L"EquipITEMSlot" + to_wstring(j);
         Slot_Desc.pParentActive = &m_bIsOpen;
+        Slot_Desc.pHover = &m_bHover;
+        Slot_Desc.pClick = &m_bClick;
 
-        if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_InventoryIcon"),
+        if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_Slot"),
             ETOI(LEVEL::STATIC), TEXT("Load_Layer"), &Slot_Desc)))
             return E_FAIL;
 
@@ -176,24 +182,57 @@ HRESULT CInventory::Initialize(void* pArg)
 
     for (size_t j = 0; j < 3; j++)
     {
-        CSlot::SLOT_DESC Slot_Desc{}; //  Item Slot
+        CSlot::SLOT_DESC Slot_Desc{}; // (장착)위 Item Slot
         Slot_Desc.fSizeX = 175;
         Slot_Desc.fSizeY = 175;
-        Slot_Desc.fX = 100 * (j + 1) + 50;
-        Slot_Desc.fY = 300;
+        Slot_Desc.fX = 150 + (j * 300);
+        Slot_Desc.fY = j == 1 ? 330 : 400;
         Slot_Desc.NumTexture = 17;
-        Slot_Desc.name = TEXT("EquipSlot");
+        Slot_Desc.name = L"EquipSlot" + to_wstring(j);
         Slot_Desc.pParentActive = &m_bIsOpen;
+        Slot_Desc.pHover = &m_bHover;
+        Slot_Desc.pClick = &m_bClick;
 
-        if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_InventoryIcon"),
+        if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_Slot"),
             ETOI(LEVEL::STATIC), TEXT("Load_Layer"), &Slot_Desc)))
             return E_FAIL;
 
     }
-   
-    // 기본 아이템 슬롯 간격 다시 수정
+
+    for (size_t i = 0; i < 7; i++)
+    {
+        CIcon::ICON_DESC AllIcon_Desc{}; // 슬롯 위 Icon
+        AllIcon_Desc.fSizeX = 40;
+        AllIcon_Desc.fSizeY = 40;
+        AllIcon_Desc.fX = 950 + (i * 110);
+        AllIcon_Desc.fY = 210;
+        AllIcon_Desc.NumTexture = 19 + i;
+        AllIcon_Desc.name = L"Allicon" + to_wstring(i);
+        AllIcon_Desc.pParentActive = &m_bIsOpen;
+
+        if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_InventoryIcon"),
+            ETOI(LEVEL::STATIC), TEXT("Load_Layer"), &AllIcon_Desc)))
+            return E_FAIL;
+    }
 
 
+    for (size_t i = 0; i < 12; i++) // deafult 슬롯 담기
+    {
+        CGameObject* slot = (m_pGameInstance->Get_GameObject(L"DeafultSlot" + to_wstring(i), TEXT("Load_Layer"), ETOI(LEVEL::STATIC)));
+        m_vecSlot[ETOI(INVEN::INVENTORY)].push_back(dynamic_cast<CSlot*>(slot));
+    }
+
+    for (size_t i = 0; i < 3; i++) // 장착 슬롯 담기
+    {
+        CSlot* slot = dynamic_cast<CSlot*>(m_pGameInstance->Get_GameObject(L"EquipSlot" + to_wstring(i), TEXT("Load_Layer"), ETOI(LEVEL::STATIC)));
+        m_vecSlot[ETOI(INVEN::EQUIP)].push_back(slot);
+    }
+
+    for (size_t i = 0; i < 3; i++) // 아이템장착 슬롯 담기
+    {
+        CSlot* slot = dynamic_cast<CSlot*>(m_pGameInstance->Get_GameObject(L"EquipITEMSlot" + to_wstring(i), TEXT("Load_Layer"), ETOI(LEVEL::STATIC)));
+        m_vecSlot[ETOI(INVEN::EQUIPITEM)].push_back(slot);
+    }
 
     return S_OK;
 }
@@ -254,10 +293,13 @@ HRESULT CInventory::Render()
             return E_FAIL;
 
 
+        //슬롯을 클릭했는가? 슬롯에 아이템이 존재하는가? 만약 존재한다면 그 아이템의 정보를 띄워줘야한다 -> 어떤 아이템의 정보인가? 정보 이름과 설명 데미지인지 방어력인지 넣어주기
         m_pGameInstance->Draw_Font(TEXT("Font_BossUI1"), TEXT("검"), _float2(g_iWinSizeX * 0.5f + 400, 300.f));
-
         m_pGameInstance->Draw_Font(TEXT("Font_Damage"), TEXT("근접 피해 10-16"), _float2(g_iWinSizeX * 0.5f + 480, 420.f));
         m_pGameInstance->Draw_Font(TEXT("Font_Damage"), TEXT("튼튼하고 믿고 쓸 수 있는검 입니다."), _float2(g_iWinSizeX * 0.5f + 400, 570.f));
+
+        m_pGameInstance->Draw_Font(TEXT("Font_Default"), TEXT("전체"), _float2(925 , 160));
+
     }
 
 

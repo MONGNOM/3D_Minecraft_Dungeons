@@ -23,6 +23,11 @@ HRESULT CSlot::Initialize(void* pArg)
     SLOT_DESC* pDesc = static_cast<SLOT_DESC*>(pArg);
     m_iNumTexture = pDesc->NumTexture;
     m_pParentActive = pDesc->pParentActive;
+    m_bHover = pDesc->pHover;
+    m_bClick = pDesc->pClick;
+
+    if (!*m_bClick)
+        int a = 10;
 
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
@@ -30,20 +35,49 @@ HRESULT CSlot::Initialize(void* pArg)
     if (FAILED(Ready_Components()))
         return E_FAIL;
 
-    m_Name = TEXT("Slot");
+   // m_Name = TEXT("Slot");
 
 
-    CIcon::ICON_DESC DefaultSlot_Desc{}; // Ä® ¸Ç ¹Ø¿¡ Àá±è ¹Ø¿¡ ±Û¾¾
+    CIcon::ICON_DESC DefaultSlot_Desc{}; // ½½·Ô ÀÌ¹ÌÁö
     DefaultSlot_Desc.fSizeX = pDesc->fSizeX;
     DefaultSlot_Desc.fSizeY = pDesc->fSizeY;
     DefaultSlot_Desc.fX = pDesc->fX;
     DefaultSlot_Desc.fY = pDesc->fY;
-    DefaultSlot_Desc.NumTexture = 6;
-    DefaultSlot_Desc.name = TEXT("DeafultSlot");
+    DefaultSlot_Desc.NumTexture = m_iNumTexture;
+    DefaultSlot_Desc.name = TEXT("DeafultSlotTEXT");
     DefaultSlot_Desc.pParentActive = m_pParentActive;
 
     if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_InventoryIcon"),
         ETOI(LEVEL::STATIC), TEXT("Load_Layer"), &DefaultSlot_Desc)))
+        return E_FAIL;
+
+    CIcon::ICON_DESC Hover_Desc{}; // ½½·Ô ÀÌ¹ÌÁö
+   Hover_Desc.fSizeX = pDesc->fSizeX;
+   Hover_Desc.fSizeY = pDesc->fSizeY;
+   Hover_Desc.fX = pDesc->fX;
+   Hover_Desc.fY = pDesc->fY;
+   Hover_Desc.NumTexture = 5;
+   Hover_Desc.name = TEXT("DeafultSlotHover");
+   Hover_Desc.pParentActive = m_pParentActive;
+   Hover_Desc.pHover = m_bHover;
+
+    if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_InventoryIcon"),
+        ETOI(LEVEL::STATIC), TEXT("Load_Layer"), &Hover_Desc)))
+        return E_FAIL;
+
+
+    CIcon::ICON_DESC Select_Desc{}; // ½½·Ô ÀÌ¹ÌÁö
+    Select_Desc.fSizeX = pDesc->fSizeX;
+    Select_Desc.fSizeY = pDesc->fSizeY;
+    Select_Desc.fX = pDesc->fX;
+    Select_Desc.fY = pDesc->fY;
+    Select_Desc.NumTexture = 4;
+    Select_Desc.name = TEXT("DeafultSlotOnSelect");
+    Select_Desc.pParentActive = m_pParentActive;
+    Select_Desc.pClick = m_bClick;
+
+    if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_InventoryIcon"),
+        ETOI(LEVEL::STATIC), TEXT("Load_Layer"), &Select_Desc)))
         return E_FAIL;
 
 

@@ -7,6 +7,7 @@
 #include "BackGround.h"
 #include "Inventory.h"
 #include "Icon.h"
+#include "Slot.h"
 
 CMainApp::CMainApp()
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -171,7 +172,7 @@ HRESULT CMainApp::Ready_Prototype_For_Static_Level()
 	}
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_Component_Texture_InventroyIcon"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/UI/Inventory/Icon/Icon%d.png"), 19))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/mincraft/UI/Inventory/Icon/Icon%d.png"), 26))))
 	{
 		MSG_BOX("Fail to Add_Prototype : Inventroy Texture");
 		return E_FAIL;
@@ -194,6 +195,13 @@ HRESULT CMainApp::Ready_Prototype_For_Static_Level()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_InventoryIcon"),
 		CIcon::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX("Faild to Add_Prototype : InventoryIcon");
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ETOI(LEVEL::STATIC), TEXT("Prototype_GameObject_Slot"),
+		CSlot::Create(m_pDevice, m_pContext))))
 	{
 		MSG_BOX("Faild to Add_Prototype : InventoryIcon");
 		return E_FAIL;

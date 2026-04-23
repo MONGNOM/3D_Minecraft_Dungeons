@@ -32,7 +32,7 @@ namespace Engine
 
 	//enum TEXTUREID { TEX_NORMAL, TEX_CUBE, TEX_END };
 
-	enum class INVEN { EQUIP, INVENTORY, INVENEND };
+	enum class INVEN { EQUIP, EQUIPITEM, INVENTORY, INVENEND };
 
 	enum class DIMB { LBUTTON, RBUTTON, WHEEL, END };
 

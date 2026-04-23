@@ -22,6 +22,8 @@ public:
 	virtual ~CItemObject() = default;
 	void Set_ItemDate(string name, string description, _float damage, _uint iconTexture);
 
+
+
 protected:
 	string m_sItemName;
 	string m_sItemDescription;

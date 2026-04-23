@@ -18,6 +18,8 @@ public:
 	typedef struct tagSlotDesc final : public CUIObject::UI_DESC
 	{
 		_bool* pParentActive = nullptr;
+		_bool* pHover = nullptr;
+		_bool* pClick = nullptr;
 	}SLOT_DESC;
 
 private:
@@ -41,6 +43,9 @@ protected:
 
 	HRESULT Ready_Components();
 	_bool* m_pParentActive = nullptr;
+	_bool* m_bHover = nullptr;
+	_bool* m_bClick = nullptr;
+
 	CItemObject* m_pItemObject = nullptr; 
 
 public:

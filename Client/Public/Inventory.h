@@ -37,9 +37,13 @@ protected:
 	CShader* m_pShaderCom = { nullptr };
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
-
 	HRESULT Ready_Components();
 	_bool m_bIsOpen = false;
+	_bool m_bHover = false;
+	_bool m_bClick = false;
+
+	vector<class CSlot*> m_vecSlot[ETOI(INVEN::INVENEND)];
+
 
 public:
 	static CInventory* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

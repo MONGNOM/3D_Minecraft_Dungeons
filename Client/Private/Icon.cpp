@@ -23,13 +23,19 @@ HRESULT CIcon::Initialize(void* pArg)
     m_iNumTexture = pDesc->NumTexture;
     m_pParentActive = pDesc->pParentActive;
 
+    if (m_iNumTexture == 4)
+    m_bClick = pDesc->pClick;
+
+    if (m_iNumTexture == 5)
+    m_bHover = pDesc->pHover;
+
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
     if (FAILED(Ready_Components()))
         return E_FAIL;
 
-    m_Name = TEXT("Icon_" + pDesc->name);
+    //m_Name = TEXT("Icon_" + pDesc->name);
 
     return S_OK;
 }
@@ -48,8 +54,21 @@ void CIcon::Update(_float fTimeDelta)
 void CIcon::Late_Update(_float fTimeDelta)
 {
     
-    if(*m_pParentActive)
-    m_pGameInstance->Add_RenderGroup(RENDERGROUP::INVEN, this);
+    if (*m_pParentActive)
+    {
+        if (m_iNumTexture == 4)
+        {
+            if(*m_bClick)
+            m_pGameInstance->Add_RenderGroup(RENDERGROUP::INVEN, this);
+        }
+        else if (m_iNumTexture == 5)
+        {
+            if (*m_bHover)
+            m_pGameInstance->Add_RenderGroup(RENDERGROUP::INVEN, this);
+        }
+        else
+            m_pGameInstance->Add_RenderGroup(RENDERGROUP::INVEN, this);
+    }
 }
 
 HRESULT CIcon::Render()
