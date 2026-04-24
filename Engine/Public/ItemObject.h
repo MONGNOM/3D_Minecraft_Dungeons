@@ -9,8 +9,8 @@ class ENGINE_DLL CItemObject : public CGameObject
 public:
 	typedef struct tagItemDesc : CGameObject::GAMEOBJECT_DESC
 	{
-		string itemName;
-		string itemDescription;
+		wstring itemName;
+		wstring itemDescription;
 		_float itemDamage;
 		_uint  iNumTexture;
 
@@ -21,14 +21,15 @@ public:
 	CItemObject(const CItemObject& Prototype);
 	virtual ~CItemObject() = default;
 	void Set_ItemDate(string name, string description, _float damage, _uint iconTexture);
+	wstring Get_ItemName() { return m_sItemName; }
 
-
-
-protected:
-	string m_sItemName;
-	string m_sItemDescription;
+	wstring m_sItemName;
+	wstring m_sItemDescription;
 	_float m_fItemDamage;
 	_uint  m_iIconTexture;
+
+protected:
+	
 
 public:
 	virtual HRESULT Initialize_Prototype() override;

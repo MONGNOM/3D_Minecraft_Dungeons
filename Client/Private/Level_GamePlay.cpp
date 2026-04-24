@@ -4,6 +4,7 @@
 #include "Level_Loading.h"
 #include "FreeCamera.h"
 #include "ImGui_Manager.h"
+#include "Item_Sword.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel { pDevice, pContext }
@@ -95,6 +96,42 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_FreeCamera"),
 		ETOI(LEVEL::GAMEPLAY), strLayerTag, &CameraDesc)))
 		return E_FAIL;
+
+
+	CItemObject::ITEM_DESC itemdesc;
+	itemdesc.Scenetype = CGameObject::SCENETYPE::GAMEPLAY;
+	itemdesc.iNumTexture = 3;
+	itemdesc.itemDamage = 10;
+	itemdesc.itemDescription = L"다이아몬드로 만든 검 누군가의 연봉의 가격 일지도..";
+	itemdesc.itemName = L"다이아 검";
+	itemdesc.pos = _float3{ 0,0,0 };
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ItemSword"),
+		ETOI(LEVEL::GAMEPLAY), strLayerTag, &itemdesc)))
+		return E_FAIL;
+
+	CItemObject::ITEM_DESC itemdesc1;
+	itemdesc1.Scenetype = CGameObject::SCENETYPE::GAMEPLAY;
+	itemdesc1.iNumTexture = 1;
+	itemdesc1.itemDamage = 20;
+	itemdesc1.itemDescription = L"그냥 활";
+	itemdesc1.itemName = L"그냥 활";
+	itemdesc1.pos = _float3{ 0,0,0 };
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_ItemBow"),
+		ETOI(LEVEL::GAMEPLAY), strLayerTag, &itemdesc1)))
+		return E_FAIL;
+
+
+	CGameObject::GAMEOBJECT_DESC desc{};
+	desc.name = TEXT("Prototype_GameObject_Player0");
+	desc.pos = _float3(0, 0, 0);
+	desc.m_sPrototype = "Prototype_GameObject_Player";
+	desc.Scenetype = CGameObject::SCENETYPE::GAMEPLAY;
+
+	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Player"),
+		ETOI(LEVEL::GAMEPLAY), TEXT("Layer_Clone"), &desc)))
+		return E_FAIL;
+
+
 
 
 	return S_OK;

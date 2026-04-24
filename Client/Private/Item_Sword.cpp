@@ -1,6 +1,7 @@
 #include "Item_Sword.h"
 #include "GameInstance.h"
 #include "Level_Loading.h"
+#include "Inventory.h"
 
 CItem_Sword::CItem_Sword(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CItemObject{ pDevice, pContext }
@@ -20,6 +21,9 @@ HRESULT CItem_Sword::Initialize_Prototype()
 
 HRESULT CItem_Sword::Initialize(void* pArg)
 {
+
+	CItemObject::ITEM_DESC* desc = reinterpret_cast<ITEM_DESC*>(pArg);
+	
 	/* 백그라운드의 멤버를 채워넣어야한다면 여기서 채운다. */
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -27,7 +31,7 @@ HRESULT CItem_Sword::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	CItemObject::ITEM_DESC* desc = reinterpret_cast<ITEM_DESC*>(pArg);
+
 
 	if (desc != nullptr)
 	{
@@ -105,6 +109,11 @@ _bool CItem_Sword::Intersect_ToPlayer()
 		if (m_pColliderCom->Intersect(collider))
 		{
 			m_pColliderCom->Set_isColl(true);
+			CInventory* inven = dynamic_cast<CInventory*>(m_pGameInstance->Get_GameObject(TEXT("Inventory"), TEXT("Layer_UI"), ETOI(LEVEL::STATIC)));
+
+			if (inven != nullptr)
+				inven->Add_Item(m_sItemName, m_sItemDescription, m_fItemDamage, m_iIconTexture);
+
 			return true;
 		}
 	}

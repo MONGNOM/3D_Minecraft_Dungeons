@@ -50,7 +50,7 @@ HRESULT CMainApp::Initialize()
 
 
 	/* 내 게임의 시작을 위해 시작이되는 레벨 할당과 동작을 시킨다. */
-	if(FAILED(Ready_StartLevel(LEVEL::LOGO)))
+	if(FAILED(Ready_StartLevel(LEVEL::GAMEPLAY)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))

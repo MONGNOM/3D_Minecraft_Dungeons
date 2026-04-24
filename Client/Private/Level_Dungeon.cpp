@@ -343,19 +343,7 @@ HRESULT CLevel_Dungeon::Ready_Layer_UI(const _wstring& strLayerTag)
 		ETOI(LEVEL::DUNGEON), strLayerTag, &desc)))
 		return E_FAIL;
 
-	CItemObject::ITEM_DESC itemdesc;
-	itemdesc.Scenetype = CGameObject::SCENETYPE::DUNGEON;
-	itemdesc.NumTexture = 0;
-	itemdesc.itemDamage = 10;
-	itemdesc.itemDescription = "";
-	itemdesc.itemName = "";
-	itemdesc.pos = _float3{ 200,65,200 };
-	if (FAILED(m_pGameInstance->Add_GameObject(ETOI(LEVEL::DUNGEON), TEXT("Prototype_GameObject_ItemSword"),
-		ETOI(LEVEL::DUNGEON), strLayerTag, &desc)))
-		return E_FAIL;
 
-	
-	
 
 	return S_OK;
 }

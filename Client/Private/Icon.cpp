@@ -28,14 +28,26 @@ HRESULT CIcon::Initialize(void* pArg)
 
     if (m_iNumTexture == 5)
     m_bHover = pDesc->pHover;
+    
+    if (m_iNumTexture == 18)
+    m_bAddItem = pDesc->pAddItem;
 
+ 
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
     if (FAILED(Ready_Components()))
         return E_FAIL;
 
-    //m_Name = TEXT("Icon_" + pDesc->name);
+    if (m_Name == L"DeafultItemImage" || m_Name == L"Image_Sword" )
+    {
+        m_bDefault = pDesc->pDefault;
+        m_iNumTexture = pDesc->NumTexture;
+        m_iItemNumTexture = pDesc->pNumTexture;
+    }
+    else if(m_Name == L"Image_DamageSword" || m_Name == L"Image_DamageBack" )
+        m_bDefault = pDesc->pDefault;
+
 
     return S_OK;
 }
@@ -46,9 +58,7 @@ void CIcon::Priority_Update(_float fTimeDelta)
 
 void CIcon::Update(_float fTimeDelta)
 {
-    
     __super::Update_Transform();
-
 }
 
 void CIcon::Late_Update(_float fTimeDelta)
@@ -56,14 +66,24 @@ void CIcon::Late_Update(_float fTimeDelta)
     
     if (*m_pParentActive)
     {
-        if (m_iNumTexture == 4)
+        if (m_iNumTexture == 18)
         {
-            if(*m_bClick)
+            if (m_bAddItem != nullptr && *m_bAddItem)
+                m_pGameInstance->Add_RenderGroup(RENDERGROUP::INVEN, this);
+        }
+        else if (m_iNumTexture == 4)
+        {
+            if (*m_bClick)
             m_pGameInstance->Add_RenderGroup(RENDERGROUP::INVEN, this);
         }
         else if (m_iNumTexture == 5)
         {
             if (*m_bHover)
+            m_pGameInstance->Add_RenderGroup(RENDERGROUP::INVEN, this);
+        }
+        else if (m_Name == L"DeafultItemImage" || m_Name == L"Image_Sword" || m_Name == L"Image_DamageSword" || m_Name == L"Image_DamageBack")
+        {
+            if(*m_bDefault)
             m_pGameInstance->Add_RenderGroup(RENDERGROUP::INVEN, this);
         }
         else
@@ -84,8 +104,17 @@ HRESULT CIcon::Render()
         if (FAILED(__super::Bind_ShaderResource(m_pShaderCom, "g_ProjMatrix", D3DTS::PROJ)))
             return E_FAIL;
 
+        _uint textuer;
+        if (m_Name == L"DeafultItemImage"|| m_Name == L"Image_Sword")
+        {
+            textuer = *m_iItemNumTexture;
+        }
+        else
+        {
+            textuer = m_iNumTexture;
+        }
 
-        if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, "g_Texture", m_iNumTexture)))
+        if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, "g_Texture", textuer)))
             return E_FAIL;
 
         if (FAILED(m_pShaderCom->Begin(0)))

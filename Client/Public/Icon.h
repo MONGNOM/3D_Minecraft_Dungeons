@@ -19,6 +19,12 @@ public:
 		_bool* pParentActive = nullptr;
 		_bool* pHover = nullptr;
 		_bool* pClick = nullptr;
+		_bool* pAddItem = nullptr;
+		_bool* pDefault = nullptr;
+		_float* pParnetPosX = nullptr;
+		_float* pParnetPosY = nullptr;
+		_uint* pNumTexture = nullptr;
+
 	}ICON_DESC;
 
 private:
@@ -44,6 +50,9 @@ protected:
 	_bool* m_pParentActive = nullptr;
 	_bool* m_bHover = nullptr;
 	_bool* m_bClick = nullptr;
+	_bool* m_bAddItem = nullptr;
+	_bool* m_bDefault = nullptr;
+	_uint* m_iItemNumTexture = nullptr;
 
 public:
 	static CIcon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

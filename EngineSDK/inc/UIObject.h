@@ -25,6 +25,12 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual void DecreaseHp(_uint damage) { m_fSizeX -= damage; }
+	_float Get_XPosition() { return m_fX; }
+	_float Get_YPosition() { return m_fY; }
+	_float Get_SizeX() { return m_fSizeX; }
+	_float Get_SizeY() { return m_fSizeY; }
+	void   Set_XPosition(_float PosX) { m_fX = PosX; }
+	void   Set_YPosition(_float PosY) { m_fY = PosY; }
 
 protected:
 	_float						m_fX{}, m_fY{}, m_fSizeX{}, m_fSizeY{};
